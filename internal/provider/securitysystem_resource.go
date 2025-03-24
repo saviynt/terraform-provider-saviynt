@@ -77,11 +77,11 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 				Description: "The unique ID of the resource.",
 			},
 			"systemname": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Name of the security system.",
 			},
 			"display_name": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Specify a user-friendly display name that is shown on the the user interface.",
 			},
 			"hostname": schema.StringAttribute{

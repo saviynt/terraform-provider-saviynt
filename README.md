@@ -1,64 +1,208 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
 
-_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
+# Terraform Provider from Saviynt
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+This Terraform provider enables efficient provisioning, configuration, and management of security systems, endpoints, and associated connections through the Saviynt API. Designed for seamless integration with Saviynt EIC, it brings Infrastructure-as-Code (IaC) principles to identity and access management.
 
-- A resource and a data source (`internal/provider/`),
-- Examples (`examples/`) and generated documentation (`docs/`),
-- Miscellaneous meta files.
+---
 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Developer](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework) platform. _Terraform Plugin Framework specific guides are titled accordingly._
+##  Overview
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+With this provider, you can:
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://developer.hashicorp.com/terraform/registry/providers/publishing) so that others can use it.
+- Automate the creation and management of Security Systems and Endpoints
+- Manage various Connections (e.g., AD, REST, Workday)
+- Leverage Terraform’s declarative configuration to manage IAM resources
+- Minimize manual intervention and reduce configuration drift
 
-## Requirements
+---
 
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
-- [Go](https://golang.org/doc/install) >= 1.22
+##  Features
 
-## Building The Provider
+- Full CRUD support for Saviynt security systems and endpoints
+- Support for multiple Connection types: AD, ADSI, REST, Workday, etc.
+- Rich filtering in data sources (e.g., filter security systems by systemname, connection_type, etc.)
+- Advanced workflow integration (e.g., firefighter workflows, account ownership workflows)
+- Advanced error handling, comprehensive logging, and enhanced debugging capabilities
+- Pre-built templates for quick and effective implementation
 
-1. Clone the repository
-1. Enter the repository directory
-1. Build the provider using the Go `install` command:
+---
 
-```shell
-go install
+##  Requirements
+
+- Terraform version `>= 1.8+`
+- Go programming language `>= 1.21+` (required for development and contributions)
+- Saviynt credentials (url, username and password)
+
+---
+
+##  Installation
+
+To use this provider, configure Terraform as follows:
+
+### Terraform Configuration
+
+```hcl
+terraform {
+  required_providers {
+    saviynt = {
+      source  = "registry.terraform.io/local/saviynt"
+      version = "1.0.0"
+    }
+  }
+}
+
+provider "saviynt" {
+  username   = "YOUR_SAVIYNT_USERNAME"
+  password   = "YOUR_SAVIYNT_PASSWORD"
+  api_token  = "YOUR_SAVIYNT_API_TOKEN"
+}
 ```
 
-## Adding Dependencies
+---
 
-This provider uses [Go modules](https://github.com/golang/go/wiki/Modules).
-Please see the Go documentation for the most up to date information about using Go modules.
+##  Usage
 
-To add a new dependency `github.com/author/dependency` to your Terraform provider:
+Here's an example of defining and managing a resource:
 
-```shell
-go get github.com/author/dependency
+```hcl
+resource "saviynt_security_system_resource" "example" {
+  systemname          = "hr_system"
+  display_name        = "HR System"
+  hostname            = "hr.example.com"
+  port                = "443"
+  access_add_workflow = "hr_access_add"
+}
+```
+
+```hcl
+data "saviynt_security_systems_datasource" "all" {
+  connection_type = "REST"
+  max             = 10
+  offset          = 0
+}
+
+output "systems" {
+  value = data.saviynt_security_systems_datasource.all.results
+}
+```
+
+---
+
+##  Available Resources
+
+###  Resource
+
+- `saviynt_security_system_resource`: Manages lifecycle (create, update, read) of security systems. Supports workflows, connectors, password policies and more.
+- `saviynt_endpoints_resource`: For managing endpoints definitions used by security systems.
+- `saviynt_connection_resouce`: For managing endpoints like AD, REST, etc. tied to security systems.
+
+###  Data Source
+
+- `saviynt_security_systems_datasource`: Retrieves a list of configured security systems filtered by systemname, connection_type, etc.
+
+---
+
+##  Development and Contribution
+
+To contribute to this project or develop locally:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/saviynt/terraform-provider-saviynt.git
+cd terraform-provider-saviynt
+```
+
+### 2. Build the Provider
+
+```bash
 go mod tidy
+go build -o terraform-provider-saviynt
 ```
 
-Then commit the changes to `go.mod` and `go.sum`.
+### 3. Locate Your `GOBIN` Path
 
-## Using the provider
-
-Fill this in for each provider
-
-## Developing the Provider
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
-
-To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
-
-To generate or update documentation, run `make generate`.
-
-In order to run the full suite of Acceptance tests, run `make testacc`.
-
-*Note:* Acceptance tests create real resources, and often cost money to run.
-
-```shell
-make testacc
+```bash
+go env GOBIN
 ```
+
+If empty:
+
+```bash
+echo "$(go env GOPATH)/bin"
+```
+
+Examples:
+
+- `/Users/<your-username>/go/bin` (macOS/Linux)  
+- `C:\Users\<your-username>\go\bin` (Windows)
+
+### 4. Configure `.terraformrc` or `terraform.rc`
+
+Create the file at:
+
+- **macOS/Linux**: `~/.terraformrc`
+- **Windows**: `%APPDATA%\terraform.rc`
+
+```hcl
+provider_installation {
+  dev_overrides {
+    "yourorgname/saviynt" = "<PATH>"
+  }
+  direct {}
+}
+```
+
+Replace `<PATH>` with your actual GOBIN path.
+
+### 5. Test the Provider Locally
+
+```hcl
+provider "saviynt" {
+  username  = "YOUR_USERNAME"
+  password  = "YOUR_PASSWORD"
+  api_token = "YOUR_API_TOKEN"
+}
+
+data "saviynt_security_systems_datasource" "example" {
+  systemname = "MySystem"
+}
+```
+
+Run:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+### 6. Run Tests
+
+```bash
+go test ./... -v
+```
+
+---
+
+##  Contributions Welcome!
+
+Contributions are warmly welcomed! Please follow these guidelines:
+
+- Submit issues clearly describing bugs or enhancement suggestions.
+- Provide pull requests that include relevant tests.
+- Ensure existing tests are passed and functionality remains intact.
+
+---
+
+##  License
+
+This project is licensed under the Apache License 2.0. Refer to [LICENSE](LICENSE) for full license details.
+
+---
+
+##  Support
+
+If you encounter any issues or have questions, please open an issue on our GitHub page.
+
+---
