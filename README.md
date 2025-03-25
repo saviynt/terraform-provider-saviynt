@@ -37,10 +37,10 @@ With this provider, you can:
 
 To use this provider, follow these steps:  
 
-### **1.Download the Binary**  
+### **1. Download the Binary**  
 Download the Terraform provider binary (`terraform-provider-saviynt_v1.0.0`).  
 
-### **2.Move the Binary to Go Bin**  
+### **2. Move the Binary to Go Bin**  
 Run the following command to move the provider to your Go bin directory:  
 ```sh
 mv terraform-provider-saviynt_v1.0.0 GOBIN
@@ -62,9 +62,9 @@ terraform {
 }
 
 provider "saviynt" {
+  server_url  = "YOUR_SAVIYNT_URL"
   username   = "YOUR_SAVIYNT_USERNAME"
   password   = "YOUR_SAVIYNT_PASSWORD"
-  api_token  = "YOUR_SAVIYNT_API_TOKEN"
 }
 ```
 

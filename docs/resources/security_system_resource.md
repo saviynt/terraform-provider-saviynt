@@ -2,7 +2,7 @@
 
 ##  Overview
 
-- Automate the creation and management of Security Systems in Saviynt.
+- Create and manage Security Systems in Saviynt
 
 ## Example Usage
 
