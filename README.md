@@ -161,7 +161,7 @@ Replace `<PATH>` with your actual GOBIN path.
 provider "saviynt" {
   username  = "YOUR_USERNAME"
   password  = "YOUR_PASSWORD"
-  api_token = "YOUR_API_TOKEN"
+  server_url = "YOUR_SERVER_URL"
 }
 
 data "saviynt_security_systems_datasource" "example" {

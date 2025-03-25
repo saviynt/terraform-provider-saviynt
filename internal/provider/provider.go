@@ -51,6 +51,7 @@ func (p *saviyntProvider) Metadata(_ context.Context, _ provider.MetadataRequest
 
 func (p *saviyntProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Interact with the Saviynt ECM",
 		Attributes: map[string]schema.Attribute{
 			"server_url": schema.StringAttribute{
 				Required:    true,

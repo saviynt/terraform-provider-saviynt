@@ -98,6 +98,7 @@ func (d *SecuritySystemsDataSource) Metadata(ctx context.Context, req datasource
 // Schema defines the attributes for the data source
 func (d *SecuritySystemsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "List of the security systems",
 		Attributes: map[string]schema.Attribute{
 			"systemname": schema.StringAttribute{
 				Optional:    true,
