@@ -35,10 +35,20 @@ With this provider, you can:
 
 ---
 
-##  Installation
+To use this provider, follow these steps:  
 
-To use this provider, configure Terraform as follows:
+### **1.Download the Binary**  
+Download the Terraform provider binary (`terraform-provider-saviynt_v1.0.0`).  
 
+### **2.Move the Binary to Go Bin**  
+Run the following command to move the provider to your Go bin directory:  
+```sh
+mv terraform-provider-saviynt_v1.0.0 GOBIN
+```
+
+```SH
+chmod +x GOBIN/terraform-provider-saviynt_v1.0.0
+```
 ### Terraform Configuration
 
 ```hcl
