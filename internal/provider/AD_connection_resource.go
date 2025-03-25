@@ -19,102 +19,100 @@ import (
 )
 
 type BaseConnector struct {
-	ConnectionName     *string `tfsdk:"connection_name"`
-	ConnectionType     string  `tfsdk:"connection_type"`
-	Description        *string `tfsdk:"description"`
-	DefaultSavRoles    *string `tfsdk:"defaultsavroles"`
-	EmailTemplate      *string `tfsdk:"email_template"`
-	SSLCertificate     *string `tfsdk:"ssl_certificate"`
-	VaultConnection    *string `tfsdk:"vault_connection"`
-	VaultConfiguration *string `tfsdk:"vault_configuration"`
-	SaveInVault        *string `tfsdk:"save_in_vault"`
+	ConnectionName     types.String `tfsdk:"connection_name"`
+	ConnectionType     types.String `tfsdk:"connection_type"`
+	Description        types.String `tfsdk:"description"`
+	DefaultSavRoles    types.String `tfsdk:"defaultsavroles"`
+	EmailTemplate      types.String `tfsdk:"email_template"`
+	SSLCertificate     types.String `tfsdk:"ssl_certificate"`
+	VaultConnection    types.String `tfsdk:"vault_connection"`
+	VaultConfiguration types.String `tfsdk:"vault_configuration"`
+	SaveInVault        types.String `tfsdk:"save_in_vault"`
+	Result             types.String `tfsdk:"result"`
+	Msg                types.String `tfsdk:"msg"`
+	ErrorCode          types.String `tfsdk:"error_code"`
 }
 type ADConnectorResourceModel struct {
 	ID types.String `tfsdk:"id"`
 	BaseConnector
-
-	// Optional additional fields
-	URL                       *string `tfsdk:"url"`                           // LDAP or target system URL (example: "ldap://uscentral.com:8972/")
-	Username                  *string `tfsdk:"username"`                      // System admin username
-	Password                  string  `tfsdk:"password"`                      // Set the password
-	LdapOrAd                  *string `tfsdk:"ldap_or_ad"`                    // e.g., default "AD"
-	EntitlementAttribute      *string `tfsdk:"entitlement_attribute"`         // e.g., "memberOf"
-	CheckForUnique            *string `tfsdk:"check_for_unique"`              // Uniqueness validation rule JSON (example: "{\"sAMAccountName\":\"${task.accountName}\"}")
-	GroupSearchBaseDN         *string `tfsdk:"group_search_base_dn"`          // Base DN for group search
-	CreateUpdateMappings      *string `tfsdk:"create_update_mappings"`        // Mapping for group creation/updation (JSON string)
-	IncrementalConfig         *string `tfsdk:"incremental_config"`            // Incremental import configuration
-	MaxChangeNumber           *string `tfsdk:"max_changenumber"`              // Maximum change number
-	ReadOperationalAttributes *string `tfsdk:"read_operational_attributes"`   // Flag for reading operational attributes
-	Base                      *string `tfsdk:"base"`                          // LDAP base DN
-	DcLocator                 *string `tfsdk:"dc_locator"`                    // Domain controller locator
-	StatusThresholdConfig     *string `tfsdk:"status_threshold_config"`       // JSON configuration for status thresholds
-	RemoveAccountAction       *string `tfsdk:"remove_account_action"`         // Action on account removal
-	AccountAttribute          *string `tfsdk:"account_attribute"`             // Mapping for LDAP user to EIC account attribute
-	AccountNameRule           *string `tfsdk:"account_name_rule"`             // Rule to generate account name
-	Advsearch                 *string `tfsdk:"advsearch"`                     // Advanced search settings
-	Setdefaultpagesize        *string `tfsdk:"setdefaultpagesize"`            // Default page size setting
-	ResetAndChangePasswrdJson *string `tfsdk:"reset_and_change_passwrd_json"` // JSON for reset/change password actions
-	ReuseInactiveAccount      *string `tfsdk:"reuse_inactive_account"`        // Reuse inactive account flag
-	ImportJson                *string `tfsdk:"import_json"`                   // JSON import configuration
-	SupportEmptyString        *string `tfsdk:"support_empty_string"`          // Flag for sending empty strings
-	EnableAccountJson         *string `tfsdk:"enable_account_json"`           // JSON configuration to enable account
-	PageSize                  *string `tfsdk:"page_size"`                     // LDAP page size
-	UserAttribute             *string `tfsdk:"user_attribute"`                // Mapping for LDAP user to EIC user attribute
-	DefaultUserRole           *string `tfsdk:"default_user_role"`             // Default user role for imported users
-	Searchfilter              *string `tfsdk:"searchfilter"`                  // LDAP search filter for users
-	EndpointsFilter           *string `tfsdk:"endpoints_filter"`              // Configuration for child endpoints
-	CreateAccountJson         *string `tfsdk:"create_account_json"`           // JSON to create an account
-	UpdateAccountJson         *string `tfsdk:"update_account_json"`           // JSON to update an account
-	ReuseAccountJson          *string `tfsdk:"reuse_account_json"`            // JSON to reuse an account
-	EnforceTreeDeletion       *string `tfsdk:"enforce_tree_deletion"`         // Enforce tree deletion flag
-	AdvanceFilterJson         *string `tfsdk:"advance_filter_json"`           // Advanced filter JSON configuration
-	Filter                    *string `tfsdk:"filter"`                        // Simple filter string
-	Objectfilter              *string `tfsdk:"objectfilter"`                  // LDAP object filter (example: "(objectClass=inetorgperson)")
-	UpdateUserJson            *string `tfsdk:"update_user_json"`              // JSON to update a user
-	SaveConnection            *string `tfsdk:"save_connection"`               // Flag to permanently save connection
-	SystemName                *string `tfsdk:"system_name"`                   // Associated system name
-	Setrandompassword         *string `tfsdk:"set_random_password"`           // Option to set a random password
-	PasswordMinLength         *string `tfsdk:"password_min_length"`           // Minimum password length (example: "8")
-	PasswordMaxLength         *string `tfsdk:"password_max_length"`           // Maximum password length (example: "12")
-	PasswordNoofcapsalpha     *string `tfsdk:"password_noofcapsalpha"`        // Number of capital letters required
-	PasswordNoofsplchars      *string `tfsdk:"password_noofsplchars"`         // Number of special characters required
-	PasswordNoofdigits        *string `tfsdk:"password_noofdigits"`           // Number of digits required
-	GroupImportMapping        *string `tfsdk:"group_import_mapping"`          // JSON mapping for LDAP groups
-	UnlockAccountJson         *string `tfsdk:"unlock_account_json"`           // JSON to unlock accounts
-	StatusKeyJson             *string `tfsdk:"status_key_json"`               // JSON for account status keys
-	Enablegroupmanagement     *string `tfsdk:"enable_group_management"`       // Flag to enable group management
-	DisableAccountJson        *string `tfsdk:"disable_account_json"`          // JSON to disable an account
-	ModifyUserdataJson        *string `tfsdk:"modify_user_data_json"`         // JSON for inline user data transformation
-	OrgBase                   *string `tfsdk:"org_base"`                      // Organization BASE for provision job
-	OrganizationAttribute     *string `tfsdk:"organization_attribute"`        // Organization attributes
-	Orgimportjson             *string `tfsdk:"org_import_json"`               // JSON for organization import
-	Createorgjson             *string `tfsdk:"create_org_json"`               // JSON for organization creation
-	Updateorgjson             *string `tfsdk:"update_org_json"`               // JSON for organization update
-	ConfigJson                *string `tfsdk:"config_json"`                   // JSON for connection timeout configuration
-	LastImportTime            *string `tfsdk:"last_import_time"`              // Last import timestamp
-	PamConfig                 *string `tfsdk:"pam_config"`                    // JSON for PAM bootstrap configuration
-	// Result                    string  `tfsdk:"result"`
-	// Msg                       *string `tfsdk:"msg"`
-	// ErrorCode                 *string `tfsdk:"error_code"`
+	URL                       types.String `tfsdk:"url"`
+	Username                  types.String `tfsdk:"username"`
+	Password                  types.String `tfsdk:"password"`
+	LdapOrAd                  types.String `tfsdk:"ldap_or_ad"`
+	EntitlementAttribute      types.String `tfsdk:"entitlement_attribute"`
+	CheckForUnique            types.String `tfsdk:"check_for_unique"`
+	GroupSearchBaseDN         types.String `tfsdk:"group_search_base_dn"`
+	CreateUpdateMappings      types.String `tfsdk:"create_update_mappings"`
+	IncrementalConfig         types.String `tfsdk:"incremental_config"`
+	MaxChangeNumber           types.String `tfsdk:"max_changenumber"`
+	ReadOperationalAttributes types.String `tfsdk:"read_operational_attributes"`
+	Base                      types.String `tfsdk:"base"`
+	DcLocator                 types.String `tfsdk:"dc_locator"`
+	StatusThresholdConfig     types.String `tfsdk:"status_threshold_config"`
+	RemoveAccountAction       types.String `tfsdk:"remove_account_action"`
+	AccountAttribute          types.String `tfsdk:"account_attribute"`
+	AccountNameRule           types.String `tfsdk:"account_name_rule"`
+	Advsearch                 types.String `tfsdk:"advsearch"`
+	Setdefaultpagesize        types.String `tfsdk:"setdefaultpagesize"`
+	ResetAndChangePasswrdJson types.String `tfsdk:"reset_and_change_passwrd_json"`
+	ReuseInactiveAccount      types.String `tfsdk:"reuse_inactive_account"`
+	ImportJson                types.String `tfsdk:"import_json"`
+	SupportEmptyString        types.String `tfsdk:"support_empty_string"`
+	EnableAccountJson         types.String `tfsdk:"enable_account_json"`
+	PageSize                  types.String `tfsdk:"page_size"`
+	UserAttribute             types.String `tfsdk:"user_attribute"`
+	DefaultUserRole           types.String `tfsdk:"default_user_role"`
+	Searchfilter              types.String `tfsdk:"searchfilter"`
+	EndpointsFilter           types.String `tfsdk:"endpoints_filter"`
+	CreateAccountJson         types.String `tfsdk:"create_account_json"`
+	UpdateAccountJson         types.String `tfsdk:"update_account_json"`
+	ReuseAccountJson          types.String `tfsdk:"reuse_account_json"`
+	EnforceTreeDeletion       types.String `tfsdk:"enforce_tree_deletion"`
+	AdvanceFilterJson         types.String `tfsdk:"advance_filter_json"`
+	Filter                    types.String `tfsdk:"filter"`
+	Objectfilter              types.String `tfsdk:"objectfilter"`
+	UpdateUserJson            types.String `tfsdk:"update_user_json"`
+	SaveConnection            types.String `tfsdk:"save_connection"`
+	SystemName                types.String `tfsdk:"system_name"`
+	Setrandompassword         types.String `tfsdk:"set_random_password"`
+	PasswordMinLength         types.String `tfsdk:"password_min_length"`
+	PasswordMaxLength         types.String `tfsdk:"password_max_length"`
+	PasswordNoofcapsalpha     types.String `tfsdk:"password_noofcapsalpha"`
+	PasswordNoofsplchars      types.String `tfsdk:"password_noofsplchars"`
+	PasswordNoofdigits        types.String `tfsdk:"password_noofdigits"`
+	GroupImportMapping        types.String `tfsdk:"group_import_mapping"`
+	UnlockAccountJson         types.String `tfsdk:"unlock_account_json"`
+	StatusKeyJson             types.String `tfsdk:"status_key_json"`
+	DisableAccountJson        types.String `tfsdk:"disable_account_json"`
+	ModifyUserdataJson        types.String `tfsdk:"modify_user_data_json"`
+	OrgBase                   types.String `tfsdk:"org_base"`
+	OrganizationAttribute     types.String `tfsdk:"organization_attribute"`
+	Createorgjson             types.String `tfsdk:"create_org_json"`
+	Updateorgjson             types.String `tfsdk:"update_org_json"`
+	ConfigJson                types.String `tfsdk:"config_json"`
+	PamConfig                 types.String `tfsdk:"pam_config"`
+	Result                    types.String `tfsdk:"result"`
+	Msg                       types.String `tfsdk:"msg"`
+	ErrorCode                 types.String `tfsdk:"error_code"`
 }
 
 // testConnectionResource implements the resource.Resource interface.
-type testConnectionResource struct {
+type adConnectionResource struct {
 	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
 
 // NewTestConnectionResource returns a new instance of testConnectionResource.
-func NewTestConnectionResource() resource.Resource {
-	return &testConnectionResource{}
+func ADNewTestConnectionResource() resource.Resource {
+	return &adConnectionResource{}
 }
 
-func (r *testConnectionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = "saviynt_test_connection"
+func (r *adConnectionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = "saviynt_ad_connection_resource"
 }
 
-func (r *testConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Create and Manage Connections",
 		Attributes: map[string]schema.Attribute{
@@ -350,10 +348,6 @@ func (r *testConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "JSON for account status keys. Example: '{\"STATUS_ACTIVE\":[\"512\",\"544\"], ...}'",
 			},
-			"enable_group_management": schema.StringAttribute{
-				Optional:    true,
-				Description: "Flag to enable group management. Example: \"TRUE\"",
-			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
 				Description: "JSON to disable an account. Example: '{\"userAccountControl\":\"546\", ...}'",
@@ -370,10 +364,6 @@ func (r *testConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "Organization attributes.",
 			},
-			"org_import_json": schema.StringAttribute{
-				Optional:    true,
-				Description: "JSON for organization import.",
-			},
 			"create_org_json": schema.StringAttribute{
 				Optional:    true,
 				Description: "JSON for organization creation.",
@@ -386,34 +376,30 @@ func (r *testConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "JSON for connection timeout configuration. Example: '{\"connectionTimeoutConfig\":{\"connectionTimeout\":10,\"readTimeout\":50,\"retryWait\":2,\"retryCount\":3}}'",
 			},
-			"last_import_time": schema.StringAttribute{
-				Optional:    true,
-				Description: "Last import timestamp.",
-			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
 				Description: "JSON for PAM bootstrap configuration. Example: '{\"Connection\":\"AD\",...}'",
 			},
-			// "result": schema.StringAttribute{
-			// 	Optional:    true,
-			// 	Computed:    true,
-			// 	Description: "The result of the API call.",
-			// },
-			// "msg": schema.StringAttribute{
-			// 	Optional:    true,
-			// 	Computed:    true,
-			// 	Description: "A message indicating the outcome of the operation.",
-			// },
-			// "error_code": schema.StringAttribute{
-			// 	Optional:    true,
-			// 	Computed:    true,
-			// 	Description: "An error code where '0' signifies success and '1' signifies an unsuccessful operation.",
-			// },
+			"result": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "The result of the API call.",
+			},
+			"msg": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "A message indicating the outcome of the operation.",
+			},
+			"error_code": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "An error code where '0' signifies success and '1' signifies an unsuccessful operation.",
+			},
 		},
 	}
 }
 
-func (r *testConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *adConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		return
@@ -431,7 +417,7 @@ func (r *testConnectionResource) Configure(ctx context.Context, req resource.Con
 	r.token = prov.accessToken
 }
 
-func (r *testConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan ADConnectorResourceModel
 
 	// Extract plan from request
@@ -450,22 +436,77 @@ func (r *testConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
-	connectionName := *plan.ConnectionName
+
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype: "AD",
-			ConnectionName: util.StringPtr(connectionName),
+			Connectiontype:     "AD",
+			ConnectionName:     util.StringPtr(plan.ConnectionName.ValueString()),
+			Description:        util.StringPtr(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPtr(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPtr(plan.EmailTemplate.ValueString()),
+			SslCertificate:     util.StringPtr(plan.SSLCertificate.ValueString()),
+			VaultConnection:    util.StringPtr(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.StringPtr(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.StringPtr(plan.SaveInVault.ValueString()),
 		},
-		URL:                     plan.URL,
-		USERNAME:                plan.Username,
-		PASSWORD:                plan.Password,
-		LDAP_OR_AD:              plan.LdapOrAd,
-		PAGE_SIZE:               plan.PageSize,
-		BASE:                    plan.Base,
-		STATUS_THRESHOLD_CONFIG: plan.StatusThresholdConfig,
-		ENTITLEMENT_ATTRIBUTE:   plan.EntitlementAttribute,
-		GroupSearchBaseDN:       plan.GroupSearchBaseDN,
+		URL:                         util.StringPtr(plan.URL.ValueString()),
+		USERNAME:                    util.StringPtr(plan.Username.ValueString()),
+		PASSWORD:                    plan.Password.ValueString(), // Assuming Password is required as plain string.
+		LDAP_OR_AD:                  util.StringPtr(plan.LdapOrAd.ValueString()),
+		ENTITLEMENT_ATTRIBUTE:       util.StringPtr(plan.EntitlementAttribute.ValueString()),
+		CHECKFORUNIQUE:              util.StringPtr(plan.CheckForUnique.ValueString()),
+		GroupSearchBaseDN:           util.StringPtr(plan.GroupSearchBaseDN.ValueString()),
+		CreateUpdateMappings:        util.StringPtr(plan.CreateUpdateMappings.ValueString()),
+		INCREMENTAL_CONFIG:          util.StringPtr(plan.IncrementalConfig.ValueString()),
+		MAX_CHANGENUMBER:            util.StringPtr(plan.MaxChangeNumber.ValueString()),
+		READ_OPERATIONAL_ATTRIBUTES: util.StringPtr(plan.ReadOperationalAttributes.ValueString()),
+		BASE:                        util.StringPtr(plan.Base.ValueString()),
+		DC_LOCATOR:                  util.StringPtr(plan.DcLocator.ValueString()),
+		STATUS_THRESHOLD_CONFIG:     util.StringPtr(plan.StatusThresholdConfig.ValueString()),
+		REMOVEACCOUNTACTION:         util.StringPtr(plan.RemoveAccountAction.ValueString()),
+		ACCOUNT_ATTRIBUTE:           util.StringPtr(plan.AccountAttribute.ValueString()),
+		ACCOUNTNAMERULE:             util.StringPtr(plan.AccountNameRule.ValueString()),
+		ADVSEARCH:                   util.StringPtr(plan.Advsearch.ValueString()),
+		SETDEFAULTPAGESIZE:          util.StringPtr(plan.Setdefaultpagesize.ValueString()),
+		RESETANDCHANGEPASSWRDJSON:   util.StringPtr(plan.ResetAndChangePasswrdJson.ValueString()),
+		REUSEINACTIVEACCOUNT:        util.StringPtr(plan.ReuseInactiveAccount.ValueString()),
+		IMPORTJSON:                  util.StringPtr(plan.ImportJson.ValueString()),
+		SUPPORTEMPTYSTRING:          util.StringPtr(plan.SupportEmptyString.ValueString()),
+		ENABLEACCOUNTJSON:           util.StringPtr(plan.EnableAccountJson.ValueString()),
+		PAGE_SIZE:                   util.StringPtr(plan.PageSize.ValueString()),
+		USER_ATTRIBUTE:              util.StringPtr(plan.UserAttribute.ValueString()),
+		DEFAULT_USER_ROLE:           util.StringPtr(plan.DefaultUserRole.ValueString()),
+		SEARCHFILTER:                util.StringPtr(plan.Searchfilter.ValueString()),
+		ENDPOINTS_FILTER:            util.StringPtr(plan.EndpointsFilter.ValueString()),
+		CREATEACCOUNTJSON:           util.StringPtr(plan.CreateAccountJson.ValueString()),
+		UPDATEACCOUNTJSON:           util.StringPtr(plan.UpdateAccountJson.ValueString()),
+		REUSEACCOUNTJSON:            util.StringPtr(plan.ReuseAccountJson.ValueString()),
+		ENFORCE_TREE_DELETION:       util.StringPtr(plan.EnforceTreeDeletion.ValueString()),
+		ADVANCE_FILTER_JSON:         util.StringPtr(plan.AdvanceFilterJson.ValueString()),
+		FILTER:                      util.StringPtr(plan.Filter.ValueString()),
+		OBJECTFILTER:                util.StringPtr(plan.Objectfilter.ValueString()),
+		UPDATEUSERJSON:              util.StringPtr(plan.UpdateUserJson.ValueString()),
+		Saveconnection:              util.StringPtr(plan.SaveConnection.ValueString()),
+		Systemname:                  util.StringPtr(plan.SystemName.ValueString()),
+		SETRANDOMPASSWORD:           util.StringPtr(plan.Setrandompassword.ValueString()),
+		PASSWORD_MIN_LENGTH:         util.StringPtr(plan.PasswordMinLength.ValueString()),
+		PASSWORD_MAX_LENGTH:         util.StringPtr(plan.PasswordMaxLength.ValueString()),
+		PASSWORD_NOOFCAPSALPHA:      util.StringPtr(plan.PasswordNoofcapsalpha.ValueString()),
+		PASSWORD_NOOFSPLCHARS:       util.StringPtr(plan.PasswordNoofsplchars.ValueString()),
+		PASSWORD_NOOFDIGITS:         util.StringPtr(plan.PasswordNoofdigits.ValueString()),
+		GroupImportMapping:          util.StringPtr(plan.GroupImportMapping.ValueString()),
+		UNLOCKACCOUNTJSON:           util.StringPtr(plan.UnlockAccountJson.ValueString()),
+		STATUSKEYJSON:               util.StringPtr(plan.StatusKeyJson.ValueString()),
+		DISABLEACCOUNTJSON:          util.StringPtr(plan.DisableAccountJson.ValueString()),
+		MODIFYUSERDATAJSON:          util.StringPtr(plan.ModifyUserdataJson.ValueString()),
+		ORG_BASE:                    util.StringPtr(plan.OrgBase.ValueString()),
+		ORGANIZATION_ATTRIBUTE:      util.StringPtr(plan.OrganizationAttribute.ValueString()),
+		CREATEORGJSON:               util.StringPtr(plan.Createorgjson.ValueString()),
+		UPDATEORGJSON:               util.StringPtr(plan.Updateorgjson.ValueString()),
+		ConfigJSON:                  util.StringPtr(plan.ConfigJson.ValueString()),
+		PAM_CONFIG:                  util.StringPtr(plan.PamConfig.ValueString()),
 	}
+
 	testConnRequest := openapi.TestConnectionRequest{
 		ADConnector: &adConn,
 	}
@@ -473,49 +514,45 @@ func (r *testConnectionResource) Create(ctx context.Context, req resource.Create
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	reqAPI := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(testConnRequest)
-	_, httpResp, err := reqAPI.Execute()
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(testConnRequest).Execute()
 	if err != nil {
-		// Handle 404: resource no longer exists, remove from state
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.State.RemoveResource(ctx)
-			return
-		}
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Failed to create connection: %s", err.Error()))
+		resp.Diagnostics.AddError(
+			"Error Creating AD Connector",
+			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
+		)
 		return
 	}
 	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + connectionName)
-	// msgValue := util.SafeDeref(apiResponse.Msg)
-	// errorCodeValue := util.SafeDeref(apiResponse.ErrorCode)
+	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
+
+	msgValue := util.SafeDeref(apiResp.Msg)
+	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
 
 	// Set the individual fields
-	// plan.Msg = util.StringPtr(msgValue)
-	// plan.ErrorCode = util.StringPtr(errorCodeValue)
-	// resultObj := map[string]string{
-	// 	"msg":        msgValue,
-	// 	"error_code": errorCodeValue,
-	// }
-	// resultJSON, err := util.MarshalDeterministic(resultObj)
-	// if err != nil {
-	// 	resp.Diagnostics.AddError(
-	// 		"Error Marshaling Result",
-	// 		fmt.Sprintf("Could not marshal API response: %v", err),
-	// 	)
-	// 	return
-	// }
-	// plan.Result = types.StringValue(string(resultJSON))
-
-	// Store state
+	plan.Msg = types.StringValue(msgValue)
+	plan.ErrorCode = types.StringValue(errorCodeValue)
+	resultObj := map[string]string{
+		"msg":        msgValue,
+		"error_code": errorCodeValue,
+	}
+	resultJSON, err := util.MarshalDeterministic(resultObj)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Marshaling Result",
+			fmt.Sprintf("Could not marshal API response: %v", err),
+		)
+		return
+	}
+	plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r *testConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	// If the API does not support a separate read operation, you can pass through the state.
 }
 
-func (r *testConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
 
 	// Extract plan from request
@@ -534,22 +571,77 @@ func (r *testConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
-	connectionName := *plan.ConnectionName
+
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype: "AD",
-			ConnectionName: util.StringPtr(connectionName),
+			Connectiontype:     "AD",
+			ConnectionName:     util.StringPtr(plan.ConnectionName.ValueString()),
+			Description:        util.StringPtr(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPtr(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPtr(plan.EmailTemplate.ValueString()),
+			SslCertificate:     util.StringPtr(plan.SSLCertificate.ValueString()),
+			VaultConnection:    util.StringPtr(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.StringPtr(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.StringPtr(plan.SaveInVault.ValueString()),
 		},
-		URL:                     plan.URL,
-		USERNAME:                plan.Username,
-		PASSWORD:                plan.Password,
-		LDAP_OR_AD:              plan.LdapOrAd,
-		PAGE_SIZE:               plan.PageSize,
-		BASE:                    plan.Base,
-		STATUS_THRESHOLD_CONFIG: plan.StatusThresholdConfig,
-		ENTITLEMENT_ATTRIBUTE:   plan.EntitlementAttribute,
-		GroupSearchBaseDN:       plan.GroupSearchBaseDN,
+		URL:                         util.StringPtr(plan.URL.ValueString()),
+		USERNAME:                    util.StringPtr(plan.Username.ValueString()),
+		PASSWORD:                    plan.Password.ValueString(), // Assuming Password is required as plain string.
+		LDAP_OR_AD:                  util.StringPtr(plan.LdapOrAd.ValueString()),
+		ENTITLEMENT_ATTRIBUTE:       util.StringPtr(plan.EntitlementAttribute.ValueString()),
+		CHECKFORUNIQUE:              util.StringPtr(plan.CheckForUnique.ValueString()),
+		GroupSearchBaseDN:           util.StringPtr(plan.GroupSearchBaseDN.ValueString()),
+		CreateUpdateMappings:        util.StringPtr(plan.CreateUpdateMappings.ValueString()),
+		INCREMENTAL_CONFIG:          util.StringPtr(plan.IncrementalConfig.ValueString()),
+		MAX_CHANGENUMBER:            util.StringPtr(plan.MaxChangeNumber.ValueString()),
+		READ_OPERATIONAL_ATTRIBUTES: util.StringPtr(plan.ReadOperationalAttributes.ValueString()),
+		BASE:                        util.StringPtr(plan.Base.ValueString()),
+		DC_LOCATOR:                  util.StringPtr(plan.DcLocator.ValueString()),
+		STATUS_THRESHOLD_CONFIG:     util.StringPtr(plan.StatusThresholdConfig.ValueString()),
+		REMOVEACCOUNTACTION:         util.StringPtr(plan.RemoveAccountAction.ValueString()),
+		ACCOUNT_ATTRIBUTE:           util.StringPtr(plan.AccountAttribute.ValueString()),
+		ACCOUNTNAMERULE:             util.StringPtr(plan.AccountNameRule.ValueString()),
+		ADVSEARCH:                   util.StringPtr(plan.Advsearch.ValueString()),
+		SETDEFAULTPAGESIZE:          util.StringPtr(plan.Setdefaultpagesize.ValueString()),
+		RESETANDCHANGEPASSWRDJSON:   util.StringPtr(plan.ResetAndChangePasswrdJson.ValueString()),
+		REUSEINACTIVEACCOUNT:        util.StringPtr(plan.ReuseInactiveAccount.ValueString()),
+		IMPORTJSON:                  util.StringPtr(plan.ImportJson.ValueString()),
+		SUPPORTEMPTYSTRING:          util.StringPtr(plan.SupportEmptyString.ValueString()),
+		ENABLEACCOUNTJSON:           util.StringPtr(plan.EnableAccountJson.ValueString()),
+		PAGE_SIZE:                   util.StringPtr(plan.PageSize.ValueString()),
+		USER_ATTRIBUTE:              util.StringPtr(plan.UserAttribute.ValueString()),
+		DEFAULT_USER_ROLE:           util.StringPtr(plan.DefaultUserRole.ValueString()),
+		SEARCHFILTER:                util.StringPtr(plan.Searchfilter.ValueString()),
+		ENDPOINTS_FILTER:            util.StringPtr(plan.EndpointsFilter.ValueString()),
+		CREATEACCOUNTJSON:           util.StringPtr(plan.CreateAccountJson.ValueString()),
+		UPDATEACCOUNTJSON:           util.StringPtr(plan.UpdateAccountJson.ValueString()),
+		REUSEACCOUNTJSON:            util.StringPtr(plan.ReuseAccountJson.ValueString()),
+		ENFORCE_TREE_DELETION:       util.StringPtr(plan.EnforceTreeDeletion.ValueString()),
+		ADVANCE_FILTER_JSON:         util.StringPtr(plan.AdvanceFilterJson.ValueString()),
+		FILTER:                      util.StringPtr(plan.Filter.ValueString()),
+		OBJECTFILTER:                util.StringPtr(plan.Objectfilter.ValueString()),
+		UPDATEUSERJSON:              util.StringPtr(plan.UpdateUserJson.ValueString()),
+		Saveconnection:              util.StringPtr(plan.SaveConnection.ValueString()),
+		Systemname:                  util.StringPtr(plan.SystemName.ValueString()),
+		SETRANDOMPASSWORD:           util.StringPtr(plan.Setrandompassword.ValueString()),
+		PASSWORD_MIN_LENGTH:         util.StringPtr(plan.PasswordMinLength.ValueString()),
+		PASSWORD_MAX_LENGTH:         util.StringPtr(plan.PasswordMaxLength.ValueString()),
+		PASSWORD_NOOFCAPSALPHA:      util.StringPtr(plan.PasswordNoofcapsalpha.ValueString()),
+		PASSWORD_NOOFSPLCHARS:       util.StringPtr(plan.PasswordNoofsplchars.ValueString()),
+		PASSWORD_NOOFDIGITS:         util.StringPtr(plan.PasswordNoofdigits.ValueString()),
+		GroupImportMapping:          util.StringPtr(plan.GroupImportMapping.ValueString()),
+		UNLOCKACCOUNTJSON:           util.StringPtr(plan.UnlockAccountJson.ValueString()),
+		STATUSKEYJSON:               util.StringPtr(plan.StatusKeyJson.ValueString()),
+		DISABLEACCOUNTJSON:          util.StringPtr(plan.DisableAccountJson.ValueString()),
+		MODIFYUSERDATAJSON:          util.StringPtr(plan.ModifyUserdataJson.ValueString()),
+		ORG_BASE:                    util.StringPtr(plan.OrgBase.ValueString()),
+		ORGANIZATION_ATTRIBUTE:      util.StringPtr(plan.OrganizationAttribute.ValueString()),
+		CREATEORGJSON:               util.StringPtr(plan.Createorgjson.ValueString()),
+		UPDATEORGJSON:               util.StringPtr(plan.Updateorgjson.ValueString()),
+		ConfigJSON:                  util.StringPtr(plan.ConfigJson.ValueString()),
+		PAM_CONFIG:                  util.StringPtr(plan.PamConfig.ValueString()),
 	}
+
 	testConnRequest := openapi.TestConnectionRequest{
 		ADConnector: &adConn,
 	}
@@ -557,45 +649,42 @@ func (r *testConnectionResource) Update(ctx context.Context, req resource.Update
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	reqAPI := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(testConnRequest)
-	_, httpResp, err := reqAPI.Execute()
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(testConnRequest).Execute()
 	if err != nil {
-		// Handle 404: resource no longer exists, remove from state
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.State.RemoveResource(ctx)
-			return
-		}
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Failed to create connection: %s", err.Error()))
+		resp.Diagnostics.AddError(
+			"Error Creating AD Connector",
+			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
+		)
 		return
 	}
 	// Assign ID and result to the plan
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + connectionName)
-	// msgValue := util.SafeDeref(apiResponse.Msg)
-	// errorCodeValue := util.SafeDeref(apiResponse.ErrorCode)
+	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
 
-	// // Set the individual fields
-	// plan.Msg = util.StringPtr(msgValue)
-	// plan.ErrorCode = util.StringPtr(errorCodeValue)
-	// resultObj := map[string]string{
-	// 	"msg":        msgValue,
-	// 	"error_code": errorCodeValue,
-	// }
-	// resultJSON, err := util.MarshalDeterministic(resultObj)
-	// if err != nil {
-	// 	resp.Diagnostics.AddError(
-	// 		"Error Marshaling Result",
-	// 		fmt.Sprintf("Could not marshal API response: %v", err),
-	// 	)
-	// 	return
-	// }
-	// plan.Result = types.StringValue(string(resultJSON))
+	msgValue := util.SafeDeref(apiResp.Msg)
+	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
+
+	// Set the individual fields
+	plan.Msg = types.StringValue(msgValue)
+	plan.ErrorCode = types.StringValue(errorCodeValue)
+	resultObj := map[string]string{
+		"msg":        msgValue,
+		"error_code": errorCodeValue,
+	}
+	resultJSON, err := util.MarshalDeterministic(resultObj)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Marshaling Result",
+			fmt.Sprintf("Could not marshal API response: %v", err),
+		)
+		return
+	}
+	plan.Result = types.StringValue(string(resultJSON))
 
 	// Store state
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r *testConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *adConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
 }

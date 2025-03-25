@@ -138,6 +138,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewSecuritySystemResource,
-		NewTestConnectionResource,
+		ADNewTestConnectionResource,
+		RestNewTestConnectionResource,
 	}
 }
