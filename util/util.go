@@ -97,3 +97,6 @@ func MarshalDeterministic(m map[string]string) (string, error) {
 	}
 	return string(b), nil
 }
+func StringPtr(v string) *string {
+	return &v
+}

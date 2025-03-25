@@ -9,8 +9,9 @@ This Terraform provider enables efficient provisioning, configuration, and manag
 
 With this provider, you can:
 
-- Automate the creation and management of Security Systems and Endpoints
-- Manage various Connections (e.g., AD, REST, Workday)
+- Automate the creation and management of Security Systems
+- Automate the creation and management of Endpoints
+- Manage various Connections (e.g. AD)
 - Leverage Terraform’s declarative configuration to manage IAM resources
 - Minimize manual intervention and reduce configuration drift
 
@@ -19,9 +20,8 @@ With this provider, you can:
 ##  Features
 
 - Full CRUD support for Saviynt security systems and endpoints
-- Support for multiple Connection types: AD, ADSI, REST, Workday, etc.
+- Support for multiple Connection types: AD etc.
 - Rich filtering in data sources (e.g., filter security systems by systemname, connection_type, etc.)
-- Advanced workflow integration (e.g., firefighter workflows, account ownership workflows)
 - Advanced error handling, comprehensive logging, and enhanced debugging capabilities
 - Pre-built templates for quick and effective implementation
 
@@ -185,7 +185,7 @@ go test ./... -v
 
 ---
 
-##  Contributions Welcome!
+<!-- ##  Contributions Welcome!
 
 Contributions are warmly welcomed! Please follow these guidelines:
 
@@ -193,7 +193,7 @@ Contributions are warmly welcomed! Please follow these guidelines:
 - Provide pull requests that include relevant tests.
 - Ensure existing tests are passed and functionality remains intact.
 
----
+--- -->
 
 ##  License
 
