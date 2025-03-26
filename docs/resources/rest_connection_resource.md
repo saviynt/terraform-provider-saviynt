@@ -3,12 +3,12 @@
 page_title: "saviynt_rest_connection_resource Resource - saviynt"
 subcategory: ""
 description: |-
-  Create and Manage REST Connections
+  Create and Manage Connections
 ---
 
 # saviynt_rest_connection_resource (Resource)
 
-Create and Manage REST Connections
+Create and Manage Connections
 
 ## Example Usage
 
@@ -79,7 +79,6 @@ resource "saviynt_rest_connection_resource" "example" {
 - `remove_ffid_access_json` (String) JSON to remove FFID access.
 - `save_in_vault` (String) Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: "false"
 - `send_otp_json` (String) JSON to send OTP.
-- `ssl_certificate` (String) SSL certificates to secure the connection. Example: "-----BEGIN CERTIFICATE----- ... -----END CERTIFICATE-----"
 - `status_threshold_config` (String) JSON configuration for status thresholds.
 - `ticket_status_json` (String) JSON to check ticket status.
 - `update_account_json` (String) JSON to update an account.

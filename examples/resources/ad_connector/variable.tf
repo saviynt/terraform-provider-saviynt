@@ -26,7 +26,7 @@ variable "LDAP_PROTOCOL" {
 variable "PASSWORD" {
   type        = string
   description = "Connection password"
-  sensitive = true
+  sensitive   = true
 }
 variable "BIND_USER" {
   type        = string

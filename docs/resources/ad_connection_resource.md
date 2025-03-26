@@ -3,12 +3,12 @@
 page_title: "saviynt_ad_connection_resource Resource - saviynt"
 subcategory: ""
 description: |-
-  Create and Manage AD Connections
+  Create and Manage Connections
 ---
 
 # saviynt_ad_connection_resource (Resource)
 
-Create and Manage AD Connections
+Create and Manage Connections
 
 ## Example Usage
 
@@ -87,7 +87,6 @@ resource "saviynt_ad_connection_resource" "example" {
 - `searchfilter` (String) LDAP search filter for users. Example: "OU=Users,DC=domainname,DC=com"
 - `set_random_password` (String) Option to set a random password.
 - `setdefaultpagesize` (String) Default page size setting. Example: "FALSE"
-- `ssl_certificate` (String) SSL certificates to secure the connection. Example: "-----BEGIN CERTIFICATE----- ... -----END CERTIFICATE-----"
 - `status_key_json` (String) JSON for account status keys. Example: '{"STATUS_ACTIVE":["512","544"], ...}'
 - `status_threshold_config` (String) JSON configuration for status thresholds. Example: '{"statusAndThresholdConfig":{...}}'
 - `support_empty_string` (String) Flag for sending empty values. Example: "FALSE"

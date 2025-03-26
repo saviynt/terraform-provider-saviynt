@@ -1,4 +1,4 @@
-resource "saviynt_security_system_resource" "example1" {
+resource "saviynt_security_systems_datasource" "example1" {
   systemname                            = "SYSTEM_NAME"
   display_name                          = "DISPLAY_NAME"
   hostname                              = "HOST_NAME"

@@ -131,6 +131,7 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewSecuritySystemsDataSource,
+		NewEndpointsDataSource,
 	}
 }
 
@@ -140,5 +141,6 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		NewSecuritySystemResource,
 		ADNewTestConnectionResource,
 		RestNewTestConnectionResource,
+		NewEndpointResource,
 	}
 }
