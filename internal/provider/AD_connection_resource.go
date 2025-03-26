@@ -90,9 +90,6 @@ type ADConnectorResourceModel struct {
 	Updateorgjson             types.String `tfsdk:"update_org_json"`
 	ConfigJson                types.String `tfsdk:"config_json"`
 	PamConfig                 types.String `tfsdk:"pam_config"`
-	Result                    types.String `tfsdk:"result"`
-	Msg                       types.String `tfsdk:"msg"`
-	ErrorCode                 types.String `tfsdk:"error_code"`
 }
 
 // testConnectionResource implements the resource.Resource interface.
