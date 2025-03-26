@@ -12,7 +12,7 @@ import (
 	"strings"
 	"terraform-provider-Saviynt/util"
 
-	openapi "shaleen"
+	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
@@ -276,7 +276,7 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 			// VaultConfiguration: util.StringPtr(plan.VaultConfiguration.ValueString()),
 			// Saveinvault:        util.StringPtr(plan.SaveInVault.ValueString()),
 		},
-		ConnectionJSON:       connJSON,
+		ConnectionJSON: connJSON,
 		// ImportUserJSON:       util.StringPtr(plan.ImportUserJson.ValueString()),
 		ImportAccountEntJSON: util.StringPtr(plan.ImportAccountEntJson.ValueString()),
 		// STATUS_THRESHOLD_CONFIG: util.StringPtr(plan.StatusThresholdConfig.ValueString()),

@@ -4,11 +4,8 @@ go 1.24.0
 
 require (
 	github.com/hashicorp/terraform-plugin-framework v1.14.1
-	github.com/saviynt/saviynt-api-go-client v0.9.8
-	shaleen v0.0.0
+	github.com/saviynt/saviynt-api-go-client v1.0.0
 )
-
-replace shaleen => /Users/shaleen.shukla/test_connections/connections
 
 require (
 	github.com/fatih/color v1.16.0 // indirect

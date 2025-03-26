@@ -440,7 +440,7 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
 			Connectiontype:     "AD",
-			ConnectionName:     util.StringPtr(plan.ConnectionName.ValueString()),
+			ConnectionName:     plan.ConnectionName.ValueString(),
 			Description:        util.StringPtr(plan.Description.ValueString()),
 			Defaultsavroles:    util.StringPtr(plan.DefaultSavRoles.ValueString()),
 			EmailTemplate:      util.StringPtr(plan.EmailTemplate.ValueString()),
@@ -575,7 +575,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
 			Connectiontype:     "AD",
-			ConnectionName:     util.StringPtr(plan.ConnectionName.ValueString()),
+			ConnectionName:     plan.ConnectionName.ValueString(),
 			Description:        util.StringPtr(plan.Description.ValueString()),
 			Defaultsavroles:    util.StringPtr(plan.DefaultSavRoles.ValueString()),
 			EmailTemplate:      util.StringPtr(plan.EmailTemplate.ValueString()),
