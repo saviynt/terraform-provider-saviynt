@@ -24,11 +24,8 @@ type EndpointsDataSource struct {
 
 var _ datasource.DataSource = &EndpointsDataSource{}
 
-func NewEndpointsDataSource(client *s.Client, token string) datasource.DataSource {
-	return &EndpointsDataSource{
-		client: client,
-		token:  token,
-	}
+func NewEndpointsDataSource() datasource.DataSource {
+	return &EndpointsDataSource{}
 }
 
 type EndpointsDataSourceModel struct {
