@@ -14,7 +14,58 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name = "Merserk_Release_3490"
+  connection_name = "Merserk_Release_3490_Rajiv_1"
+  remove_account_json=jsonencode({
+  "call": [
+    {
+      "name": "call1",
+      "connection": "EntraIDAuth",
+      "url": "https://graph.microsoft.com/v1.0/users/$${account.accountID}",
+      "httpMethod": "DELETE",
+      "httpHeaders": {
+        "Authorization": "$${access_token}"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201,
+          204,
+          205
+        ]
+      }
+    }
+  ]
+  })
+  create_account_json=jsonencode({
+  "accountIdPath": "call1.message.id",
+  "dateFormat": "yyyy-MM-dd'T'HH:mm:ssXXX",
+  "responseColsToPropsMap": {
+    "displayName": "call1.message.displayName~#~char",
+    "name": "call1.message.userPrincipalName~#~char"
+  },
+  "call": [
+    {
+      "name": "call1",
+      "connection": "EntraIDAuth",
+      "url": "https://graph.microsoft.com/v1.0/users",
+      "httpMethod": "POST",
+      "httpParams": "{\"accountEnabled\":true,\"displayName\":\"$${user.firstname} $${user.lastname}\",\"mailNickname\":\"$${user.firstname}\",\"userPrincipalName\":\"$${user.firstname}.$${user.lastname}@saviyntlivedev.onmicrosoft.com\",\"passwordProfile\":{\"forceChangePasswordNextSignIn\":true,\"password\":\"$${password}\"}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201,
+          204,
+          205
+        ]
+      }
+    }
+  ]
+  })
   connection_json = jsonencode({
     "authentications": {
     "EntraIDAuth": {

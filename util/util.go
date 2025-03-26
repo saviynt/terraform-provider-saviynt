@@ -100,3 +100,9 @@ func MarshalDeterministic(m map[string]string) (string, error) {
 func StringPtr(v string) *string {
 	return &v
 }
+func SafeStringConnector(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
