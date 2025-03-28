@@ -227,6 +227,7 @@ resource "saviynt_rest_connection_resource" "example" {
               "processingType" : "http",
               "http" : {
                 "url" : "https://graph.microsoft.com/",
+
                 "httpContentType" : "application/json",
                 "httpMethod" : "GET",
                 "httpHeaders" : {

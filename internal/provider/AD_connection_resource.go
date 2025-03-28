@@ -575,7 +575,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		},
 		URL:                         util.SafeStringConnector(plan.URL.ValueString()),
 		USERNAME:                    util.SafeStringConnector(plan.Username.ValueString()),
-		PASSWORD:                    plan.Password.ValueString(), // Assuming Password is required as plain string.
+		PASSWORD:                    plan.Password.ValueString(),
 		LDAP_OR_AD:                  util.SafeStringConnector(plan.LdapOrAd.ValueString()),
 		ENTITLEMENT_ATTRIBUTE:       util.SafeStringConnector(plan.EntitlementAttribute.ValueString()),
 		CHECKFORUNIQUE:              util.SafeStringConnector(plan.CheckForUnique.ValueString()),
@@ -639,6 +639,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	apiClient := openapi.NewAPIClient(cfg)
 
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
+
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating AD Connector",
