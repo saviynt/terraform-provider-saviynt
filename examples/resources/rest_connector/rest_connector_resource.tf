@@ -14,29 +14,10 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name = "Merserk_Release_3490_Rajiv_1"
-  remove_account_json = jsonencode({
-    "call" : [
-      {
-        "name" : "call1",
-        "connection" : "EntraIDAuth",
-        "url" : "https://graph.microsoft.com/v1.0/users/$${account.accountID}",
-        "httpMethod" : "DELETE",
-        "httpHeaders" : {
-          "Authorization" : "$${access_token}"
-        },
-        "httpContentType" : "application/json",
-        "successResponses" : {
-          "statusCode" : [
-            200,
-            201,
-            204,
-            205
-          ]
-        }
-      }
-    ]
-  })
+  connection_name = "Merserk_Release_3490_Rajiv_2"
+  config_json=<<EOF
+  {"showLogs":true}
+   EOF
   create_account_json = jsonencode({
     "accountIdPath" : "call1.message.id",
     "dateFormat" : "yyyy-MM-dd'T'HH:mm:ssXXX",
@@ -48,7 +29,7 @@ resource "saviynt_rest_connection_resource" "example" {
       {
         "name" : "call1",
         "connection" : "EntraIDAuth",
-        "url" : "https://graph.microsoft.com/v1.0/users",
+        "url" : "https://graph.microsoft.com",
         "httpMethod" : "POST",
         "httpParams" : "{\"accountEnabled\":true,\"displayName\":\"$${user.firstname} $${user.lastname}\",\"mailNickname\":\"$${user.firstname}\",\"userPrincipalName\":\"$${user.firstname}.$${user.lastname}@saviyntlivedev.onmicrosoft.com\",\"passwordProfile\":{\"forceChangePasswordNextSignIn\":true,\"password\":\"$${password}\"}}",
         "httpHeaders" : {
@@ -70,12 +51,12 @@ resource "saviynt_rest_connection_resource" "example" {
     "authentications" : {
       "EntraIDAuth" : {
         "authType" : "oauth2",
-        "url" : "https://login.microsoftonline.com/***REMOVED***/oauth2/token",
+        "url" : "https://login.microsoftonline.com/oauth2/token",
         "httpMethod" : "POST",
         "httpParams" : {
           "grant_type" : "client_credentials",
-          "client_secret" : "***REMOVED***",
-          "client_id" : "***REMOVED***",
+          "client_secret" : "XXXXX",
+          "client_id" : "XXXX",
           "resource" : "https://graph.microsoft.com"
         },
         "httpHeaders" : {
@@ -89,7 +70,7 @@ resource "saviynt_rest_connection_resource" "example" {
         "maxRefreshTryCount" : 5,
         "tokenResponsePath" : "access_token",
         "tokenType" : "Bearer",
-        "accessToken" : "Bearer ***REMOVED***"
+        "accessToken" : "Bearer access_token"
       }
     }
   })
@@ -103,7 +84,7 @@ resource "saviynt_rest_connection_resource" "example" {
           "stageNumber" : 0,
           "showJobHistory" : true,
           "http" : {
-            "url" : "https://graph.microsoft.com/v1.0/users?%24select=Id,userPrincipalName,accountEnabled,mail,userType,createdDateTime,country,preferredLanguage,displayName,surname,givenName,mobilePhone,businessPhones,mailNickname,mail,state",
+            "url" : "https://graph.microsoft.com/v1.0/",
             "httpContentType" : "application/json",
             "httpMethod" : "GET",
             "httpHeaders" : {
@@ -157,7 +138,7 @@ resource "saviynt_rest_connection_resource" "example" {
               "stageNumber" : 0,
               "showJobHistory" : true,
               "http" : {
-                "url" : "https://graph.microsoft.com/v1.0/identityGovernance/entitlementManagement/accessPackages?%24expand=assignmentPolicies&$select=id,displayName,uniqueName,description,isHidden,createdDateTime,modifiedDateTime",
+                "url" : "https://graph.microsoft.com/v1.0",
                 "httpContentType" : "application/json",
                 "httpMethod" : "GET",
                 "httpHeaders" : {
@@ -198,7 +179,7 @@ resource "saviynt_rest_connection_resource" "example" {
               "stageNumber" : 0,
               "showJobHistory" : true,
               "http" : {
-                "url" : "https://graph.microsoft.com/v1.0/identityGovernance/entitlementManagement/assignmentPolicies",
+                "url" : "https://graph.microsoft.com/",
                 "httpContentType" : "application/json",
                 "httpMethod" : "GET",
                 "httpHeaders" : {
@@ -245,7 +226,8 @@ resource "saviynt_rest_connection_resource" "example" {
               "stageNumber" : 0,
               "processingType" : "http",
               "http" : {
-                "url" : "https://graph.microsoft.com/v1.0/identityGovernance/entitlementManagement/assignments?%24filter=state%20eq%20'Delivered'&%24expand=target,accessPackage",
+                "url" : "https://graph.microsoft.com/",
+
                 "httpContentType" : "application/json",
                 "httpMethod" : "GET",
                 "httpHeaders" : {
