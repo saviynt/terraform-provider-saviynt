@@ -12,7 +12,6 @@ terraform {
 	password   = var.SAVIYNT_PASSWORD
   }
   resource "saviynt_security_system_resource" "example" {
-    systemname="rajiv-checking-terraform"
-    display_name="rajiv-checking-terraform"
-    access_add_workflow = "Autoapprovalwf"
+    systemname="name of the security system"
+    display_name="display name of the security system"
   }
