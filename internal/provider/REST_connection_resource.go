@@ -295,14 +295,14 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 		ValidateOtpJSON:         util.SafeStringConnector(plan.ValidateOtpJson.ValueString()),
 		PAM_CONFIG:              util.SafeStringConnector(plan.PamConfig.ValueString()),
 	}
-	resttConnRequest := openapi.TestConnectionRequest{
+	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
 	}
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(resttConnRequest).Execute()
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating AD Connector",
@@ -403,14 +403,14 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 		ValidateOtpJSON:         util.SafeStringConnector(plan.ValidateOtpJson.ValueString()),
 		PAM_CONFIG:              util.SafeStringConnector(plan.PamConfig.ValueString()),
 	}
-	resttConnRequest := openapi.TestConnectionRequest{
+	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
 	}
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(resttConnRequest).Execute()
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating AD Connector",
