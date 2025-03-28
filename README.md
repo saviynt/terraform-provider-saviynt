@@ -38,7 +38,7 @@ With this provider, you can:
 To use this provider, follow these steps:  
 
 ### **1. Download the Binary**  
-Download the Terraform provider binary (`terraform-provider-saviynt_v1.0.0`).  
+Download the Terraform provider binary [bin/terraform-provider-saviynt_v0.1.0](bin/terraform-provider-saviynt_v0.1.0).  
 
 ### **2. Move the Binary to Go Bin**  
 Run the following command to move the provider to your Go bin directory:  

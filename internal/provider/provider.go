@@ -132,15 +132,16 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		NewSecuritySystemsDataSource,
 		NewEndpointsDataSource,
+		NewConnectionsDataSource,
 	}
 }
 
 // Resources defines the resources implemented in the provider.
 func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewSecuritySystemResource,
-		ADNewTestConnectionResource,
-		RestNewTestConnectionResource,
-		NewEndpointResource,
+		// NewSecuritySystemResource,
+		// ADNewTestConnectionResource,
+		// RestNewTestConnectionResource,
+		// NewEndpointResource,
 	}
 }
