@@ -111,17 +111,14 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"proposed_account_owners_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Query to filter the access and display of the endpoint to specific users. If you do not define a query, the endpoint is displayed for all users",
 			},
 			"firefighterid_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Firefighter ID Workflow.",
 			},
 			"firefighterid_request_access_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Firefighter ID Request Access Workflow.",
 			},
 			"connection_parameters": schema.StringAttribute{
@@ -138,17 +135,14 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"connectionname": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Select the connection name for performing reconciliation of identity objects from third-party application.",
 			},
 			"provisioning_connection": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "You can use a separate connection to an endpoint where you are performing provisioning or deprovisioning. Based on your requirement, you can specify a separate connection where you want to perform provisioning and de-provisioning.",
 			},
 			"service_desk_connection": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Specify the Service Desk Connection used for integration with a ticketing system, which can be a disconnected system too.",
 			},
 			"provisioning_comments": schema.StringAttribute{
@@ -157,12 +151,10 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"policy_rule": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Use this setting to assign the password policy for the security system.",
 			},
 			"policy_rule_service_account": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Use this setting to assign the password policy which will be used to set the service account passwords for the security system.",
 			},
 			"use_open_connector": schema.StringAttribute{
@@ -179,13 +171,11 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"external_risk_connection_json": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Contains JSON configuration for external risk connections and is applicable only for a few connections like SAP.",
 			},
 			"inherent_sod_report_fields": schema.ListAttribute{
 				ElementType: types.StringType,
 				Optional:    true,
-				Computed:    true,
 				Description: "You can use this option used to filter out columns in SOD.",
 			},
 			"result": schema.StringAttribute{
