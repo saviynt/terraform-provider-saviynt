@@ -428,7 +428,6 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
-
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
 			Connectiontype:     "AD",
@@ -442,7 +441,7 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		},
 		URL:                         util.SafeStringConnector(plan.URL.ValueString()),
 		USERNAME:                    util.SafeStringConnector(plan.Username.ValueString()),
-		PASSWORD:                    plan.Password.ValueString(), // Assuming Password is required as plain string.
+		PASSWORD:                    plan.Password.ValueString(),
 		LDAP_OR_AD:                  util.SafeStringConnector(plan.LdapOrAd.ValueString()),
 		ENTITLEMENT_ATTRIBUTE:       util.SafeStringConnector(plan.EntitlementAttribute.ValueString()),
 		CHECKFORUNIQUE:              util.SafeStringConnector(plan.CheckForUnique.ValueString()),
@@ -498,14 +497,14 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		PAM_CONFIG:                  util.SafeStringConnector(plan.PamConfig.ValueString()),
 	}
 
-	testConnRequest := openapi.TestConnectionRequest{
+	adConnRequest := openapi.CreateOrUpdateRequest{
 		ADConnector: &adConn,
 	}
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(testConnRequest).Execute()
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating AD Connector",
@@ -576,7 +575,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		},
 		URL:                         util.SafeStringConnector(plan.URL.ValueString()),
 		USERNAME:                    util.SafeStringConnector(plan.Username.ValueString()),
-		PASSWORD:                    plan.Password.ValueString(), // Assuming Password is required as plain string.
+		PASSWORD:                    plan.Password.ValueString(),
 		LDAP_OR_AD:                  util.SafeStringConnector(plan.LdapOrAd.ValueString()),
 		ENTITLEMENT_ATTRIBUTE:       util.SafeStringConnector(plan.EntitlementAttribute.ValueString()),
 		CHECKFORUNIQUE:              util.SafeStringConnector(plan.CheckForUnique.ValueString()),
@@ -632,14 +631,15 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		PAM_CONFIG:                  util.SafeStringConnector(plan.PamConfig.ValueString()),
 	}
 
-	testConnRequest := openapi.TestConnectionRequest{
+	adConnRequest := openapi.CreateOrUpdateRequest{
 		ADConnector: &adConn,
 	}
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.TestConnection(ctx).TestConnectionRequest(testConnRequest).Execute()
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
+
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating AD Connector",

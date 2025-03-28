@@ -141,6 +141,8 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		NewSecuritySystemResource,
 		ADNewTestConnectionResource,
 		RestNewTestConnectionResource,
+		DBNewTestConnectionResource,
+		ADSINewTestConnectionResource,
 		NewEndpointResource,
 	}
 }
