@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*'  # Trigger on tags like v1.0.0
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -53,7 +56,8 @@ jobs:
         with:
           name: provider-binaries
           path: |
-            *.zip
+            $ZIP_NAME
+            #*.zip
 
   release:
     name: Publish Release
