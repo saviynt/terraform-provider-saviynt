@@ -1,0 +1,85 @@
+name: Release Terraform Provider
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on tags like v1.0.0
+
+jobs:
+  build:
+    name: Build Provider
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Target platforms (OS/arch)
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+      fail-fast: false
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract Version
+        run: |
+          # Strip 'v' from the tag (e.g., v1.0.0 → 1.0.0)
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Set Up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21  # Use your required Go version
+
+      - name: Build Provider
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GOFLAGS: -trimpath  # Optional: Reduce binary size
+        run: |
+          # Name the binary (e.g., terraform-provider-example_v1.0.0)
+          BINARY_NAME="terraform-provider-example_${{ github.ref_name }}"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME="$BINARY_NAME.exe"
+          fi
+
+          # Build the binary
+          go build -v -o "$BINARY_NAME"
+
+          # Zip the binary (Terraform expects OS/arch in the filename)
+          ZIP_NAME="terraform-provider-example_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
+          zip "$ZIP_NAME" "$BINARY_NAME"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: provider-binaries
+          path: |
+            *.zip
+
+  release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: provider-binaries
+          path: artifacts
+
+      - name: Generate SHA256 Checksums
+        run: |
+          cd artifacts
+          shasum -a 256 *.zip > SHA256SUMS
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: "v${{ env.VERSION }}"
+          body: "Terraform Provider Release ${{ env.VERSION }}"
+          files: |
+            artifacts/*.zip
+            artifacts/SHA256SUMS
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
