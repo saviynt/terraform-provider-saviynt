@@ -60,7 +60,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: provider-binaries
+          name: provider-binaries-*
           path: artifacts
 
       - name: Create GitHub Release
