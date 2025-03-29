@@ -10,14 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        #goos: [linux, darwin, windows]
-        goos: [linux]
-        goarch: [amd64]
+        goos: [linux, darwin, windows]
+        #goos: [linux]
+        #goarch: [amd64]
+        goarch: [amd64, arm64]
       fail-fast: false
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Extract Version
+        run: |
+          # Strip 'v' from the tag (e.g., v1.0.0 → 1.0.0)
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Set Up Go
         uses: actions/setup-go@v5
@@ -41,7 +47,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: provider-binaries
+          name: provider-binaries-${{ matrix.goos }}-${{ matrix.goarch }}
           path: |
             *.zip
 
