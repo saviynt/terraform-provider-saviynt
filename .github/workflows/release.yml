@@ -28,7 +28,8 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
         run: |
-          BINARY_NAME="terraform-provider-saviynt_${{ github.ref_name }}"
+          #BINARY_NAME="terraform-provider-saviynt_${{ github.ref_name }}"
+          BINARY_NAME="terraform-provider-saviynt_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME="$BINARY_NAME.exe"
           fi
