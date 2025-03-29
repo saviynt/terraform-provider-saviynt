@@ -48,7 +48,7 @@ jobs:
           go build -v -o "$BINARY_NAME"
 
           # Zip the binary (Terraform expects OS/arch in the filename)
-          ZIP_NAME="terraform-provider-example_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
+          ZIP_NAME="terraform-provider-saviynt_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
           zip "$ZIP_NAME" "$BINARY_NAME"
 
       - name: Upload Artifact
