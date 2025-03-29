@@ -36,8 +36,7 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           GOFLAGS: -trimpath  # Optional: Reduce binary size
         run: |
-          # Name the binary (e.g., terraform-provider-example_v1.0.0)
-          BINARY_NAME="terraform-provider-example_${{ github.ref_name }}"
+          BINARY_NAME="terraform-provider-saviynt_${{ github.ref_name }}"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME="$BINARY_NAME.exe"
           fi
