@@ -3,18 +3,13 @@ name: Release Terraform Provider
 on:
   push:
     tags:
-      - 'v*'  # Trigger on tags like v1.0.0
-  pull_request:
-    branches:
-      - main
+      - 'v*'
 
 jobs:
   build:
-    name: Build Provider
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Target platforms (OS/arch)
         goos: [linux, darwin, windows]
         goarch: [amd64, arm64]
       fail-fast: false
@@ -23,31 +18,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Extract Version
-        run: |
-          # Strip 'v' from the tag (e.g., v1.0.0 → 1.0.0)
-          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-
       - name: Set Up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.24  # Use your required Go version
+          go-version: "1.21"
 
       - name: Build Provider
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-          GOFLAGS: -trimpath  # Optional: Reduce binary size
         run: |
           BINARY_NAME="terraform-provider-saviynt_${{ github.ref_name }}"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME="$BINARY_NAME.exe"
           fi
-
-          # Build the binary
-          go build -v -o "$BINARY_NAME"
-
-          # Zip the binary (Terraform expects OS/arch in the filename)
+          go build -o "$BINARY_NAME"
           ZIP_NAME="terraform-provider-saviynt_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
           zip "$ZIP_NAME" "$BINARY_NAME"
 
@@ -55,13 +40,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: provider-binaries
-          path: |
-            *.zip
+          path: *.zip
 
   release:
-    name: Publish Release
-    runs-on: ubuntu-latest
     needs: [build]
+    runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
@@ -69,19 +52,10 @@ jobs:
           name: provider-binaries
           path: artifacts
 
-      - name: Generate SHA256 Checksums
-        run: |
-          cd artifacts
-          shasum -a 256 *.zip > SHA256SUMS
-
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2  # Fixed to v2
         with:
           tag_name: ${{ github.ref }}
-          name: "v${{ env.VERSION }}"
-          body: "Terraform Provider Release ${{ env.VERSION }}"
-          files: |
-            artifacts/*.zip
-            artifacts/SHA256SUMS
+          files: artifacts/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
