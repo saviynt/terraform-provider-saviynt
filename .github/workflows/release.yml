@@ -1,87 +1,67 @@
-name: Release Terraform Provider
+name: Build & Publish Terraform Provider
 
 on:
   push:
     tags:
-      - 'v*'  # Trigger on tags like v1.0.0
+      - 'v*.*.*'   # triggers on version tags (e.g. v0.1.0)
   pull_request:
     branches:
       - main
 
 jobs:
   build:
-    name: Build Provider
+    name: Build Provider Binary
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Target platforms (OS/arch)
-        goos: [linux, darwin, windows]
-        goarch: [amd64, arm64]
-      fail-fast: false
-
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Extract Version
-        run: |
-          # Strip 'v' from the tag (e.g., v1.0.0 → 1.0.0)
-          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-
-      - name: Set Up Go
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.21  # Use your required Go version
+          go-version: '1.20'  # or your desired Go version
 
-      - name: Build Provider
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          GOFLAGS: -trimpath  # Optional: Reduce binary size
+      - name: Build Binary
         run: |
-          BINARY_NAME="terraform-provider-saviynt_${{ github.ref_name }}"
-          if [ "${{ matrix.goos }}" = "windows" ]; then
-            BINARY_NAME="$BINARY_NAME.exe"
-          fi
+          go build -o terraform-provider-saviynt
 
-          # Build the binary
-          go build -v -o "$BINARY_NAME"
-
-          # Zip the binary (Terraform expects OS/arch in the filename)
-          ZIP_NAME="terraform-provider-saviynt_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
-          zip "$ZIP_NAME" "$BINARY_NAME"
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Archive Binary
+        uses: actions/upload-artifact@v3
         with:
-          name: provider-binaries
-          path: |
-            *.zip
+          name: provider-binary
+          path: terraform-provider-saviynt
 
   release:
-    name: Publish Release
+    name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
         with:
-          name: provider-binaries
-          path: artifacts
+          name: provider-binary
 
-      - name: Generate SHA256 Checksums
-        run: |
-          cd artifacts
-          shasum -a 256 *.zip > SHA256SUMS
-
-      - name: Create GitHub Release
+      - name: Create Release
+        id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          name: "v${{ env.VERSION }}"
-          body: "Terraform Provider Release ${{ env.VERSION }}"
-          files: |
-            artifacts/*.zip
-            artifacts/SHA256SUMS
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Binary to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          asset_path: terraform-provider-saviynt
+          asset_name: terraform-provider-saviynt_${{ runner.os }}_amd64
+          asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
