@@ -52,12 +52,11 @@ jobs:
           zip "$ZIP_NAME" "$BINARY_NAME"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: provider-binaries
           path: |
-            $ZIP_NAME
-            #*.zip
+            *.zip
 
   release:
     name: Publish Release
@@ -65,7 +64,7 @@ jobs:
     needs: [build]
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: provider-binaries
           path: artifacts
