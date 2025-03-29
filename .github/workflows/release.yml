@@ -54,7 +54,7 @@ jobs:
           path: artifacts
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2  # Fixed to v2
+        uses: softprops/action-gh-release@v2.1.0  # Fixed to v2
         with:
           tag_name: ${{ github.ref }}
           files: artifacts/*.zip
