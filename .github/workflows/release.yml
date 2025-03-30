@@ -60,9 +60,10 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: provider-binaries-*
           path: artifacts
+          pattern: provider-binaries-*
           merge-multiple: true
+      - run: ls -R artifacts
 
       - name: Verify download
         run: ls -la artifacts/
