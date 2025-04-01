@@ -13,17 +13,17 @@ provider "saviynt" {
 }
 
 # data "saviynt_connections_datasource" "oneResource" {}
-# data "saviynt_endpoints_datasource" "data"{}
-data "saviynt_security_systems_datasource" "ss"{}
+data "saviynt_endpoints_datasource" "data"{}
+# data "saviynt_security_systems_datasource" "ss"{}
 
 # Output of data
 output "endpoints_data" {
   value = {
-    msg           = data.saviynt_security_systems_datasource.ss.msg
-    display_count = data.saviynt_security_systems_datasource.ss.display_count
-    error_code    = data.saviynt_security_systems_datasource.ss.error_code
-    total_count   = data.saviynt_security_systems_datasource.ss.total_count
-    results       = data.saviynt_security_systems_datasource.ss.results
+    msg           = data.saviynt_endpoints_datasource.data.message
+    display_count = data.saviynt_endpoints_datasource.data.display_count
+    error_code    = data.saviynt_endpoints_datasource.data.error_code
+    total_count   = data.saviynt_endpoints_datasource.data.total_count
+    results       = data.saviynt_endpoints_datasource.data.results
   }
 }
 
