@@ -11,10 +11,8 @@ import (
 
 	"terraform-provider-Saviynt/util"
 
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	s "github.com/saviynt/saviynt-api-go-client"
 	openapi "github.com/saviynt/saviynt-api-go-client/securitysystems"
@@ -38,7 +36,8 @@ type SecuritySystemsDataSourceModel struct {
 	ErrorCode      types.String `tfsdk:"error_code"`
 	TotalCount     types.Int64  `tfsdk:"total_count"`
 
-	Results types.List `tfsdk:"results"`
+	// Results types.List `tfsdk:"results"`
+	Results []SecuritySystemDetails `tfsdk:"results"`
 }
 
 // SecuritySystemDetails represents a single security system details object.
@@ -208,108 +207,106 @@ func (d *SecuritySystemsDataSource) Configure(ctx context.Context, req datasourc
 }
 
 // securitySystemObjectType defines the Terraform object type for a single security system.
-var securitySystemObjectType = types.ObjectType{
-	AttrTypes: map[string]attr.Type{
-		"display_name":                          types.StringType,
-		"hostname":                              types.StringType,
-		"connection_type_1":                     types.StringType,
-		"systemname1":                           types.StringType,
-		"access_add_workflow":                   types.StringType,
-		"access_remove_workflow":                types.StringType,
-		"add_service_account_workflow":          types.StringType,
-		"remove_service_account_workflow":       types.StringType,
-		"connection_parameters":                 types.StringType,
-		"automated_provisioning":                types.StringType,
-		"use_open_connector":                    types.StringType,
-		"manage_entity":                         types.StringType,
-		"persistent_data":                       types.StringType,
-		"default_system":                        types.StringType,
-		"recon_application":                     types.StringType,
-		"instant_provision":                     types.StringType,
-		"provisioning_tries":                    types.StringType,
-		"provisioning_comments":                 types.StringType,
-		"proposed_account_owners_workflow":      types.StringType,
-		"firefighterid_workflow":                types.StringType,
-		"firefighterid_request_access_workflow": types.StringType,
-		"policy_rule":                           types.StringType,
-		"policy_rule_service_account":           types.StringType,
-		"connectionname1":                       types.StringType,
-		"provisioning_connection":               types.StringType,
-		"service_desk_connection":               types.StringType,
-		"external_risk_connection_json":         types.StringType,
-		"connection":                            types.StringType,
-		"create_date":                           types.StringType,
-		"update_date":                           types.StringType,
-		"endpoints":                             types.StringType,
-		"created_by":                            types.StringType,
-		"updated_by":                            types.StringType,
-		"status":                                types.StringType,
-		"created_from":                          types.StringType,
-		"port":                                  types.StringType,
-		"inherent_sod_report_fields":            types.ListType{ElemType: types.StringType},
-	},
-}
+// var securitySystemObjectType = types.ObjectType{
+// 	AttrTypes: map[string]attr.Type{
+// 		"display_name":                          types.StringType,
+// 		"hostname":                              types.StringType,
+// 		"connection_type_1":                     types.StringType,
+// 		"systemname1":                           types.StringType,
+// 		"access_add_workflow":                   types.StringType,
+// 		"access_remove_workflow":                types.StringType,
+// 		"add_service_account_workflow":          types.StringType,
+// 		"remove_service_account_workflow":       types.StringType,
+// 		"connection_parameters":                 types.StringType,
+// 		"automated_provisioning":                types.StringType,
+// 		"use_open_connector":                    types.StringType,
+// 		"manage_entity":                         types.StringType,
+// 		"persistent_data":                       types.StringType,
+// 		"default_system":                        types.StringType,
+// 		"recon_application":                     types.StringType,
+// 		"instant_provision":                     types.StringType,
+// 		"provisioning_tries":                    types.StringType,
+// 		"provisioning_comments":                 types.StringType,
+// 		"proposed_account_owners_workflow":      types.StringType,
+// 		"firefighterid_workflow":                types.StringType,
+// 		"firefighterid_request_access_workflow": types.StringType,
+// 		"policy_rule":                           types.StringType,
+// 		"policy_rule_service_account":           types.StringType,
+// 		"connectionname1":                       types.StringType,
+// 		"provisioning_connection":               types.StringType,
+// 		"service_desk_connection":               types.StringType,
+// 		"external_risk_connection_json":         types.StringType,
+// 		"connection":                            types.StringType,
+// 		"create_date":                           types.StringType,
+// 		"update_date":                           types.StringType,
+// 		"endpoints":                             types.StringType,
+// 		"created_by":                            types.StringType,
+// 		"updated_by":                            types.StringType,
+// 		"status":                                types.StringType,
+// 		"created_from":                          types.StringType,
+// 		"port":                                  types.StringType,
+// 		"inherent_sod_report_fields":            types.ListType{ElemType: types.StringType},
+// 	},
+// }
 
-// ToMap converts SecuritySystemDetails to a map[string]attr.Value matching the Terraform object schema.
-func (r SecuritySystemDetails) ToMap() (map[string]attr.Value, diag.Diagnostics) {
-	inherentSodList, diags := util.SafeList(util.ConvertTypesStringToStrings(r.InherentSodReportFields))
-	if diags.HasError() {
-		inherentSodList = types.ListNull(types.StringType)
-	}
+// // ToMap converts SecuritySystemDetails to a map[string]attr.Value matching the Terraform object schema.
+// func (r SecuritySystemDetails) ToMap() (map[string]attr.Value, diag.Diagnostics) {
+// 	inherentSodList, diags := util.SafeList(util.ConvertTypesStringToStrings(r.InherentSodReportFields))
+// 	if diags.HasError() {
+// 		inherentSodList = types.ListNull(types.StringType)
+// 	}
 
-	return map[string]attr.Value{
-		"display_name":                          r.DisplayName,
-		"hostname":                              r.Hostname,
-		"connection_type_1":                     r.ConnectionType,
-		"systemname1":                           r.Systemname,
-		"access_add_workflow":                   r.AccessAddWorkflow,
-		"access_remove_workflow":                r.AccessRemoveWorkflow,
-		"add_service_account_workflow":          r.AddServiceAccountWorkflow,
-		"remove_service_account_workflow":       r.RemoveServiceAccountWorkflow,
-		"connection_parameters":                 r.Connectionparameters,
-		"automated_provisioning":                r.AutomatedProvisioning,
-		"use_open_connector":                    r.UseOpenConnector,
-		"manage_entity":                         r.ManageEntity,
-		"persistent_data":                       r.PersistentData,
-		"default_system":                        r.DefaultSystem,
-		"recon_application":                     r.ReconApplication,
-		"instant_provision":                     r.InstantProvision,
-		"provisioning_tries":                    r.ProvisioningTries,
-		"provisioning_comments":                 r.ProvisioningComments,
-		"proposed_account_owners_workflow":      r.ProposedAccountOwnersWorkflow,
-		"firefighterid_workflow":                r.FirefighterIDWorkflow,
-		"firefighterid_request_access_workflow": r.FirefighterIDRequestAccessWorkflow,
-		"policy_rule":                           r.PolicyRule,
-		"policy_rule_service_account":           r.PolicyRuleServiceAccount,
-		"connectionname1":                       r.Connectionname,
-		"provisioning_connection":               r.ProvisioningConnection,
-		"service_desk_connection":               r.ServiceDeskConnection,
-		"external_risk_connection_json":         r.ExternalRiskConnectionJson,
-		"connection":                            r.Connection,
-		"create_date":                           r.CreateDate,
-		"update_date":                           r.UpdateDate,
-		"endpoints":                             r.Endpoints,
-		"created_by":                            r.CreatedBy,
-		"updated_by":                            r.UpdatedBy,
-		"status":                                r.Status,
-		"created_from":                          r.CreatedFrom,
-		"port":                                  r.Port,
-		"inherent_sod_report_fields":            inherentSodList,
-	}, diags
-}
+// 	return map[string]attr.Value{
+// 		"display_name":                          r.DisplayName,
+// 		"hostname":                              r.Hostname,
+// 		"connection_type_1":                     r.ConnectionType,
+// 		"systemname1":                           r.Systemname,
+// 		"access_add_workflow":                   r.AccessAddWorkflow,
+// 		"access_remove_workflow":                r.AccessRemoveWorkflow,
+// 		"add_service_account_workflow":          r.AddServiceAccountWorkflow,
+// 		"remove_service_account_workflow":       r.RemoveServiceAccountWorkflow,
+// 		"connection_parameters":                 r.Connectionparameters,
+// 		"automated_provisioning":                r.AutomatedProvisioning,
+// 		"use_open_connector":                    r.UseOpenConnector,
+// 		"manage_entity":                         r.ManageEntity,
+// 		"persistent_data":                       r.PersistentData,
+// 		"default_system":                        r.DefaultSystem,
+// 		"recon_application":                     r.ReconApplication,
+// 		"instant_provision":                     r.InstantProvision,
+// 		"provisioning_tries":                    r.ProvisioningTries,
+// 		"provisioning_comments":                 r.ProvisioningComments,
+// 		"proposed_account_owners_workflow":      r.ProposedAccountOwnersWorkflow,
+// 		"firefighterid_workflow":                r.FirefighterIDWorkflow,
+// 		"firefighterid_request_access_workflow": r.FirefighterIDRequestAccessWorkflow,
+// 		"policy_rule":                           r.PolicyRule,
+// 		"policy_rule_service_account":           r.PolicyRuleServiceAccount,
+// 		"connectionname1":                       r.Connectionname,
+// 		"provisioning_connection":               r.ProvisioningConnection,
+// 		"service_desk_connection":               r.ServiceDeskConnection,
+// 		"external_risk_connection_json":         r.ExternalRiskConnectionJson,
+// 		"connection":                            r.Connection,
+// 		"create_date":                           r.CreateDate,
+// 		"update_date":                           r.UpdateDate,
+// 		"endpoints":                             r.Endpoints,
+// 		"created_by":                            r.CreatedBy,
+// 		"updated_by":                            r.UpdatedBy,
+// 		"status":                                r.Status,
+// 		"created_from":                          r.CreatedFrom,
+// 		"port":                                  r.Port,
+// 		"inherent_sod_report_fields":            inherentSodList,
+// 	}, diags
+// }
 
 // Read fetches data from the API and converts it to Terraform state.
 func (d *SecuritySystemsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state SecuritySystemsDataSourceModel
 
-	// Retrieve user-defined filters from configuration.
 	diags := req.Config.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Prepare the API client configuration.
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := d.client.APIBaseURL()
 	cfg.Host = strings.TrimPrefix(apiBaseURL, "https://")
@@ -362,10 +359,52 @@ func (d *SecuritySystemsDataSource) Read(ctx context.Context, req datasource.Rea
 	state.DisplayCount = types.Int64Value(int64(*apiResp.DisplayCount))
 	state.ErrorCode = types.StringValue(*apiResp.ErrorCode)
 	state.TotalCount = types.Int64Value(int64(*apiResp.TotalCount))
-	var results []SecuritySystemDetails
+
+	// if apiResp.SecuritySystemDetails != nil {
+	// 	for _, item := range apiResp.SecuritySystemDetails {
+	// 		results = append(results, SecuritySystemDetails{
+	// 			ConnectionType:                     util.SafeString(item.ConnectionType),
+	// 			Connectionname:                     util.SafeString(item.Connectionname),
+	// 			DefaultSystem:                      util.SafeString(item.DefaultSystem),
+	// 			DisplayName:                        util.SafeString(item.DisplayName),
+	// 			Hostname:                           util.SafeString(item.Hostname),
+	// 			Systemname:                         util.SafeString(item.Systemname),
+	// 			AccessAddWorkflow:                  util.SafeString(item.AccessAddWorkflow),
+	// 			AccessRemoveWorkflow:               util.SafeString(item.AccessRemoveWorkflow),
+	// 			AddServiceAccountWorkflow:          util.SafeString(item.AddServiceAccountWorkflow),
+	// 			RemoveServiceAccountWorkflow:       util.SafeString(item.RemoveServiceAccountWorkflow),
+	// 			Connectionparameters:               util.SafeString(item.Connectionparameters),
+	// 			ProvisioningConnection:             util.SafeString(item.ProvisioningConnection),
+	// 			Connection:                         util.SafeString(item.Connection),
+	// 			CreateDate:                         util.SafeString(item.CreateDate),
+	// 			UpdateDate:                         util.SafeString(item.UpdateDate),
+	// 			Endpoints:                          util.SafeString(item.Endpoints),
+	// 			UseOpenConnector:                   util.SafeString(item.Useopenconnector),
+	// 			ReconApplication:                   util.SafeString(item.ReconApplication),
+	// 			AutomatedProvisioning:              util.SafeString(item.AutomatedProvisioning),
+	// 			InstantProvision:                   util.SafeString(item.Instantprovision),
+	// 			ProvisioningComments:               util.SafeString(item.Provisioningcomments),
+	// 			ProvisioningTries:                  util.SafeString(item.ProvisioningTries),
+	// 			ProposedAccountOwnersWorkflow:      util.SafeString(item.ProposedAccountOwnersworkflow),
+	// 			FirefighterIDWorkflow:              util.SafeString(item.FirefighteridWorkflow),
+	// 			FirefighterIDRequestAccessWorkflow: util.SafeString(item.FirefighteridRequestAccessWorkflow),
+	// 			PolicyRuleServiceAccount:           util.SafeString(item.PolicyRuleServiceAccount),
+	// 			ServiceDeskConnection:              util.SafeString(item.ServiceDeskConnection),
+	// 			ExternalRiskConnectionJson:         util.SafeString(item.ExternalRiskConnectionJson),
+	// 			CreatedBy:                          util.SafeString(item.CreatedBy),
+	// 			UpdatedBy:                          util.SafeString(item.UpdatedBy),
+	// 			Status:                             util.SafeString(item.Status),
+	// 			CreatedFrom:                        util.SafeString(item.CreatedFrom),
+	// 			PolicyRule:                         util.SafeString(item.PolicyRule),
+	// 			Port:                               util.SafeString(item.Port),
+	// 			InherentSodReportFields:            util.ToTypesStringSlice(item.InherentSODReportFields),
+	// 		})
+	// 	}
+	// }
+
 	if apiResp.SecuritySystemDetails != nil {
 		for _, item := range apiResp.SecuritySystemDetails {
-			results = append(results, SecuritySystemDetails{
+			securitySystemState := SecuritySystemDetails{
 				ConnectionType:                     util.SafeString(item.ConnectionType),
 				Connectionname:                     util.SafeString(item.Connectionname),
 				DefaultSystem:                      util.SafeString(item.DefaultSystem),
@@ -401,29 +440,35 @@ func (d *SecuritySystemsDataSource) Read(ctx context.Context, req datasource.Rea
 				PolicyRule:                         util.SafeString(item.PolicyRule),
 				Port:                               util.SafeString(item.Port),
 				InherentSodReportFields:            util.ToTypesStringSlice(item.InherentSODReportFields),
-			})
+			}
+			state.Results = append(state.Results, securitySystemState)
 		}
 	}
 
-	// Convert the results slice to a list of Terraform object values.
-	var listValues []attr.Value
-	for _, item := range results {
-		m, mDiags := item.ToMap()
-		if mDiags.HasError() {
-			resp.Diagnostics.Append(mDiags...)
-			return
-		}
-		objVal, objDiags := types.ObjectValue(securitySystemObjectType.AttrTypes, m)
+	// // Convert the results slice to a list of Terraform object values.
+	// var listValues []attr.Value
+	// for _, item := range results {
+	// 	m, mDiags := item.ToMap()
+	// 	if mDiags.HasError() {
+	// 		resp.Diagnostics.Append(mDiags...)
+	// 		return
+	// 	}
+	// 	objVal, objDiags := types.ObjectValue(securitySystemObjectType.AttrTypes, m)
 
-		if objDiags.HasError() {
-			resp.Diagnostics.Append(objDiags...)
-			return
-		}
-		listValues = append(listValues, objVal)
+	// 	if objDiags.HasError() {
+	// 		resp.Diagnostics.Append(objDiags...)
+	// 		return
+	// 	}
+	// 	listValues = append(listValues, objVal)
+	// }
+	// state.Results, diags = types.ListValue(securitySystemObjectType, listValues)
+	// resp.Diagnostics.Append(diags...)
+
+	// // Save the state.
+	// resp.State.Set(ctx, state)
+	diags1 := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(diags1...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	state.Results, diags = types.ListValue(securitySystemObjectType, listValues)
-	resp.Diagnostics.Append(diags...)
-
-	// Save the state.
-	resp.State.Set(ctx, state)
 }
