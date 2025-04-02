@@ -1383,7 +1383,28 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 	if !plan.CustomProperty60Label.IsNull() && plan.CustomProperty60Label.ValueString() != "" {
 		updateReq.SetCustomproperty60Label(plan.CustomProperty60Label.ValueString())
 	}
+	var emailTemplates openapi.UpdateEndpointRequestEmailTemplateInner
+	hehe:=openapi.NewUpdateEndpointRequestEmailTemplateInner()
 
+	if !plan.EmailTemplate.IsNull() && plan.EmailTemplate.ValueString()!=""{
+		emailTemplates.EmailTemplate=plan.EmailTemplate.ValueStringPointer()
+		hehe.SetEmailTemplateType(plan.EmailTemplate.ValueString())
+	}
+	if(!plan.EmailTemplateType.IsNull() && plan.EmailTemplateType.ValueString()!=""){
+		emailTemplates.EmailTemplateType=plan.EmailTemplate.ValueStringPointer()
+		hehe.SetEmailTemplateType(plan.EmailTemplateType.ValueString())
+	}
+	if(!plan.TaskType.IsNull() && plan.TaskType.ValueString()!=""){
+		emailTemplates.TaskType=plan.TaskType.ValueStringPointer()
+		hehe.SetTaskType(plan.TaskType.ValueString())
+	}
+
+    // If email templates were populated, assign them to the update request
+    if emailTemplates.EmailTemplate != nil || emailTemplates.EmailTemplateType != nil || emailTemplates.TaskType != nil {
+		// updateReq.EmailTemplate = []openapi.UpdateEndpointRequestEmailTemplateInner{emailTemplates}
+		updateReq.EmailTemplate=[] openapi.UpdateEndpointRequestEmailTemplateInner{*hehe}
+	}
+	
 	apiResp, httpResp, err := apiClient.EndpointsAPI.
 		UpdateEndpoint(ctx).
 		UpdateEndpointRequest(*updateReq).

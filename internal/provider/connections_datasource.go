@@ -5,13 +5,12 @@ package provider
 
 import (
 	"context"
-	// "encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+	"log"
 
 	openapi "github.com/saviynt/saviynt-api-go-client/connections"
-	// openapi "connections"
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
@@ -34,7 +33,6 @@ func NewConnectionsDataSource() datasource.DataSource {
 
 type ConnectionsDataSourceModel struct {
 	ID types.String `tfsdk:"id"`
-	// Results        types.List   `tfsdk:"results"`
 	Results        []Connection `tfsdk:"results"`
 	ConnectionName types.String `tfsdk:"connection_name"`
 	Offset         types.String `tfsdk:"offset"`
@@ -105,10 +103,6 @@ func (d *ConnectionsDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "List of connections retrieved",
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						// "id1": schema.StringAttribute{
-						// 	Computed: true,
-						// 	Description: "Connection ID",
-						// },
 						"connectionname": schema.StringAttribute{
 							Computed:    true,
 							Description: "Connection Name",
@@ -149,6 +143,7 @@ func (d *ConnectionsDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *ConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	// Check if provider data is available.
 	if req.ProviderData == nil {
 		return
 	}
@@ -165,44 +160,24 @@ func (d *ConnectionsDataSource) Configure(ctx context.Context, req datasource.Co
 	d.token = prov.accessToken
 }
 
-// var connectionObjectType = types.ObjectType{
-// 	AttrTypes: map[string]attr.Type{
-// 		"connectionname":       types.StringType,
-// 		"connectiontype":       types.StringType,
-// 		"connectiondescription": types.StringType,
-// 		"status":               types.Int64Type,
-// 		"createdby":            types.StringType,
-// 		"createdon":            types.StringType,
-// 		"updatedby":            types.StringType,
-// 		"updatedon":            types.StringType,
-// 	},
-// }
-
-// func (c Connection) ToMap() map[string]attr.Value {
-// 	return map[string]attr.Value{
-// 		"connectionname":        c.ConnectionName,
-// 		"connectiontype":        c.ConnectionType,
-// 		"connectiondescription": c.ConnectionDescription,
-// 		"status":                c.Status,
-// 		"createdby":             c.CreatedBy,
-// 		"createdon":             c.CreatedOn,
-// 		"updatedby":             c.UpdatedBy,
-// 		"updatedon":             c.UpdatedOn,
-// 	}
-// }
 
 func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state ConnectionsDataSourceModel
 
-	diags := req.Config.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
+	configDiagnostics := req.Config.Get(ctx, &state)
+	resp.Diagnostics.Append(configDiagnostics...)
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := d.client.APIBaseURL()
-	cfg.Host = strings.TrimPrefix(apiBaseURL, "https://")
+	
+	apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
+	apiBaseURL = strings.TrimPrefix(apiBaseURL, "http://")
+
+	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+d.token)
 	cfg.HTTPClient = http.DefaultClient
@@ -235,45 +210,17 @@ func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	connectionsResponse, httpResp, err := apiReq.Execute()
 	if err != nil {
-		fmt.Printf("[ERROR] API Call Failed: %v\n", err)
+		log.Printf("[ERROR] API Call Failed: %v", err)
 		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	fmt.Printf("[DEBUG] HTTP Status Code: %d\n", httpResp.StatusCode)
-
-	// jsonBytes, err := json.MarshalIndent(connectionsResponse, "", "  ")
-	// if err != nil {
-	// 	fmt.Printf("Error marshalling API response: %v\n", err)
-	// 	return
-	// }
-	// fmt.Println("Marshalled API Response:")
-	// fmt.Println(string(jsonBytes))
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 
 	state.Msg = types.StringValue(*connectionsResponse.Msg)
 	state.DisplayCount = types.Int64Value(int64(*connectionsResponse.DisplayCount))
 	state.ErrorCode = types.StringValue(*connectionsResponse.ErrorCode)
 	state.TotalCount = types.Int64Value(int64(*connectionsResponse.TotalCount))
-	// state.Msg = safeString(connectionsResponse.Msg)
-	// state.DisplayCount = safeInt64(pointerToInt64(connectionsResponse.DisplayCount))
-	// state.ErrorCode = safeString(connectionsResponse.ErrorCode)
-	// state.TotalCount = safeInt64(pointerToInt64(connectionsResponse.TotalCount))
 
-	// var results []Connection
-
-	// if connectionsResponse != nil && connectionsResponse.ConnectionList != nil {
-	// 	for _, item := range connectionsResponse.ConnectionList {
-	// 		results = append(results, Connection{
-	// 			ConnectionName:        safeString(item.CONNECTIONNAME),
-	// 			ConnectionType:        safeString(item.CONNECTIONTYPE),
-	// 			ConnectionDescription: safeString(item.CONNECTIONDESCRIPTION),
-	// 			Status:                safeInt32(item.STATUS),
-	// 			CreatedBy:             safeString(item.CREATEDBY),
-	// 			CreatedOn:             safeString(item.CREATEDON),
-	// 			UpdatedBy:             safeString(item.UPDATEDBY),
-	// 			UpdatedOn:             safeString(item.UPDATEDON),
-	// 		})
-	// 	}
-	// }
 	if connectionsResponse != nil && connectionsResponse.ConnectionList != nil {
 		for _, item := range connectionsResponse.ConnectionList {
 			resultState := Connection{
@@ -291,43 +238,12 @@ func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 	}
 
-	diags1 := resp.State.Set(ctx, &state)
-	resp.Diagnostics.Append(diags1...)
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	// fmt.Println("Debug: Printing Results Before Assigning to State:")
-	// for _, item := range results {
-	// 	fmt.Printf("Item: %+v\n", item.ConnectionName)
-	// }
-
-	// var listValues []attr.Value
-	// for _, item := range results {
-	// 	objVal, objDiags := types.ObjectValue(connectionObjectType.AttrTypes, item.ToMap())
-	// 	if objDiags.HasError() {
-	// 		fmt.Println("[ERROR] ObjectValue conversion failed:", objDiags)
-	// 		resp.Diagnostics.Append(objDiags...)
-	// 		continue
-	// 	}
-	// 	listValues = append(listValues, objVal)
-	// }
-
-	// listValue, diags := types.ListValue(connectionObjectType, listValues)
-	// if diags.HasError() {
-	// 	fmt.Println("[ERROR] ListValue conversion failed:", diags)
-	// 	resp.Diagnostics.Append(diags...)
-	// 	return
-	// }
-	// state.Results = listValue
-	// fmt.Println("Diagnostics after ListValue:", diags)
-
-	// resp.Diagnostics.Append(diags...)
-	// err1 := resp.State.Set(ctx, state)
-	// if err1 != nil {
-	// 	fmt.Println("Error setting state:", err1)
-	// }
-	// fmt.Printf("Final state before set: %+v\n", state)
 }
 
 func safeInt32(ptr *int32) types.Int32 {

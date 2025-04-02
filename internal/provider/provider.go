@@ -132,6 +132,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		NewSecuritySystemsDataSource,
 		NewEndpointsDataSource,
+		NewConnectionsDataSource,
 	}
 }
 
