@@ -106,3 +106,10 @@ func SafeStringConnector(s string) *string {
 	}
 	return &s
 }
+
+func safeInt32(ptr *int32) types.Int32 {
+	if ptr == nil {
+		return types.Int32Null()
+	}
+	return types.Int32Value(*ptr)
+}

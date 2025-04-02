@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"log"
 	"strings"
 	"terraform-provider-Saviynt/util"
 
@@ -156,19 +157,21 @@ type endpointResourceModel struct {
 	CustomProperty60Label                   types.String `tfsdk:"custom_property60_label"`
 	AllowRemoveAllRoleOnRequest             types.String `tfsdk:"allow_remove_all_role_on_request"`
 	ChangePasswordAccessQuery               types.String `tfsdk:"change_password_access_query"`
-	MappedEndpointsSecuritySystem           types.String `tfsdk:"mapped_endpoints_security_system"`
-	MappedEndpointsEndpoint                 types.String `tfsdk:"mapped_endpoints_endpoint"`
-	MappedEndpointsRequestable              types.String `tfsdk:"mapped_endpoints_requestable"`
-	MappedEndpointsOperation                types.String `tfsdk:"mapped_endpoints_operation"`
-	RequestableRoleTypeRoleType             types.String `tfsdk:"requestable_role_type_role_type"`
-	RequestableRoleTypeRequestOption        types.String `tfsdk:"requestable_role_type_request_option"`
-	RequestableRoleTypeRequired             types.Bool   `tfsdk:"requestable_role_type_required"`
-	RequestableRoleTypeRequestedQuery       types.String `tfsdk:"requestable_role_type_requested_query"`
-	RequestableRoleTypeSelectedQuery        types.String `tfsdk:"requestable_role_type_selected_query"`
-	RequestableRoleTypeShowOn               types.String `tfsdk:"requestable_role_type_show_on"`
-	EmailTemplateType                       types.String `tfsdk:"email_template_type"`
-	TaskType                                types.String `tfsdk:"task_type"`
-	EmailTemplate                           types.String `tfsdk:"email_template"`
+	// MappedEndpointsSecuritySystem           types.String `tfsdk:"mapped_endpoints_security_system"`
+	// MappedEndpointsEndpoint                 types.String `tfsdk:"mapped_endpoints_endpoint"`
+	// MappedEndpointsRequestable              types.String `tfsdk:"mapped_endpoints_requestable"`
+	// MappedEndpointsOperation                types.String `tfsdk:"mapped_endpoints_operation"`
+	// RequestableRoleTypeRoleType       types.String     `tfsdk:"requestable_role_type_role_type"`
+	// RequestableRoleTypeRequestOption  types.String     `tfsdk:"requestable_role_type_request_option"`
+	// RequestableRoleTypeRequired       types.Bool       `tfsdk:"requestable_role_type_required"`
+	// RequestableRoleTypeRequestedQuery types.String     `tfsdk:"requestable_role_type_requested_query"`
+	// RequestableRoleTypeSelectedQuery  types.String     `tfsdk:"requestable_role_type_selected_query"`
+	// RequestableRoleTypeShowOn         types.String     `tfsdk:"requestable_role_type_show_on"`
+	// EmailTemplateType                 types.String     `tfsdk:"email_template_type"`
+	// TaskType                          types.String     `tfsdk:"task_type"`
+	RequestableRoleType []RequestableRoleType `tfsdk:"requestable_role_type"`
+	EmailTemplate       []EmailTemplate       `tfsdk:"email_template"`
+	MappedEndpoints     []MappedEndpoint      `tfsdk:"mapped_endpoints"`
 
 	Result    types.String `tfsdk:"result"`
 	Msg       types.String `tfsdk:"msg"`
@@ -178,6 +181,28 @@ type endpointResourceModel struct {
 type endpointResource struct {
 	client *s.Client
 	token  string
+}
+
+type RequestableRoleType struct {
+	RoleType       types.String `tfsdk:"role_type"`
+	RequestOption  types.String `tfsdk:"request_option"`
+	Required       types.Bool   `tfsdk:"required"`
+	RequestedQuery types.String `tfsdk:"requested_query"`
+	SelectedQuery  types.String `tfsdk:"selected_query"`
+	ShowOn         types.String `tfsdk:"show_on"`
+}
+
+type EmailTemplate struct {
+	EmailTemplateType types.String `tfsdk:"email_template_type"`
+	TaskType          types.String `tfsdk:"task_type"`
+	EmailTemplate     types.String `tfsdk:"email_template"`
+}
+
+type MappedEndpoint struct {
+	SecuritySystem types.String `tfsdk:"security_system"`
+	Endpoint       types.String `tfsdk:"endpoint"`
+	Requestable    types.String `tfsdk:"requestable"`
+	Operation      types.String `tfsdk:"operation"`
 }
 
 func NewEndpointResource() resource.Resource {
@@ -357,69 +382,82 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 		Description: "Specify query to restrict the access for changing the account password of the endpoint.",
 	}
 
-	resp.Schema.Attributes["mapped_endpoints_security_system"] = schema.StringAttribute{
+	resp.Schema.Attributes["requestable_role_type"] = schema.ListNestedAttribute{
+		Description: "A list of requestable role types associated with the endpoint.",
 		Optional:    true,
-		Description: "Security system for mapped endpoints.",
+		NestedObject: schema.NestedAttributeObject{
+			Attributes: map[string]schema.Attribute{
+				"role_type": schema.StringAttribute{
+					Description: "Type of role that can be requested.",
+					Optional:    true,
+				},
+				"request_option": schema.StringAttribute{
+					Description: "Option for requesting the role.",
+					Optional:    true,
+				},
+				"required": schema.BoolAttribute{
+					Description: "Indicates whether the role is required.",
+					Optional:    true,
+				},
+				"requested_query": schema.StringAttribute{
+					Description: "Query for requested role selection.",
+					Optional:    true,
+				},
+				"selected_query": schema.StringAttribute{
+					Description: "Query for selected role display.",
+					Optional:    true,
+				},
+				"show_on": schema.StringAttribute{
+					Description: "Specifies where the role should be shown.",
+					Optional:    true,
+				},
+			},
+		},
+	}
+	resp.Schema.Attributes["email_template"] = schema.ListNestedAttribute{
+		Description: "A list of email templates associated with the endpoint.",
+		Optional:    true,
+		NestedObject: schema.NestedAttributeObject{
+			Attributes: map[string]schema.Attribute{
+				"email_template_type": schema.StringAttribute{
+					Description: "Type of email template (e.g., Approval, Rejection).",
+					Optional:    true,
+				},
+				"task_type": schema.StringAttribute{
+					Description: "Task type associated with the email template (e.g., Create, Delete).",
+					Optional:    true,
+				},
+				"email_template": schema.StringAttribute{
+					Description: "The email template name to be used.",
+					Optional:    true,
+				},
+			},
+		},
 	}
 
-	resp.Schema.Attributes["mapped_endpoints_endpoint"] = schema.StringAttribute{
+	resp.Schema.Attributes["mapped_endpoints"] = schema.ListNestedAttribute{
+		Description: "List of mapped endpoints with individual security systems.",
 		Optional:    true,
-		Description: "Endpoint for mapped endpoints.",
-	}
-
-	resp.Schema.Attributes["mapped_endpoints_requestable"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Whether the mapped endpoint is requestable.",
-	}
-
-	resp.Schema.Attributes["mapped_endpoints_operation"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Operation type for mapped endpoints.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type_role_type"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "The role type for requestable roles.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type_request_option"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Request options for requestable roles.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type_required"] = schema.BoolAttribute{
-		Optional:    true,
-		Description: "Defines if the requestable role type is required.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type_requested_query"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Query for requested role type.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type_selected_query"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Query for selected role type.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type_show_on"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Defines where the requestable role type is shown.",
-	}
-
-	resp.Schema.Attributes["email_template_type"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "Type of the email template.",
-	}
-
-	resp.Schema.Attributes["task_type"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "The type of task related to the email template.",
-	}
-
-	resp.Schema.Attributes["email_template"] = schema.StringAttribute{
-		Optional:    true,
-		Description: "The email template content.",
+		NestedObject: schema.NestedAttributeObject{
+			Attributes: map[string]schema.Attribute{
+				"security_system": schema.StringAttribute{
+					Description: "The security system specific to this mapped endpoint.",
+					Required:    true,
+				},
+				"endpoint": schema.StringAttribute{
+					Description: "Logical name of the endpoint.",
+					Required:    true,
+				},
+				"requestable": schema.StringAttribute{
+					Description: "Indicates whether the endpoint is requestable.",
+					Optional:    true,
+				},
+				"operation": schema.StringAttribute{
+					Description: "Specifies the operation associated with the endpoint.",
+					Optional:    true,
+				},
+			},
+		},
 	}
 }
 
@@ -444,8 +482,8 @@ func (r *endpointResource) Configure(ctx context.Context, req resource.Configure
 func (r *endpointResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan endpointResourceModel
 
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	planGetDiagnostics := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(planGetDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -836,13 +874,14 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 		CreateEndpoint(ctx).
 		CreateEndpointRequest(*createReq).
 		Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating Endpoint",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
-		return
-	}
+		if err != nil {
+			log.Printf("Error Creating Endpoint: %v, HTTP Response: %v", err, httpResp)
+			resp.Diagnostics.AddError(
+				"Error Creating Endpoint",
+				"Check logs for details.",
+			)
+			return
+		}
 
 	plan.ID = types.StringValue("endpoint-" + plan.EndpointName.ValueString())
 	msgValue := util.SafeDeref(apiResp.Msg)
@@ -865,23 +904,27 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 	}
 	plan.Result = types.StringValue(string(resultJSON))
 
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	stateCreateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateCreateDiagnostics...)
 }
 
 func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state endpointResourceModel
 
 	// Retrieve the current state
-	diags := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
+	stateRetrievalDiagnostics := req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(stateRetrievalDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := r.client.APIBaseURL()
 	if strings.HasPrefix(apiBaseURL, "https://") {
 		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
+	}
+	if strings.HasPrefix(apiBaseURL, "http://"){
+		apiBaseURL = strings.TrimPrefix(apiBaseURL, "http://")
 	}
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
@@ -896,9 +939,11 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if err != nil {
 		// Handle 404: resource no longer exists, remove from state
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			log.Println("[WARN] Endpoint not found, removing from state")
 			resp.State.RemoveResource(ctx)
 			return
 		}
+		log.Printf("[ERROR] Error reading security system: %v", err)
 		resp.Diagnostics.AddError("Error Reading Security System", err.Error())
 		return
 	}
@@ -990,15 +1035,16 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	state.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, &state)
-	resp.Diagnostics.Append(diags...)
+
+	stateSetDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateSetDiagnostics...)
 }
 
 func (r *endpointResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan endpointResourceModel
 
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	planGetDiagnostics := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(planGetDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -1383,39 +1429,116 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 	if !plan.CustomProperty60Label.IsNull() && plan.CustomProperty60Label.ValueString() != "" {
 		updateReq.SetCustomproperty60Label(plan.CustomProperty60Label.ValueString())
 	}
-	var emailTemplates openapi.UpdateEndpointRequestEmailTemplateInner
-	hehe:=openapi.NewUpdateEndpointRequestEmailTemplateInner()
 
-	if !plan.EmailTemplate.IsNull() && plan.EmailTemplate.ValueString()!=""{
-		emailTemplates.EmailTemplate=plan.EmailTemplate.ValueStringPointer()
-		hehe.SetEmailTemplateType(plan.EmailTemplate.ValueString())
-	}
-	if(!plan.EmailTemplateType.IsNull() && plan.EmailTemplateType.ValueString()!=""){
-		emailTemplates.EmailTemplateType=plan.EmailTemplate.ValueStringPointer()
-		hehe.SetEmailTemplateType(plan.EmailTemplateType.ValueString())
-	}
-	if(!plan.TaskType.IsNull() && plan.TaskType.ValueString()!=""){
-		emailTemplates.TaskType=plan.TaskType.ValueStringPointer()
-		hehe.SetTaskType(plan.TaskType.ValueString())
+	var requestableRoleTypes []openapi.UpdateEndpointRequestRequestableRoleTypeInner
+
+	for _, role := range plan.RequestableRoleType {
+		var requestableRole openapi.UpdateEndpointRequestRequestableRoleTypeInner
+
+		if !role.RoleType.IsNull() && role.RoleType.ValueString() != "" {
+			requestableRole.RoleType = role.RoleType.ValueStringPointer()
+		}
+		if !role.RequestOption.IsNull() && role.RequestOption.ValueString() != "" {
+			requestableRole.RequestOption = role.RequestOption.ValueStringPointer()
+		}
+		if !role.Required.IsNull() {
+			requestableRole.Required = role.Required.ValueBoolPointer()
+		}
+		if !role.RequestedQuery.IsNull() && role.RequestedQuery.ValueString() != "" {
+			requestableRole.RequestedQuery = role.RequestedQuery.ValueStringPointer()
+		}
+		if !role.SelectedQuery.IsNull() && role.SelectedQuery.ValueString() != "" {
+			requestableRole.SelectedQuery = role.SelectedQuery.ValueStringPointer()
+		}
+		if !role.ShowOn.IsNull() && role.ShowOn.ValueString() != "" {
+			requestableRole.ShowOn = role.ShowOn.ValueStringPointer()
+		}
+
+		// Add the role type if any value is set
+		if requestableRole.RoleType != nil || requestableRole.RequestOption != nil || requestableRole.Required != nil ||
+			requestableRole.RequestedQuery != nil || requestableRole.SelectedQuery != nil || requestableRole.ShowOn != nil {
+			requestableRoleTypes = append(requestableRoleTypes, requestableRole)
+		}
 	}
 
-    // If email templates were populated, assign them to the update request
-    if emailTemplates.EmailTemplate != nil || emailTemplates.EmailTemplateType != nil || emailTemplates.TaskType != nil {
-		// updateReq.EmailTemplate = []openapi.UpdateEndpointRequestEmailTemplateInner{emailTemplates}
-		updateReq.EmailTemplate=[] openapi.UpdateEndpointRequestEmailTemplateInner{*hehe}
+	// Assign to update request if populated
+	if len(requestableRoleTypes) > 0 {
+		updateReq.RequestableRoleType = requestableRoleTypes
 	}
-	
+
+	var emailTemplates []openapi.UpdateEndpointRequestEmailTemplateInner
+
+	// Iterate over email templates from Terraform plan
+	for _, template := range plan.EmailTemplate {
+		var emailTemplate openapi.UpdateEndpointRequestEmailTemplateInner
+
+		// Check and set each field if it's not null or empty
+		if !template.EmailTemplateType.IsNull() && template.EmailTemplateType.ValueString() != "" {
+			emailTemplate.EmailTemplateType = template.EmailTemplateType.ValueStringPointer()
+		}
+		if !template.TaskType.IsNull() && template.TaskType.ValueString() != "" {
+			emailTemplate.TaskType = template.TaskType.ValueStringPointer()
+		}
+		if !template.EmailTemplate.IsNull() && template.EmailTemplate.ValueString() != "" {
+			emailTemplate.EmailTemplate = template.EmailTemplate.ValueStringPointer()
+		}
+
+		// Append only if at least one field is set
+		if emailTemplate.EmailTemplateType != nil || emailTemplate.TaskType != nil || emailTemplate.EmailTemplate != nil {
+			emailTemplates = append(emailTemplates, emailTemplate)
+		}
+	}
+
+	// Assign to update request if email templates exist
+	if len(emailTemplates) > 0 {
+		updateReq.EmailTemplate = emailTemplates
+	}
+
+	var mappedEndpoints []openapi.UpdateEndpointRequestMappedEndpointsInner
+
+	// Iterate over mapped endpoints from Terraform plan
+	for _, endpoint := range plan.MappedEndpoints {
+		var mappedEndpoint openapi.UpdateEndpointRequestMappedEndpointsInner
+
+		// Check and set each field if it's not null or empty
+		if !endpoint.SecuritySystem.IsNull() && endpoint.SecuritySystem.ValueString() != "" {
+			mappedEndpoint.Securitysystem = endpoint.SecuritySystem.ValueStringPointer()
+		}
+		if !endpoint.Endpoint.IsNull() && endpoint.Endpoint.ValueString() != "" {
+			mappedEndpoint.Endpoint = endpoint.Endpoint.ValueStringPointer()
+		}
+		if !endpoint.Requestable.IsNull() && endpoint.Requestable.ValueString() != "" {
+			mappedEndpoint.Requestable = endpoint.Requestable.ValueStringPointer()
+		}
+		if !endpoint.Operation.IsNull() && endpoint.Operation.ValueString() != "" {
+			mappedEndpoint.Operation = endpoint.Operation.ValueStringPointer()
+		}
+
+		// Append only if at least one field is set
+		if mappedEndpoint.Securitysystem != nil || mappedEndpoint.Endpoint != nil ||
+			mappedEndpoint.Requestable != nil || mappedEndpoint.Operation != nil {
+			mappedEndpoints = append(mappedEndpoints, mappedEndpoint)
+		}
+	}
+
+	// Assign to update request if mapped endpoints exist
+	if len(mappedEndpoints) > 0 {
+		updateReq.MappedEndpoints = mappedEndpoints
+	}
+
 	apiResp, httpResp, err := apiClient.EndpointsAPI.
 		UpdateEndpoint(ctx).
 		UpdateEndpointRequest(*updateReq).
 		Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Updating Endpoint",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
-		return
-	}
+		if err != nil {
+			log.Printf("Error Updating Endpoint: %v, HTTP Response: %v", err, httpResp)
+			resp.Diagnostics.AddError(
+				"Error Updating Endpoint",
+				"Check logs for details.",
+			)
+			return
+		}
+		
 
 	if plan.ID.IsUnknown() || plan.ID.IsNull() {
 		plan.ID = types.StringValue("endpoint-" + plan.EndpointName.ValueString())
@@ -1439,8 +1562,9 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 
 func (r *endpointResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

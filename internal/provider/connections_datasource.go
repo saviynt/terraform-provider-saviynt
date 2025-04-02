@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strings"
 	"log"
+	// "terraform-provider-Saviynt/util"
 
 	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 
@@ -253,17 +254,3 @@ func safeInt32(ptr *int32) types.Int32 {
 	return types.Int32Value(*ptr)
 }
 
-func safeInt64(ptr *int64) types.Int64 {
-	if ptr == nil {
-		return types.Int64Null()
-	}
-	return types.Int64Value(*ptr)
-}
-
-func pointerToInt64(ptr *int32) *int64 {
-	if ptr == nil {
-		return nil
-	}
-	val := int64(*ptr) // Convert int32 to int64
-	return &val
-}

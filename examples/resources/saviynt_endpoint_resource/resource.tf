@@ -13,10 +13,15 @@ provider "saviynt" {
 }
 
 resource "saviynt_endpoint_resource" "example" {
-  endpointname = "sample-102"
-  display_name = "sample 102"
+  endpointname = "sample-103"
+  display_name = "sample 103"
   security_system  = "shaleenhuddle"
-  # email_template_type="3"
-  task_type="1"
-  email_template="Add Password Expiry Email"
+  mapped_endpoints =[
+    {
+      security_system = "Shaleen_testing_terraform"
+      endpoint        = "Shaleen_testing_terraform"
+      requestable     = "true"
+      operation       = "ADD"
+    }
+  ]
 }

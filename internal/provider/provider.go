@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"strings"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -74,8 +75,8 @@ func (p *saviyntProvider) Schema(_ context.Context, _ provider.SchemaRequest, re
 func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var config SaviyntProviderModel
 
-	diags := req.Config.Get(ctx, &config)
-	resp.Diagnostics.Append(diags...)
+	configDiagnostics := req.Config.Get(ctx, &config)
+	resp.Diagnostics.Append(configDiagnostics...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -103,14 +104,17 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 		Password:  config.Password.ValueString(),
 	})
 	if err != nil {
+		log.Printf("Failed to create Saviynt client: %v", err)
 		resp.Diagnostics.AddError(
 			"Failed to create Saviynt client",
 			"Could not initialize Saviynt API client: "+err.Error(),
 		)
 		return
 	}
+	
 	token := client.Token()
 	if token == nil {
+		log.Printf("Token error: Failed to fetch access token.")
 		resp.Diagnostics.AddError("Token Error", "Failed to fetch access token.")
 		return
 	}
