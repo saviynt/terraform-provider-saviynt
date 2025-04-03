@@ -5,10 +5,11 @@ package provider
 
 import (
 	"context"
-	"log"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
+	"terraform-provider-Saviynt/util"
 
 	openapi "github.com/saviynt/saviynt-api-go-client/endpoints"
 
@@ -32,7 +33,7 @@ func NewEndpointsDataSource() datasource.DataSource {
 }
 
 type EndpointsDataSourceModel struct {
-	ID types.String `tfsdk:"id"`
+	ID             types.String `tfsdk:"id"`
 	Results        []Endpoint   `tfsdk:"results"`
 	DisplayCount   types.Int64  `tfsdk:"display_count"`
 	ErrorCode      types.String `tfsdk:"error_code"`
@@ -267,16 +268,10 @@ func (d *EndpointsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 }
 
 
-func safeString(s *string) types.String {
-	if s == nil {
-		return types.StringValue("")
-	}
-	return types.StringValue(*s)
-}
-
 func (d *EndpointsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -303,11 +298,7 @@ func (d *EndpointsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := d.client.APIBaseURL()
-
-	apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	apiBaseURL = strings.TrimPrefix(apiBaseURL, "http://")
-
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(d.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+d.token)
@@ -377,83 +368,83 @@ func (d *EndpointsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if endpointsResponse.Endpoints != nil {
 		for _, item := range endpointsResponse.Endpoints {
 			endpointState := Endpoint{
-				Id1:                                 safeString(item.Id),
-				EndpointName:                        safeString(item.Endpointname),
-				DisplayName:                         safeString(item.DisplayName),
-				SecuritySystem:                      safeString(item.Securitysystem),
-				AccessQuery:                         safeString(item.Accessquery),
-				EnableCopyAccess:                    safeString(item.EnableCopyAccess),
-				UpdatedBy:                           safeString(item.UpdatedBy),
-				Status:                              safeString(item.Status),
-				UpdateDate:                          safeString(item.UpdateDate),
-				AllowRemoveAllRoleOnRequest:         safeString(item.AllowRemoveAllRoleOnRequest),
-				RoleTypeAsJson:                      safeString(item.RoleTypeAsJson),
-				EntsWithNewAccount:                  safeString(item.EntsWithNewAccount),
-				ConnectionConfigAsJson:              safeString(item.ConnectionconfigAsJson),
-				ConnectionConfig:                    safeString(item.Connectionconfig),
-				AccountNameRule:                     safeString(item.AccountNameRule),
-				ChangePasswordAccessQuery:           safeString(item.ChangePasswordAccessQuery),
-				ServiceAccountAccessQuery:           safeString(item.ServiceAccountAccessQuery),
-				CreateEntTaskForRemoveAcc:           safeString(item.CreateEntTaskforRemoveAcc),
-				UserAccountCorrelationRule:          safeString(item.UserAccountCorrelationRule),
-				DisableAccountRequest:               safeString(item.Disableaccountrequest),
-				PluginConfigs:                       safeString(item.PluginConfigs),
-				DisableAccountRequestServiceAccount: safeString(item.DisableaccountrequestServiceAccount),
-				RequestableApplication:              safeString(item.Requestableapplication),
-				CreatedFrom:                         safeString(item.CreatedFrom),
-				CreatedBy:                           safeString(item.CreatedBy),
-				CreateDate:                          safeString(item.CreateDate),
-				ParentEndpoint:                      safeString(item.ParentEndpoint),
-				BaseLineConfig:                      safeString(item.BaseLineConfig),
-				EndpointConfig:                      safeString(item.EndpointConfig),
-				TaskEmailTemplates:                  safeString(item.Taskemailtemplates),
-				StatusConfig:                        safeString(item.StatusConfig),
+				Id1:                                 util.SafeString(item.Id),
+				EndpointName:                        util.SafeString(item.Endpointname),
+				DisplayName:                         util.SafeString(item.DisplayName),
+				SecuritySystem:                      util.SafeString(item.Securitysystem),
+				AccessQuery:                         util.SafeString(item.Accessquery),
+				EnableCopyAccess:                    util.SafeString(item.EnableCopyAccess),
+				UpdatedBy:                           util.SafeString(item.UpdatedBy),
+				Status:                              util.SafeString(item.Status),
+				UpdateDate:                          util.SafeString(item.UpdateDate),
+				AllowRemoveAllRoleOnRequest:         util.SafeString(item.AllowRemoveAllRoleOnRequest),
+				RoleTypeAsJson:                      util.SafeString(item.RoleTypeAsJson),
+				EntsWithNewAccount:                  util.SafeString(item.EntsWithNewAccount),
+				ConnectionConfigAsJson:              util.SafeString(item.ConnectionconfigAsJson),
+				ConnectionConfig:                    util.SafeString(item.Connectionconfig),
+				AccountNameRule:                     util.SafeString(item.AccountNameRule),
+				ChangePasswordAccessQuery:           util.SafeString(item.ChangePasswordAccessQuery),
+				ServiceAccountAccessQuery:           util.SafeString(item.ServiceAccountAccessQuery),
+				CreateEntTaskForRemoveAcc:           util.SafeString(item.CreateEntTaskforRemoveAcc),
+				UserAccountCorrelationRule:          util.SafeString(item.UserAccountCorrelationRule),
+				DisableAccountRequest:               util.SafeString(item.Disableaccountrequest),
+				PluginConfigs:                       util.SafeString(item.PluginConfigs),
+				DisableAccountRequestServiceAccount: util.SafeString(item.DisableaccountrequestServiceAccount),
+				RequestableApplication:              util.SafeString(item.Requestableapplication),
+				CreatedFrom:                         util.SafeString(item.CreatedFrom),
+				CreatedBy:                           util.SafeString(item.CreatedBy),
+				CreateDate:                          util.SafeString(item.CreateDate),
+				ParentEndpoint:                      util.SafeString(item.ParentEndpoint),
+				BaseLineConfig:                      util.SafeString(item.BaseLineConfig),
+				EndpointConfig:                      util.SafeString(item.EndpointConfig),
+				TaskEmailTemplates:                  util.SafeString(item.Taskemailtemplates),
+				StatusConfig:                        util.SafeString(item.StatusConfig),
 
-				CustomProperty1:  safeString(item.CustomProperty1),
-				CustomProperty2:  safeString(item.CustomProperty2),
-				CustomProperty3:  safeString(item.CustomProperty3),
-				CustomProperty4:  safeString(item.CustomProperty4),
-				CustomProperty5:  safeString(item.CustomProperty5),
-				CustomProperty6:  safeString(item.CustomProperty6),
-				CustomProperty7:  safeString(item.CustomProperty7),
-				CustomProperty8:  safeString(item.CustomProperty8),
-				CustomProperty9:  safeString(item.CustomProperty9),
-				CustomProperty10: safeString(item.CustomProperty10),
-				CustomProperty11: safeString(item.CustomProperty11),
-				CustomProperty12: safeString(item.CustomProperty12),
-				CustomProperty13: safeString(item.CustomProperty13),
-				CustomProperty14: safeString(item.CustomProperty14),
-				CustomProperty15: safeString(item.CustomProperty15),
-				CustomProperty16: safeString(item.CustomProperty16),
-				CustomProperty17: safeString(item.CustomProperty17),
-				CustomProperty18: safeString(item.CustomProperty18),
-				CustomProperty19: safeString(item.CustomProperty19),
-				CustomProperty20: safeString(item.CustomProperty20),
-				CustomProperty21: safeString(item.CustomProperty21),
-				CustomProperty22: safeString(item.CustomProperty22),
-				CustomProperty23: safeString(item.CustomProperty23),
-				CustomProperty24: safeString(item.CustomProperty24),
-				CustomProperty25: safeString(item.CustomProperty25),
-				CustomProperty26: safeString(item.CustomProperty26),
-				CustomProperty27: safeString(item.CustomProperty27),
-				CustomProperty28: safeString(item.CustomProperty28),
-				CustomProperty29: safeString(item.CustomProperty29),
-				CustomProperty30: safeString(item.CustomProperty30),
-				CustomProperty31: safeString(item.CustomProperty31),
-				CustomProperty32: safeString(item.CustomProperty32),
-				CustomProperty33: safeString(item.CustomProperty33),
-				CustomProperty34: safeString(item.CustomProperty34),
-				CustomProperty35: safeString(item.CustomProperty35),
-				CustomProperty36: safeString(item.CustomProperty36),
-				CustomProperty37: safeString(item.CustomProperty37),
-				CustomProperty38: safeString(item.CustomProperty38),
-				CustomProperty39: safeString(item.CustomProperty39),
-				CustomProperty40: safeString(item.CustomProperty40),
-				CustomProperty41: safeString(item.CustomProperty41),
-				CustomProperty42: safeString(item.CustomProperty42),
-				CustomProperty43: safeString(item.CustomProperty43),
-				CustomProperty44: safeString(item.CustomProperty44),
-				CustomProperty45: safeString(item.CustomProperty45),
+				CustomProperty1:  util.SafeString(item.CustomProperty1),
+				CustomProperty2:  util.SafeString(item.CustomProperty2),
+				CustomProperty3:  util.SafeString(item.CustomProperty3),
+				CustomProperty4:  util.SafeString(item.CustomProperty4),
+				CustomProperty5:  util.SafeString(item.CustomProperty5),
+				CustomProperty6:  util.SafeString(item.CustomProperty6),
+				CustomProperty7:  util.SafeString(item.CustomProperty7),
+				CustomProperty8:  util.SafeString(item.CustomProperty8),
+				CustomProperty9:  util.SafeString(item.CustomProperty9),
+				CustomProperty10: util.SafeString(item.CustomProperty10),
+				CustomProperty11: util.SafeString(item.CustomProperty11),
+				CustomProperty12: util.SafeString(item.CustomProperty12),
+				CustomProperty13: util.SafeString(item.CustomProperty13),
+				CustomProperty14: util.SafeString(item.CustomProperty14),
+				CustomProperty15: util.SafeString(item.CustomProperty15),
+				CustomProperty16: util.SafeString(item.CustomProperty16),
+				CustomProperty17: util.SafeString(item.CustomProperty17),
+				CustomProperty18: util.SafeString(item.CustomProperty18),
+				CustomProperty19: util.SafeString(item.CustomProperty19),
+				CustomProperty20: util.SafeString(item.CustomProperty20),
+				CustomProperty21: util.SafeString(item.CustomProperty21),
+				CustomProperty22: util.SafeString(item.CustomProperty22),
+				CustomProperty23: util.SafeString(item.CustomProperty23),
+				CustomProperty24: util.SafeString(item.CustomProperty24),
+				CustomProperty25: util.SafeString(item.CustomProperty25),
+				CustomProperty26: util.SafeString(item.CustomProperty26),
+				CustomProperty27: util.SafeString(item.CustomProperty27),
+				CustomProperty28: util.SafeString(item.CustomProperty28),
+				CustomProperty29: util.SafeString(item.CustomProperty29),
+				CustomProperty30: util.SafeString(item.CustomProperty30),
+				CustomProperty31: util.SafeString(item.CustomProperty31),
+				CustomProperty32: util.SafeString(item.CustomProperty32),
+				CustomProperty33: util.SafeString(item.CustomProperty33),
+				CustomProperty34: util.SafeString(item.CustomProperty34),
+				CustomProperty35: util.SafeString(item.CustomProperty35),
+				CustomProperty36: util.SafeString(item.CustomProperty36),
+				CustomProperty37: util.SafeString(item.CustomProperty37),
+				CustomProperty38: util.SafeString(item.CustomProperty38),
+				CustomProperty39: util.SafeString(item.CustomProperty39),
+				CustomProperty40: util.SafeString(item.CustomProperty40),
+				CustomProperty41: util.SafeString(item.CustomProperty41),
+				CustomProperty42: util.SafeString(item.CustomProperty42),
+				CustomProperty43: util.SafeString(item.CustomProperty43),
+				CustomProperty44: util.SafeString(item.CustomProperty44),
+				CustomProperty45: util.SafeString(item.CustomProperty45),
 			}
 
 			state.Results = append(state.Results, endpointState)

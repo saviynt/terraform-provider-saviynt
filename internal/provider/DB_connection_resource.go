@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"log"
 	"strings"
 	"terraform-provider-Saviynt/util"
 
@@ -249,6 +250,7 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 func (r *dbConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -275,10 +277,7 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -339,6 +338,7 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 			"Error Creating AD Connector",
 			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
 		)
+		log.Printf("[ERROR] API Call Failed: ", err)
 		return
 	}
 	// Assign ID and result to the plan
@@ -356,12 +356,11 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 	resultJSON, err := util.MarshalDeterministic(resultObj)
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
+		log.Printf("[ERROR] JSON marshal Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 	plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
@@ -446,6 +445,7 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 			"Error Creating AD Connector",
 			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
 		)
+		log.Printf("[ERROR] API Call Failed: ", err)
 		return
 	}
 	// Assign ID and result to the plan
@@ -463,12 +463,11 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 	resultJSON, err := util.MarshalDeterministic(resultObj)
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
+		log.Printf("JSON Marshaling Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+
 	plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)

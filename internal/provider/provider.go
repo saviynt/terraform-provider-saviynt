@@ -5,8 +5,8 @@ package provider
 
 import (
 	"context"
-	"strings"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -94,9 +94,8 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 	ctx = context.Background()
 
 	serverURL := config.ServerURL.ValueString()
-	if strings.HasPrefix(serverURL, "https://") {
-		serverURL = strings.TrimPrefix(serverURL, "https://")
-	}
+
+	serverURL = strings.TrimPrefix(strings.TrimPrefix(serverURL, "https://"), "http://")
 
 	client, err := s.NewClient(ctx, s.Credentials{
 		ServerURL: "https://" + serverURL,
@@ -111,7 +110,7 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 		)
 		return
 	}
-	
+
 	token := client.Token()
 	if token == nil {
 		log.Printf("Token error: Failed to fetch access token.")
@@ -124,7 +123,6 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 	p.accessToken = token.AccessToken
 	p.refreshToken = token.RefreshToken
 	p.expiresIn = token.ExpiresIn
-
 	//Storing in Resource and Datasource
 	resp.ResourceData = p
 	resp.DataSourceData = p
@@ -137,6 +135,8 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewSecuritySystemsDataSource,
 		NewEndpointsDataSource,
 		NewConnectionsDataSource,
+		NewADConnectionsDataSource,
+		NewRESTConnectionsDataSource,
 	}
 }
 

@@ -50,7 +50,7 @@ type RESTConnectorResourceModel struct {
 	PamConfig             types.String `tfsdk:"pam_config"`
 }
 
-// testConnectionResource implements the resource.Resource interface.
+// restConnectionResource implements the resource.Resource interface.
 type restConnectionResource struct {
 	// client *openapi.APIClient
 	client *s.Client
@@ -221,6 +221,7 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 func (r *restConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -251,10 +252,7 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 		log.Fatalf("Failed to unmarshal ConnectionJSON: %v", err)
 	}
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -304,12 +302,11 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 	// Assign ID and result to the plan
 	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
 
@@ -413,9 +410,10 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
+			"Error Updating AD Connector",
 			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
 		)
+		log.Printf("Error updating AD connector ", err)
 		return
 	}
 	// Assign ID and result to the plan
@@ -437,6 +435,7 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("Error in marshalling JSON: ", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))

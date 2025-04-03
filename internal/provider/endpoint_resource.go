@@ -6,8 +6,8 @@ package provider
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"log"
+	"net/http"
 	"strings"
 	"terraform-provider-Saviynt/util"
 
@@ -464,6 +464,7 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 func (r *endpointResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -489,10 +490,7 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -874,14 +872,14 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 		CreateEndpoint(ctx).
 		CreateEndpointRequest(*createReq).
 		Execute()
-		if err != nil {
-			log.Printf("Error Creating Endpoint: %v, HTTP Response: %v", err, httpResp)
-			resp.Diagnostics.AddError(
-				"Error Creating Endpoint",
-				"Check logs for details.",
-			)
-			return
-		}
+	if err != nil {
+		log.Printf("Error Creating Endpoint: %v, HTTP Response: %v", err, httpResp)
+		resp.Diagnostics.AddError(
+			"Error Creating Endpoint",
+			"Check logs for details.",
+		)
+		return
+	}
 
 	plan.ID = types.StringValue("endpoint-" + plan.EndpointName.ValueString())
 	msgValue := util.SafeDeref(apiResp.Msg)
@@ -896,12 +894,11 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 	}
 	resultJSON, err := util.MarshalDeterministic(resultObj)
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("JSON Marshall failed: ", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 	plan.Result = types.StringValue(string(resultJSON))
 
 	stateCreateDiagnostics := resp.State.Set(ctx, plan)
@@ -919,13 +916,7 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
-	if strings.HasPrefix(apiBaseURL, "http://"){
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "http://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -937,16 +928,12 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	readReq.Endpointname = &endpointName
 	apiResp, httpResp, err := apiClient.EndpointsAPI.GetEndpoints(ctx).GetEndpointsRequest(*readReq).Execute()
 	if err != nil {
-		// Handle 404: resource no longer exists, remove from state
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			log.Println("[WARN] Endpoint not found, removing from state")
-			resp.State.RemoveResource(ctx)
-			return
-		}
-		log.Printf("[ERROR] Error reading security system: %v", err)
-		resp.Diagnostics.AddError("Error Reading Security System", err.Error())
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+
 	var foundItem *openapi.GetEndpoints200ResponseEndpointsInner
 	for _, item := range apiResp.Endpoints {
 		if item.Endpointname != nil && *item.Endpointname == state.EndpointName.ValueString() {
@@ -1028,12 +1015,11 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 	resultJSON, err := util.MarshalDeterministic(resultObj)
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 	state.Result = types.StringValue(string(resultJSON))
 
 	stateSetDiagnostics := resp.State.Set(ctx, &state)
@@ -1050,10 +1036,7 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -1530,15 +1513,14 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 		UpdateEndpoint(ctx).
 		UpdateEndpointRequest(*updateReq).
 		Execute()
-		if err != nil {
-			log.Printf("Error Updating Endpoint: %v, HTTP Response: %v", err, httpResp)
-			resp.Diagnostics.AddError(
-				"Error Updating Endpoint",
-				"Check logs for details.",
-			)
-			return
-		}
-		
+	if err != nil {
+		log.Printf("Error Updating Endpoint: %v, HTTP Response: %v", err, httpResp)
+		resp.Diagnostics.AddError(
+			"Error Updating Endpoint",
+			"Check logs for details.",
+		)
+		return
+	}
 
 	if plan.ID.IsUnknown() || plan.ID.IsNull() {
 		plan.ID = types.StringValue("endpoint-" + plan.EndpointName.ValueString())
@@ -1559,6 +1541,7 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("Error marshaling result: %v", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))

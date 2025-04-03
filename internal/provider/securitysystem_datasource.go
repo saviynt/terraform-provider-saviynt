@@ -27,16 +27,16 @@ type SecuritySystemsDataSource struct {
 
 // SecuritySystemsDataSourceModel maps the API response and user inputs
 type SecuritySystemsDataSourceModel struct {
-	Systemname     types.String `tfsdk:"systemname"`
-	Max            types.Int64  `tfsdk:"max"`
-	Offset         types.Int64  `tfsdk:"offset"`
-	Connectionname types.String `tfsdk:"connectionname"`
-	ConnectionType types.String `tfsdk:"connection_type"`
-	Msg            types.String `tfsdk:"msg"`
-	DisplayCount   types.Int64  `tfsdk:"display_count"`
-	ErrorCode      types.String `tfsdk:"error_code"`
-	TotalCount     types.Int64  `tfsdk:"total_count"`
-	Results []SecuritySystemDetails `tfsdk:"results"`
+	Systemname     types.String            `tfsdk:"systemname"`
+	Max            types.Int64             `tfsdk:"max"`
+	Offset         types.Int64             `tfsdk:"offset"`
+	Connectionname types.String            `tfsdk:"connectionname"`
+	ConnectionType types.String            `tfsdk:"connection_type"`
+	Msg            types.String            `tfsdk:"msg"`
+	DisplayCount   types.Int64             `tfsdk:"display_count"`
+	ErrorCode      types.String            `tfsdk:"error_code"`
+	TotalCount     types.Int64             `tfsdk:"total_count"`
+	Results        []SecuritySystemDetails `tfsdk:"results"`
 }
 
 // SecuritySystemDetails represents a single security system details object.
@@ -190,6 +190,7 @@ func (d *SecuritySystemsDataSource) Schema(ctx context.Context, req datasource.S
 func (d *SecuritySystemsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -217,11 +218,7 @@ func (d *SecuritySystemsDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := d.client.APIBaseURL()
-
-	apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	apiBaseURL = strings.TrimPrefix(apiBaseURL, "http://")
-
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(d.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+d.token)

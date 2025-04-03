@@ -13,15 +13,18 @@ provider "saviynt" {
 }
 
 resource "saviynt_endpoint_resource" "example" {
-  endpointname = "sample-103"
-  display_name = "sample 103"
-  security_system  = "shaleenhuddle"
-  mapped_endpoints =[
-    {
-      security_system = "Shaleen_testing_terraform"
-      endpoint        = "Shaleen_testing_terraform"
-      requestable     = "true"
-      operation       = "ADD"
-    }
-  ]
+  endpointname    = "sample"
+  display_name    = "sample"
+  security_system = "samplesystem"
 }
+
+# data "saviynt_rest_connection_datasource" "ss"{
+#   # connection_key="123"
+# }
+
+# output "endpoints_data" {
+#   value = {
+#     msg           = data.saviynt_rest_connection_datasource.ss.msg
+#     error_code    = data.saviynt_rest_connection_datasource.ss.error_code
+#   }
+# }

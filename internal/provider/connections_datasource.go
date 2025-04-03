@@ -6,10 +6,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
-	"log"
-	// "terraform-provider-Saviynt/util"
+	"terraform-provider-Saviynt/util"
 
 	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 
@@ -33,7 +33,7 @@ func NewConnectionsDataSource() datasource.DataSource {
 }
 
 type ConnectionsDataSourceModel struct {
-	ID types.String `tfsdk:"id"`
+	ID             types.String `tfsdk:"id"`
 	Results        []Connection `tfsdk:"results"`
 	ConnectionName types.String `tfsdk:"connection_name"`
 	Offset         types.String `tfsdk:"offset"`
@@ -146,6 +146,7 @@ func (d *ConnectionsDataSource) Schema(ctx context.Context, req datasource.Schem
 func (d *ConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -161,7 +162,6 @@ func (d *ConnectionsDataSource) Configure(ctx context.Context, req datasource.Co
 	d.token = prov.accessToken
 }
 
-
 func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state ConnectionsDataSourceModel
 
@@ -173,10 +173,7 @@ func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := d.client.APIBaseURL()
-	
-	apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	apiBaseURL = strings.TrimPrefix(apiBaseURL, "http://")
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(d.client.APIBaseURL(), "https://"), "http://")
 
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
@@ -225,14 +222,14 @@ func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if connectionsResponse != nil && connectionsResponse.ConnectionList != nil {
 		for _, item := range connectionsResponse.ConnectionList {
 			resultState := Connection{
-				ConnectionName:        safeString(item.CONNECTIONNAME),
-				ConnectionType:        safeString(item.CONNECTIONTYPE),
-				ConnectionDescription: safeString(item.CONNECTIONDESCRIPTION),
-				Status:                safeInt32(item.STATUS),
-				CreatedBy:             safeString(item.CREATEDBY),
-				CreatedOn:             safeString(item.CREATEDON),
-				UpdatedBy:             safeString(item.UPDATEDBY),
-				UpdatedOn:             safeString(item.UPDATEDON),
+				ConnectionName:        util.SafeString(item.CONNECTIONNAME),
+				ConnectionType:        util.SafeString(item.CONNECTIONTYPE),
+				ConnectionDescription: util.SafeString(item.CONNECTIONDESCRIPTION),
+				Status:                util.SafeInt32(item.STATUS),
+				CreatedBy:             util.SafeString(item.CREATEDBY),
+				CreatedOn:             util.SafeString(item.CREATEDON),
+				UpdatedBy:             util.SafeString(item.UPDATEDBY),
+				UpdatedOn:             util.SafeString(item.UPDATEDON),
 			}
 
 			state.Results = append(state.Results, resultState)
@@ -246,11 +243,3 @@ func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 }
-
-func safeInt32(ptr *int32) types.Int32 {
-	if ptr == nil {
-		return types.Int32Null()
-	}
-	return types.Int32Value(*ptr)
-}
-
