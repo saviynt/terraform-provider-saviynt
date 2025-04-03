@@ -6,13 +6,14 @@ package util
 
 import (
 	"encoding/json"
+	"regexp"
 	"sort"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
-
 
 // safeString converts a *string to types.String safely.
 func SafeString(s *string) types.String {
@@ -119,7 +120,12 @@ func SafeStringConnector(s string) *string {
 	if s == "" {
 		return nil
 	}
-	return &s
+	escaped := EscapeTerraformInterpolation(s)
+	return &escaped
+}
+func EscapeTerraformInterpolation(input string) string {
+	re := regexp.MustCompile(`\$\{([^}]+)\}`)
+	return re.ReplaceAllString(input, "$${$1}")
 }
 
 func SafeInt32(ptr *int32) types.Int32 {
@@ -134,4 +140,12 @@ func SafeInt64[T int32 | int64](value *T) types.Int64 {
 		return types.Int64Null()
 	}
 	return types.Int64Value(int64(*value))
+}
+
+func Int32PtrToTFString(val *int32) types.String {
+	if val != nil {
+		str := strconv.Itoa(int(*val))
+		return types.StringValue(str)
+	}
+	return types.StringNull()
 }

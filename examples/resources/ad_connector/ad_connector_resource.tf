@@ -14,13 +14,30 @@ provider "saviynt" {
 
 resource "saviynt_ad_connection_resource" "example" {
   connection_type     = "AD"
-  connection_name     = "Maersk_AD_Connector_3"
+  connection_name     = "Maersk_AD_Connector_8"
   url                 = format("%s://%s:%d", var.LDAP_PROTOCOL, var.IP_ADDRESS, var.LDAP_PORT)
   password            = var.PASSWORD
   username            = var.BIND_USER
   vault_connection    = var.VAULT_CONNECTION
   vault_configuration = var.VAULT_CONFIG
   save_in_vault       = var.SAVE_IN_VAULT
+  enable_account_json=<<EOF
+{
+  "USEDNFROMACCOUNT": "YES",
+  "MOVEDN": "NO",
+  "REMOVEGROUPS": "NO",
+  "ENABLEACCOUNTOU": "CN=Users,DC=corp,DC=SaviyntAD,DC=com1",
+  "AFTERMOVEACTIONS": {
+    "userAccountControl": "544",
+    "otherMailbox": [
+      "$${user?.customproperty15.toString().replace(',','\",\"')}"
+    ]
+  }
+}
+EOF
+  account_name_rule=<<EOF
+  hello world
+  EOF
 }
 
 

@@ -415,8 +415,8 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	var plan ADConnectorResourceModel
 
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	planGetDiagnostics := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(planGetDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -534,20 +534,138 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	stateCreateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateCreateDiagnostics...)
 }
 
 func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// If the API does not support a separate read operation, you can pass through the state.
+	var state ADConnectorResourceModel
+
+	stateRetrievalDiagnostics := req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(stateRetrievalDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Configure API client
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	// Set filters based on provided parameters
+	if !state.ConnectionName.IsNull() && state.ConnectionName.ValueString() != "" {
+		reqParams.SetConnectionname(state.ConnectionName.ValueString())
+	}
+	apiReq := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams)
+
+	// Execute API request
+	apiResp, httpResp, err := apiReq.Execute()
+	if err != nil {
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+	state.ID = types.StringValue("test-connection-" + state.ConnectionName.ValueString())
+	state.ConnectionName = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionname)
+	state.Description = util.SafeStringDatasource(apiResp.ADConnectionResponse.Description)
+	state.DefaultSavRoles = util.SafeStringDatasource(apiResp.ADConnectionResponse.Defaultsavroles)
+	state.ConnectionType = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectiontype)
+	state.EmailTemplate = util.SafeStringDatasource(apiResp.ADConnectionResponse.Emailtemplate)
+
+	state.URL = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.URL)
+	state.ConnectionType = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectiontype)
+	state.Advsearch = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ADVSEARCH)
+	state.CreateAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	state.DisableAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON)
+	state.GroupSearchBaseDN = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.GroupSearchBaseDN)
+	state.PasswordNoofsplchars = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD_NOOFSPLCHARS)
+	state.PasswordNoofdigits = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD_NOOFDIGITS)
+	state.StatusKeyJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.STATUSKEYJSON)
+	state.Searchfilter = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.SEARCHFILTER)
+	state.ConfigJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ConfigJSON)
+	state.RemoveAccountAction = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.REMOVEACCOUNTACTION)
+	state.AccountAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTE)
+	state.AccountNameRule = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNTNAMERULE)
+	state.Username = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.USERNAME)
+	state.Password = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD)
+	state.LdapOrAd = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.LDAP_OR_AD)
+	state.EntitlementAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
+	state.Setrandompassword = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.SETRANDOMPASSWORD)
+	state.PasswordMinLength = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD_MIN_LENGTH)
+	state.PasswordMaxLength = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD_MAX_LENGTH)
+	state.PasswordNoofcapsalpha = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD_NOOFCAPSALPHA)
+	state.Setdefaultpagesize = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.SETDEFAULTPAGESIZE)
+	state.ReuseInactiveAccount = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.REUSEINACTIVEACCOUNT)
+	state.ImportJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.IMPORTJSON)
+	state.CreateUpdateMappings = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CreateUpdateMappings)
+	state.AdvanceFilterJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ADVANCE_FILTER_JSON)
+	state.PamConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PAM_CONFIG)
+	state.PageSize = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PAGE_SIZE)
+	state.Base = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.BASE)
+	state.DcLocator = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.DC_LOCATOR)
+	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	state.ResetAndChangePasswrdJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.RESETANDCHANGEPASSWRDJSON)
+	state.SupportEmptyString = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.SUPPORTEMPTYSTRING)
+	state.ReadOperationalAttributes = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.READ_OPERATIONAL_ATTRIBUTES)
+	state.EnableAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON)
+	state.UserAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.USER_ATTRIBUTE)
+	state.DefaultUserRole = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.DEFAULT_USER_ROLE)
+	state.EndpointsFilter = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	state.UpdateAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON)
+	state.ReuseAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.REUSEACCOUNTJSON)
+	state.EnforceTreeDeletion = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ENFORCE_TREE_DELETION)
+	state.Filter = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.FILTER)
+	state.Objectfilter = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.OBJECTFILTER)
+	state.UpdateUserJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.UPDATEUSERJSON)
+	state.SaveConnection = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.Saveconnection)
+	state.SystemName = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.Systemname)
+	state.GroupImportMapping = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.GroupImportMapping)
+	state.UnlockAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.UNLOCKACCOUNTJSON)
+	state.ModifyUserdataJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	state.OrgBase = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ORG_BASE)
+	state.OrganizationAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ORGANIZATION_ATTRIBUTE)
+	state.Createorgjson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CREATEORGJSON)
+	state.Updateorgjson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.UPDATEORGJSON)
+	state.MaxChangeNumber = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
+	state.IncrementalConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
+	state.CheckForUnique = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
+	msgValue := util.SafeDeref(apiResp.ADConnectionResponse.Msg)
+	errorCodeValue := util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
+
+	// Set the individual fields
+	state.Msg = types.StringValue(msgValue)
+	state.ErrorCode = errorCodeValue
+	resultObj := map[string]string{
+		"msg":        msgValue,
+		"error_code": errorCodeValue.ValueString(),
+	}
+	resultJSON, err := util.MarshalDeterministic(resultObj)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Marshaling Result",
+			fmt.Sprintf("Could not marshal API response: %v", err),
+		)
+		log.Printf("JSON Marshalling failed: ", err)
+		return
+	}
+	state.Result = types.StringValue(string(resultJSON))
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
 }
 
 func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
 
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	planGetDiagnostics := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(planGetDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -673,8 +791,8 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	plan.Result = types.StringValue(string(resultJSON))
 
 	// Store state
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 
 func (r *adConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

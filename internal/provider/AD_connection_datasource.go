@@ -43,6 +43,7 @@ type BaseConnectionDataSourceModel struct {
 
 // SecuritySysteADConnectionDataSourceModelmDetails represents a single security system details object.
 type ADConnectionDataSourceModel struct {
+	ID types.String `tfsdk:"id"`
 	BaseConnectionDataSourceModel
 	ConnectionAttributes *ADConnectionAttributes `tfsdk:"connection_attributes"`
 }
@@ -140,6 +141,10 @@ func (d *ADConnectionsDataSource) Metadata(ctx context.Context, req datasource.M
 func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "Resource ID.",
+			},
 			"connection_name": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
