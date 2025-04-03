@@ -21,23 +21,6 @@ resource "saviynt_ad_connection_resource" "example" {
   vault_connection    = var.VAULT_CONNECTION
   vault_configuration = var.VAULT_CONFIG
   save_in_vault       = var.SAVE_IN_VAULT
-  enable_account_json=<<EOF
-{
-  "USEDNFROMACCOUNT": "YES",
-  "MOVEDN": "NO",
-  "REMOVEGROUPS": "NO",
-  "ENABLEACCOUNTOU": "CN=Users,DC=corp,DC=SaviyntAD,DC=com1",
-  "AFTERMOVEACTIONS": {
-    "userAccountControl": "544",
-    "otherMailbox": [
-      "$${user?.customproperty15.toString().replace(',','\",\"')}"
-    ]
-  }
-}
-EOF
-  account_name_rule=<<EOF
-  hello world
-  EOF
 }
 
 
