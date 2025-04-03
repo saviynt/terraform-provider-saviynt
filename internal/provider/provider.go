@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -74,10 +75,11 @@ func (p *saviyntProvider) Schema(_ context.Context, _ provider.SchemaRequest, re
 func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var config SaviyntProviderModel
 
-	diags := req.Config.Get(ctx, &config)
-	resp.Diagnostics.Append(diags...)
+	configDiagnostics := req.Config.Get(ctx, &config)
+	resp.Diagnostics.Append(configDiagnostics...)
 
 	if resp.Diagnostics.HasError() {
+		log.Println("Diagnostics contain errors, returning early.")
 		return
 	}
 
@@ -93,9 +95,8 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 	ctx = context.Background()
 
 	serverURL := config.ServerURL.ValueString()
-	if strings.HasPrefix(serverURL, "https://") {
-		serverURL = strings.TrimPrefix(serverURL, "https://")
-	}
+
+	serverURL = strings.TrimPrefix(strings.TrimPrefix(serverURL, "https://"), "http://")
 
 	client, err := s.NewClient(ctx, s.Credentials{
 		ServerURL: "https://" + serverURL,
@@ -103,14 +104,17 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 		Password:  config.Password.ValueString(),
 	})
 	if err != nil {
+		log.Printf("Failed to create Saviynt client: %v", err)
 		resp.Diagnostics.AddError(
 			"Failed to create Saviynt client",
 			"Could not initialize Saviynt API client: "+err.Error(),
 		)
 		return
 	}
+
 	token := client.Token()
 	if token == nil {
+		log.Printf("Token error: Failed to fetch access token.")
 		resp.Diagnostics.AddError("Token Error", "Failed to fetch access token.")
 		return
 	}
@@ -120,7 +124,6 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 	p.accessToken = token.AccessToken
 	p.refreshToken = token.RefreshToken
 	p.expiresIn = token.ExpiresIn
-
 	//Storing in Resource and Datasource
 	resp.ResourceData = p
 	resp.DataSourceData = p
@@ -132,6 +135,9 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		NewSecuritySystemsDataSource,
 		NewEndpointsDataSource,
+		NewConnectionsDataSource,
+		NewADConnectionsDataSource,
+		NewRESTConnectionsDataSource,
 	}
 }
 

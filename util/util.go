@@ -13,10 +13,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+
 // safeString converts a *string to types.String safely.
 func SafeString(s *string) types.String {
 	if s == nil {
 		return types.StringValue("")
+	}
+	return types.StringValue(*s)
+}
+
+func SafeBoolDatasource(b *bool) types.Bool {
+	if b == nil {
+		return types.BoolNull()
+	}
+	return types.BoolValue(*b)
+}
+
+func SafeStringDatasource(s *string) types.String {
+	if s == nil {
+		return types.StringNull()
 	}
 	return types.StringValue(*s)
 }
@@ -105,4 +120,18 @@ func SafeStringConnector(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func SafeInt32(ptr *int32) types.Int32 {
+	if ptr == nil {
+		return types.Int32Null()
+	}
+	return types.Int32Value(*ptr)
+}
+
+func SafeInt64[T int32 | int64](value *T) types.Int64 {
+	if value == nil {
+		return types.Int64Null()
+	}
+	return types.Int64Value(int64(*value))
 }
