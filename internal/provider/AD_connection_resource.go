@@ -115,6 +115,7 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
+				Sensitive:   true,
 				Description: "Resource ID.",
 			},
 			"connection_name": schema.StringAttribute{
@@ -376,16 +377,19 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 			"result": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
+				Sensitive:   true,
 				Description: "The result of the API call.",
 			},
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
+				Sensitive:   true,
 				Description: "A message indicating the outcome of the operation.",
 			},
 			"error_code": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
+				Sensitive:   true,
 				Description: "An error code where '0' signifies success and '1' signifies an unsuccessful operation.",
 			},
 		},
@@ -562,6 +566,7 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	if !state.ConnectionName.IsNull() && state.ConnectionName.ValueString() != "" {
 		reqParams.SetConnectionname(state.ConnectionName.ValueString())
 	}
+	log.Printf("name of the connection %#v", state.ConnectionName.ValueString())
 	apiReq := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams)
 
 	// Execute API request
@@ -592,6 +597,8 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.ConfigJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ConfigJSON)
 	state.RemoveAccountAction = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.REMOVEACCOUNTACTION)
 	state.AccountAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTE)
+	log.Printf("[DEBUG] ACCOUNTNAMERULE raw API: %#v", util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNTNAMERULE))
+	log.Printf("[DEBUG] ACCOUNTNAMERULE in TF state: %#v", state.AccountNameRule.ValueString())
 	state.AccountNameRule = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNTNAMERULE)
 	state.Username = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.USERNAME)
 	state.Password = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD)
