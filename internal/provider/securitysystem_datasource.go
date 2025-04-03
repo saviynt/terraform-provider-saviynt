@@ -187,6 +187,7 @@ func (d *SecuritySystemsDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
+// Retrieve user-defined filters from configuration.
 func (d *SecuritySystemsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {

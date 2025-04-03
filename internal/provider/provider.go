@@ -79,6 +79,7 @@ func (p *saviyntProvider) Configure(ctx context.Context, req provider.ConfigureR
 	resp.Diagnostics.Append(configDiagnostics...)
 
 	if resp.Diagnostics.HasError() {
+		log.Println("Diagnostics contain errors, returning early.")
 		return
 	}
 
