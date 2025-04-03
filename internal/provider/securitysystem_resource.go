@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -47,20 +48,16 @@ type securitySystemResourceModel struct {
 	ExternalRiskConnectionJson         types.String   `tfsdk:"external_risk_connection_json"`
 	InherentSODReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
 
-	// Computed response:
 	Result    types.String `tfsdk:"result"`
 	Msg       types.String `tfsdk:"msg"`
 	ErrorCode types.String `tfsdk:"error_code"`
 }
 
-// securitySystemResource represents the Security System resource.
 type SecuritySystemResource struct {
 	client *s.Client
 	token  string
 }
 
-// NewSecuritySystemResource returns a new instance of securitySystemResource.
-// After: no parameters
 func NewSecuritySystemResource() resource.Resource {
 	return &SecuritySystemResource{}
 }
@@ -200,6 +197,7 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 func (r *SecuritySystemResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -227,10 +225,7 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 
 	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -335,8 +330,8 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 
 	// Initialize API client configuration
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	cfg.Host = strings.TrimPrefix(apiBaseURL, "https://")
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
@@ -433,10 +428,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 
 	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -531,6 +523,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 			"Error Updating Security System",
 			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
 		)
+		log.Printf("API call error: ", err)
 		return
 	}
 
@@ -556,6 +549,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("Error marshalling result: ", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))

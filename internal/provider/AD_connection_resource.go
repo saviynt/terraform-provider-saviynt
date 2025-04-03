@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"terraform-provider-Saviynt/util"
@@ -394,6 +395,7 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 func (r *adConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -420,10 +422,7 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -506,12 +505,12 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+
 	// Assign ID and result to the plan
 	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
 
@@ -531,6 +530,7 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("JSON Marshalling failed: ", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))
@@ -645,6 +645,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 			"Error Creating AD Connector",
 			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
 		)
+		log.Printf("[ERROR] API Called Failed: ", err)
 		return
 	}
 	// Assign ID and result to the plan
@@ -666,6 +667,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("JSON Marshalling failed: ", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))

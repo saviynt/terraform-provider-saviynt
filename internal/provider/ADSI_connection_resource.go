@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"log"
 	"strings"
 	"terraform-provider-Saviynt/util"
 
@@ -307,6 +308,7 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 func (r *adsiConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -405,12 +407,11 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 	// Assign ID and result to the plan
 	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
 
@@ -430,6 +431,7 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("JSON Marshalling failed: ", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))
@@ -452,10 +454,7 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -524,12 +523,12 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
+		log.Printf("[ERROR] API Call Failed: %v", err)
+		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+
 	// Assign ID and result to the plan
 	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
 
@@ -549,6 +548,7 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 			"Error Marshaling Result",
 			fmt.Sprintf("Could not marshal API response: %v", err),
 		)
+		log.Printf("JSON Marshalling failed: ", err)
 		return
 	}
 	plan.Result = types.StringValue(string(resultJSON))
