@@ -15,7 +15,7 @@ provider "saviynt" {
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
   connection_name = "Merserk_Release_3490_Rajiv_2"
-  config_json=<<EOF
+  config_json     = <<EOF
   {"showLogs":true}
    EOF
   create_account_json = jsonencode({

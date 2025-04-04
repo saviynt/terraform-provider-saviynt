@@ -50,14 +50,12 @@ type RESTConnectorResourceModel struct {
 	PamConfig             types.String `tfsdk:"pam_config"`
 }
 
-// restConnectionResource implements the resource.Resource interface.
 type restConnectionResource struct {
 	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
 
-// NewTestConnectionResource returns a new instance of testConnectionResource.
 func RestNewTestConnectionResource() resource.Resource {
 	return &restConnectionResource{}
 }
