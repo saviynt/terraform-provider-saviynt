@@ -20,7 +20,6 @@ import (
 	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 )
 
-// RESTConnectionsDataSource defines the data source
 type RESTConnectionsDataSource struct {
 	client *s.Client
 	token  string
@@ -71,22 +70,19 @@ type RESTConnectionAttributesConnectionTimeoutConfig struct {
 	ConnectionTimeout       types.Int64 `tfsdk:"connection_timeout"`
 }
 
-// Ensure the implementation satisfies Terraform framework interface
 var _ datasource.DataSource = &RESTConnectionsDataSource{}
 
-// NewSecuritySystemsDataSource returns a new instance
 func NewRESTConnectionsDataSource() datasource.DataSource {
 	return &RESTConnectionsDataSource{}
 }
 
-// Metadata defines the data source name
 func (d *RESTConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_rest_connection_datasource"
 }
 
-// Schema defines the attributes for the data source
 func (d *RESTConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Retrieve the details of a REST connector by its name or key",
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,
