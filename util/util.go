@@ -7,12 +7,12 @@ package util
 import (
 	"encoding/json"
 	"sort"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
-
 
 // safeString converts a *string to types.String safely.
 func SafeString(s *string) types.String {
@@ -30,7 +30,7 @@ func SafeBoolDatasource(b *bool) types.Bool {
 }
 
 func SafeStringDatasource(s *string) types.String {
-	if s == nil {
+	if s == nil || *s == "" {
 		return types.StringNull()
 	}
 	return types.StringValue(*s)
@@ -115,9 +115,31 @@ func MarshalDeterministic(m map[string]string) (string, error) {
 func StringPtr(v string) *string {
 	return &v
 }
+
+//	func SafeStringConnector(s string) *string {
+//		if s == "" {
+//			return nil
+//		}
+//		escaped := EscapeTerraformInterpolation(s)
+//		return &escaped
+//	}
+//
+//	func EscapeTerraformInterpolation(input string) string {
+//		re := regexp.MustCompile(`\$\{([^}]+)\}`)
+//		return re.ReplaceAllString(input, "$${$1}")
+//	}
 func SafeStringConnector(s string) *string {
 	if s == "" {
 		return nil
+	}
+	return &s
+}
+
+func SafeStringConnectorForNullHandling(s string) *string {
+	//for .tf file where we have removed the data but we have the data in ui
+	if s == "" {
+		empty := ""
+		return &empty
 	}
 	return &s
 }
@@ -134,4 +156,12 @@ func SafeInt64[T int32 | int64](value *T) types.Int64 {
 		return types.Int64Null()
 	}
 	return types.Int64Value(int64(*value))
+}
+
+func Int32PtrToTFString(val *int32) types.String {
+	if val != nil {
+		str := strconv.Itoa(int(*val))
+		return types.StringValue(str)
+	}
+	return types.StringNull()
 }

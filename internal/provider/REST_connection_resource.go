@@ -50,12 +50,13 @@ type RESTConnectorResourceModel struct {
 	PamConfig             types.String `tfsdk:"pam_config"`
 }
 
+// restConnectionResource implements the resource.Resource interface.
 type restConnectionResource struct {
-	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
 
+// NewTestConnectionResource returns a new instance of testConnectionResource.
 func RestNewTestConnectionResource() resource.Resource {
 	return &restConnectionResource{}
 }
@@ -71,6 +72,10 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 			"id": schema.StringAttribute{
 				Computed:    true,
 				Description: "Resource ID.",
+			},
+			"connection_key": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Unique identifier of the connection returned by the API. Example: 1909",
 			},
 			"connection_name": schema.StringAttribute{
 				Required:    true,
@@ -200,10 +205,6 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "PAM configuration JSON.",
 			},
-			"result": schema.StringAttribute{
-				Computed:    true,
-				Description: "Result of the operation.",
-			},
 			"msg": schema.StringAttribute{
 				Computed:    true,
 				Description: "Message returned from the operation.",
@@ -239,16 +240,18 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	var plan RESTConnectorResourceModel
 
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	//for connJson data conversion from string to map[string]interface{}
 	var connJSON map[string]interface{}
 	err := json.Unmarshal([]byte(plan.ConnectionJSON.ValueString()), &connJSON)
 	if err != nil {
 		log.Fatalf("Failed to unmarshal ConnectionJSON: %v", err)
 	}
+
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
@@ -259,37 +262,37 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 		BaseConnector: openapi.BaseConnector{
 			Connectiontype:     "REST",
 			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.SafeStringConnector(plan.Description.ValueString()),
-			Defaultsavroles:    util.SafeStringConnector(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.SafeStringConnector(plan.EmailTemplate.ValueString()),
+			Description:        util.SafeStringConnectorForNullHandling(plan.Description.ValueString()),
+			Defaultsavroles:    util.SafeStringConnectorForNullHandling(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.SafeStringConnectorForNullHandling(plan.EmailTemplate.ValueString()),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		ConnectionJSON:          connJSON,
-		ImportUserJSON:          util.SafeStringConnector(plan.ImportUserJson.ValueString()),
-		ImportAccountEntJSON:    util.SafeStringConnector(plan.ImportAccountEntJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.SafeStringConnector(plan.StatusThresholdConfig.ValueString()),
-		CreateAccountJSON:       util.SafeStringConnector(plan.CreateAccountJson.ValueString()),
-		UpdateAccountJSON:       util.SafeStringConnector(plan.UpdateAccountJson.ValueString()),
-		EnableAccountJSON:       util.SafeStringConnector(plan.EnableAccountJson.ValueString()),
-		DisableAccountJSON:      util.SafeStringConnector(plan.DisableAccountJson.ValueString()),
-		AddAccessJSON:           util.SafeStringConnector(plan.AddAccessJson.ValueString()),
-		RemoveAccessJSON:        util.SafeStringConnector(plan.RemoveAccessJson.ValueString()),
-		UpdateUserJSON:          util.SafeStringConnector(plan.UpdateUserJson.ValueString()),
-		ChangePassJSON:          util.SafeStringConnector(plan.ChangePassJson.ValueString()),
-		RemoveAccountJSON:       util.SafeStringConnector(plan.RemoveAccountJson.ValueString()),
-		TicketStatusJSON:        util.SafeStringConnector(plan.TicketStatusJson.ValueString()),
-		CreateTicketJSON:        util.SafeStringConnector(plan.CreateTicketJson.ValueString()),
-		ENDPOINTS_FILTER:        util.SafeStringConnector(plan.EndpointsFilter.ValueString()),
-		PasswdPolicyJSON:        util.SafeStringConnector(plan.PasswdPolicyJson.ValueString()),
-		ConfigJSON:              util.SafeStringConnector(plan.ConfigJSON.ValueString()),
-		AddFFIDAccessJSON:       util.SafeStringConnector(plan.AddFFIDAccessJson.ValueString()),
-		RemoveFFIDAccessJSON:    util.SafeStringConnector(plan.RemoveFFIDAccessJson.ValueString()),
-		MODIFYUSERDATAJSON:      util.SafeStringConnector(plan.ModifyUserdataJson.ValueString()),
-		SendOtpJSON:             util.SafeStringConnector(plan.SendOtpJson.ValueString()),
-		ValidateOtpJSON:         util.SafeStringConnector(plan.ValidateOtpJson.ValueString()),
-		PAM_CONFIG:              util.SafeStringConnector(plan.PamConfig.ValueString()),
+		ImportUserJSON:          util.SafeStringConnectorForNullHandling(plan.ImportUserJson.ValueString()),
+		ImportAccountEntJSON:    util.SafeStringConnectorForNullHandling(plan.ImportAccountEntJson.ValueString()),
+		STATUS_THRESHOLD_CONFIG: util.SafeStringConnectorForNullHandling(plan.StatusThresholdConfig.ValueString()),
+		CreateAccountJSON:       util.SafeStringConnectorForNullHandling(plan.CreateAccountJson.ValueString()),
+		UpdateAccountJSON:       util.SafeStringConnectorForNullHandling(plan.UpdateAccountJson.ValueString()),
+		EnableAccountJSON:       util.SafeStringConnectorForNullHandling(plan.EnableAccountJson.ValueString()),
+		DisableAccountJSON:      util.SafeStringConnectorForNullHandling(plan.DisableAccountJson.ValueString()),
+		AddAccessJSON:           util.SafeStringConnectorForNullHandling(plan.AddAccessJson.ValueString()),
+		RemoveAccessJSON:        util.SafeStringConnectorForNullHandling(plan.RemoveAccessJson.ValueString()),
+		UpdateUserJSON:          util.SafeStringConnectorForNullHandling(plan.UpdateUserJson.ValueString()),
+		ChangePassJSON:          util.SafeStringConnectorForNullHandling(plan.ChangePassJson.ValueString()),
+		RemoveAccountJSON:       util.SafeStringConnectorForNullHandling(plan.RemoveAccountJson.ValueString()),
+		TicketStatusJSON:        util.SafeStringConnectorForNullHandling(plan.TicketStatusJson.ValueString()),
+		CreateTicketJSON:        util.SafeStringConnectorForNullHandling(plan.CreateTicketJson.ValueString()),
+		ENDPOINTS_FILTER:        util.SafeStringConnectorForNullHandling(plan.EndpointsFilter.ValueString()),
+		PasswdPolicyJSON:        util.SafeStringConnectorForNullHandling(plan.PasswdPolicyJson.ValueString()),
+		ConfigJSON:              util.SafeStringConnectorForNullHandling(plan.ConfigJSON.ValueString()),
+		AddFFIDAccessJSON:       util.SafeStringConnectorForNullHandling(plan.AddFFIDAccessJson.ValueString()),
+		RemoveFFIDAccessJSON:    util.SafeStringConnectorForNullHandling(plan.RemoveFFIDAccessJson.ValueString()),
+		MODIFYUSERDATAJSON:      util.SafeStringConnectorForNullHandling(plan.ModifyUserdataJson.ValueString()),
+		SendOtpJSON:             util.SafeStringConnectorForNullHandling(plan.SendOtpJson.ValueString()),
+		ValidateOtpJSON:         util.SafeStringConnectorForNullHandling(plan.ValidateOtpJson.ValueString()),
+		PAM_CONFIG:              util.SafeStringConnectorForNullHandling(plan.PamConfig.ValueString()),
 	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
@@ -298,37 +301,17 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
-	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
-
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -339,11 +322,12 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	var plan RESTConnectorResourceModel
 
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	
+	//for connJson data conversion from string to map[string]interface{}
 	var connJSON map[string]interface{}
 	if !plan.ConnectionJSON.IsNull() && plan.ConnectionJSON.ValueString() != "" {
 		err := json.Unmarshal([]byte(plan.ConnectionJSON.ValueString()), &connJSON)
@@ -366,37 +350,37 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 		BaseConnector: openapi.BaseConnector{
 			Connectiontype:     "REST",
 			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.SafeStringConnector(plan.Description.ValueString()),
-			Defaultsavroles:    util.SafeStringConnector(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.SafeStringConnector(plan.EmailTemplate.ValueString()),
+			Description:        util.SafeStringConnectorForNullHandling(plan.Description.ValueString()),
+			Defaultsavroles:    util.SafeStringConnectorForNullHandling(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.SafeStringConnectorForNullHandling(plan.EmailTemplate.ValueString()),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		ConnectionJSON:          connJSON,
-		ImportUserJSON:          util.SafeStringConnector(plan.ImportUserJson.ValueString()),
-		ImportAccountEntJSON:    util.SafeStringConnector(plan.ImportAccountEntJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.SafeStringConnector(plan.StatusThresholdConfig.ValueString()),
-		CreateAccountJSON:       util.SafeStringConnector(plan.CreateAccountJson.ValueString()),
-		UpdateAccountJSON:       util.SafeStringConnector(plan.UpdateAccountJson.ValueString()),
-		EnableAccountJSON:       util.SafeStringConnector(plan.EnableAccountJson.ValueString()),
-		DisableAccountJSON:      util.SafeStringConnector(plan.DisableAccountJson.ValueString()),
-		AddAccessJSON:           util.SafeStringConnector(plan.AddAccessJson.ValueString()),
-		RemoveAccessJSON:        util.SafeStringConnector(plan.RemoveAccessJson.ValueString()),
-		UpdateUserJSON:          util.SafeStringConnector(plan.UpdateUserJson.ValueString()),
-		ChangePassJSON:          util.SafeStringConnector(plan.ChangePassJson.ValueString()),
-		RemoveAccountJSON:       util.SafeStringConnector(plan.RemoveAccountJson.ValueString()),
-		TicketStatusJSON:        util.SafeStringConnector(plan.TicketStatusJson.ValueString()),
-		CreateTicketJSON:        util.SafeStringConnector(plan.CreateTicketJson.ValueString()),
-		ENDPOINTS_FILTER:        util.SafeStringConnector(plan.EndpointsFilter.ValueString()),
-		PasswdPolicyJSON:        util.SafeStringConnector(plan.PasswdPolicyJson.ValueString()),
-		ConfigJSON:              util.SafeStringConnector(plan.ConfigJSON.ValueString()),
-		AddFFIDAccessJSON:       util.SafeStringConnector(plan.AddFFIDAccessJson.ValueString()),
-		RemoveFFIDAccessJSON:    util.SafeStringConnector(plan.RemoveFFIDAccessJson.ValueString()),
-		MODIFYUSERDATAJSON:      util.SafeStringConnector(plan.ModifyUserdataJson.ValueString()),
-		SendOtpJSON:             util.SafeStringConnector(plan.SendOtpJson.ValueString()),
-		ValidateOtpJSON:         util.SafeStringConnector(plan.ValidateOtpJson.ValueString()),
-		PAM_CONFIG:              util.SafeStringConnector(plan.PamConfig.ValueString()),
+		ImportUserJSON:          util.SafeStringConnectorForNullHandling(plan.ImportUserJson.ValueString()),
+		ImportAccountEntJSON:    util.SafeStringConnectorForNullHandling(plan.ImportAccountEntJson.ValueString()),
+		STATUS_THRESHOLD_CONFIG: util.SafeStringConnectorForNullHandling(plan.StatusThresholdConfig.ValueString()),
+		CreateAccountJSON:       util.SafeStringConnectorForNullHandling(plan.CreateAccountJson.ValueString()),
+		UpdateAccountJSON:       util.SafeStringConnectorForNullHandling(plan.UpdateAccountJson.ValueString()),
+		EnableAccountJSON:       util.SafeStringConnectorForNullHandling(plan.EnableAccountJson.ValueString()),
+		DisableAccountJSON:      util.SafeStringConnectorForNullHandling(plan.DisableAccountJson.ValueString()),
+		AddAccessJSON:           util.SafeStringConnectorForNullHandling(plan.AddAccessJson.ValueString()),
+		RemoveAccessJSON:        util.SafeStringConnectorForNullHandling(plan.RemoveAccessJson.ValueString()),
+		UpdateUserJSON:          util.SafeStringConnectorForNullHandling(plan.UpdateUserJson.ValueString()),
+		ChangePassJSON:          util.SafeStringConnectorForNullHandling(plan.ChangePassJson.ValueString()),
+		RemoveAccountJSON:       util.SafeStringConnectorForNullHandling(plan.RemoveAccountJson.ValueString()),
+		TicketStatusJSON:        util.SafeStringConnectorForNullHandling(plan.TicketStatusJson.ValueString()),
+		CreateTicketJSON:        util.SafeStringConnectorForNullHandling(plan.CreateTicketJson.ValueString()),
+		ENDPOINTS_FILTER:        util.SafeStringConnectorForNullHandling(plan.EndpointsFilter.ValueString()),
+		PasswdPolicyJSON:        util.SafeStringConnectorForNullHandling(plan.PasswdPolicyJson.ValueString()),
+		ConfigJSON:              util.SafeStringConnectorForNullHandling(plan.ConfigJSON.ValueString()),
+		AddFFIDAccessJSON:       util.SafeStringConnectorForNullHandling(plan.AddFFIDAccessJson.ValueString()),
+		RemoveFFIDAccessJSON:    util.SafeStringConnectorForNullHandling(plan.RemoveFFIDAccessJson.ValueString()),
+		MODIFYUSERDATAJSON:      util.SafeStringConnectorForNullHandling(plan.ModifyUserdataJson.ValueString()),
+		SendOtpJSON:             util.SafeStringConnectorForNullHandling(plan.SendOtpJson.ValueString()),
+		ValidateOtpJSON:         util.SafeStringConnectorForNullHandling(plan.ValidateOtpJson.ValueString()),
+		PAM_CONFIG:              util.SafeStringConnectorForNullHandling(plan.PamConfig.ValueString()),
 	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
