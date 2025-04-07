@@ -80,10 +80,8 @@ type SecuritySystemDetails struct {
 	InherentSodReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
 }
 
-// Ensure the implementation satisfies Terraform framework interface
 var _ datasource.DataSource = &SecuritySystemsDataSource{}
 
-// NewSecuritySystemsDataSource returns a new instance
 func NewSecuritySystemsDataSource() datasource.DataSource {
 	return &SecuritySystemsDataSource{}
 }
