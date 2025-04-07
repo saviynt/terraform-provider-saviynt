@@ -93,14 +93,12 @@ type ADConnectorResourceModel struct {
 	PamConfig                 types.String `tfsdk:"pam_config"`
 }
 
-// testConnectionResource implements the resource.Resource interface.
 type adConnectionResource struct {
 	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
 
-// NewTestConnectionResource returns a new instance of testConnectionResource.
 func ADNewTestConnectionResource() resource.Resource {
 	return &adConnectionResource{}
 }

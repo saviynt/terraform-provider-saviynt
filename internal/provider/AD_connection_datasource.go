@@ -124,22 +124,19 @@ type ADConnectionAttributesConnectionTimeoutConfig struct {
 	ConnectionTimeout       types.Int64 `tfsdk:"connection_timeout"`
 }
 
-// Ensure the implementation satisfies Terraform framework interface
 var _ datasource.DataSource = &ADConnectionsDataSource{}
 
-// NewSecuritySystemsDataSource returns a new instance
 func NewADConnectionsDataSource() datasource.DataSource {
 	return &ADConnectionsDataSource{}
 }
 
-// Metadata defines the data source name
 func (d *ADConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_ad_connection_datasource"
 }
 
-// Schema defines the attributes for the data source
 func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Retrieve the details for a given AD connector by its name or key",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

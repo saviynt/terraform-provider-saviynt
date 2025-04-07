@@ -157,18 +157,6 @@ type endpointResourceModel struct {
 	CustomProperty60Label                   types.String `tfsdk:"custom_property60_label"`
 	AllowRemoveAllRoleOnRequest             types.String `tfsdk:"allow_remove_all_role_on_request"`
 	ChangePasswordAccessQuery               types.String `tfsdk:"change_password_access_query"`
-	// MappedEndpointsSecuritySystem           types.String `tfsdk:"mapped_endpoints_security_system"`
-	// MappedEndpointsEndpoint                 types.String `tfsdk:"mapped_endpoints_endpoint"`
-	// MappedEndpointsRequestable              types.String `tfsdk:"mapped_endpoints_requestable"`
-	// MappedEndpointsOperation                types.String `tfsdk:"mapped_endpoints_operation"`
-	// RequestableRoleTypeRoleType       types.String     `tfsdk:"requestable_role_type_role_type"`
-	// RequestableRoleTypeRequestOption  types.String     `tfsdk:"requestable_role_type_request_option"`
-	// RequestableRoleTypeRequired       types.Bool       `tfsdk:"requestable_role_type_required"`
-	// RequestableRoleTypeRequestedQuery types.String     `tfsdk:"requestable_role_type_requested_query"`
-	// RequestableRoleTypeSelectedQuery  types.String     `tfsdk:"requestable_role_type_selected_query"`
-	// RequestableRoleTypeShowOn         types.String     `tfsdk:"requestable_role_type_show_on"`
-	// EmailTemplateType                 types.String     `tfsdk:"email_template_type"`
-	// TaskType                          types.String     `tfsdk:"task_type"`
 	RequestableRoleType []RequestableRoleType `tfsdk:"requestable_role_type"`
 	EmailTemplate       []EmailTemplate       `tfsdk:"email_template"`
 	MappedEndpoints     []MappedEndpoint      `tfsdk:"mapped_endpoints"`

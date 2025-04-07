@@ -66,13 +66,11 @@ type ADSIConnectorResourceModel struct {
 	ModifyUserDataJson          types.String `tfsdk:"modifyuserdatajson"`
 }
 
-// testConnectionResource implements the resource.Resource interface.
 type adsiConnectionResource struct {
 	client *s.Client
 	token  string
 }
 
-// NewTestConnectionResource returns a new instance of testConnectionResource.
 func ADSINewTestConnectionResource() resource.Resource {
 	return &adsiConnectionResource{}
 }

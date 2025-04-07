@@ -12,7 +12,7 @@ variable "SAVIYNT_PASSWORD" {
   sensitive   = true
 }
 variable "PASSWORD" {
-type=string
-description="Connector Password"
-sensitive=true
+  type        = string
+  description = "Connector Password"
+  sensitive   = true
 }

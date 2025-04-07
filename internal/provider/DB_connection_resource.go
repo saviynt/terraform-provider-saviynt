@@ -55,14 +55,12 @@ type DBConnectorResourceModel struct {
 	CliCommandJson         types.String `tfsdk:"cli_command_json"`
 }
 
-// testConnectionResource implements the resource.Resource interface.
 type dbConnectionResource struct {
 	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
 
-// NewTestConnectionResource returns a new instance of testConnectionResource.
 func DBNewTestConnectionResource() resource.Resource {
 	return &dbConnectionResource{}
 }
