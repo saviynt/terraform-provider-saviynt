@@ -135,6 +135,15 @@ func SafeStringConnector(s string) *string {
 	return &s
 }
 
+func SafeStringConnectorForNullHandling(s string) *string {
+	//for .tf file where we have removed the data but we have the data in ui
+	if s == "" {
+		empty := ""
+		return &empty
+	}
+	return &s
+}
+
 func SafeInt32(ptr *int32) types.Int32 {
 	if ptr == nil {
 		return types.Int32Null()

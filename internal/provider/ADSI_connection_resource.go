@@ -21,8 +21,8 @@ import (
 )
 
 type ADSIConnectorResourceModel struct {
-	ID types.String `tfsdk:"id"`
 	BaseConnector
+	ID                          types.String `tfsdk:"id"`
 	URL                         types.String `tfsdk:"url"`
 	Username                    types.String `tfsdk:"username"`
 	Password                    types.String `tfsdk:"password"`
@@ -68,7 +68,6 @@ type ADSIConnectorResourceModel struct {
 
 // testConnectionResource implements the resource.Resource interface.
 type adsiConnectionResource struct {
-	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
@@ -286,11 +285,6 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "Specify this parameter to transform the data during user import.",
 			},
-			// "result": schema.StringAttribute{
-			// 	Optional:    true,
-			// 	Computed:    true,
-			// 	Description: "The result of the API call.",
-			// },
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
