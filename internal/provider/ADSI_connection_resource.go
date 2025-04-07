@@ -6,8 +6,8 @@ package provider
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"log"
+	"net/http"
 	"strings"
 	"terraform-provider-Saviynt/util"
 
@@ -286,11 +286,11 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "Specify this parameter to transform the data during user import.",
 			},
-			"result": schema.StringAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "The result of the API call.",
-			},
+			// "result": schema.StringAttribute{
+			// 	Optional:    true,
+			// 	Computed:    true,
+			// 	Description: "The result of the API call.",
+			// },
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
@@ -421,20 +421,20 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	// Set the individual fields
 	plan.Msg = types.StringValue(msgValue)
 	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		log.Printf("JSON Marshalling failed: ", err)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
+	// resultObj := map[string]string{
+	// 	"msg":        msgValue,
+	// 	"error_code": errorCodeValue,
+	// }
+	// resultJSON, err := util.MarshalDeterministic(resultObj)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError(
+	// 		"Error Marshaling Result",
+	// 		fmt.Sprintf("Could not marshal API response: %v", err),
+	// 	)
+	// 	log.Printf("JSON Marshalling failed: ", err)
+	// 	return
+	// }
+	// plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
@@ -538,20 +538,20 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	// Set the individual fields
 	plan.Msg = types.StringValue(msgValue)
 	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		log.Printf("JSON Marshalling failed: ", err)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
+	// resultObj := map[string]string{
+	// 	"msg":        msgValue,
+	// 	"error_code": errorCodeValue,
+	// }
+	// resultJSON, err := util.MarshalDeterministic(resultObj)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError(
+	// 		"Error Marshaling Result",
+	// 		fmt.Sprintf("Could not marshal API response: %v", err),
+	// 	)
+	// 	log.Printf("JSON Marshalling failed: ", err)
+	// 	return
+	// }
+	// plan.Result = types.StringValue(string(resultJSON))
 
 	// Store state
 	diags = resp.State.Set(ctx, plan)

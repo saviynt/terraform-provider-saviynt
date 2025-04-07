@@ -316,19 +316,19 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	// Set the individual fields
 	plan.Msg = types.StringValue(msgValue)
 	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
+	// resultObj := map[string]string{
+	// 	"msg":        msgValue,
+	// 	"error_code": errorCodeValue,
+	// }
+	// resultJSON, err := util.MarshalDeterministic(resultObj)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError(
+	// 		"Error Marshaling Result",
+	// 		fmt.Sprintf("Could not marshal API response: %v", err),
+	// 	)
+	// 	return
+	// }
+	// plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
@@ -425,20 +425,20 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	// Set the individual fields
 	plan.Msg = types.StringValue(msgValue)
 	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		log.Printf("Error in marshalling JSON: ", err)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
+	// resultObj := map[string]string{
+	// 	"msg":        msgValue,
+	// 	"error_code": errorCodeValue,
+	// }
+	// resultJSON, err := util.MarshalDeterministic(resultObj)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError(
+	// 		"Error Marshaling Result",
+	// 		fmt.Sprintf("Could not marshal API response: %v", err),
+	// 	)
+	// 	log.Printf("Error in marshalling JSON: ", err)
+	// 	return
+	// }
+	// plan.Result = types.StringValue(string(resultJSON))
 
 	// Store state
 	diags = resp.State.Set(ctx, plan)

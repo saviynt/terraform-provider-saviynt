@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,6 +21,7 @@ import (
 )
 
 type BaseConnector struct {
+	ConnectionKey      types.Int64  `tfsdk:"connection_key"`
 	ConnectionName     types.String `tfsdk:"connection_name"`
 	ConnectionType     types.String `tfsdk:"connection_type"`
 	Description        types.String `tfsdk:"description"`
@@ -28,9 +30,9 @@ type BaseConnector struct {
 	VaultConnection    types.String `tfsdk:"vault_connection"`
 	VaultConfiguration types.String `tfsdk:"vault_configuration"`
 	SaveInVault        types.String `tfsdk:"save_in_vault"`
-	Result             types.String `tfsdk:"result"`
-	Msg                types.String `tfsdk:"msg"`
-	ErrorCode          types.String `tfsdk:"error_code"`
+	// Result             types.String `tfsdk:"result"`
+	Msg       types.String `tfsdk:"msg"`
+	ErrorCode types.String `tfsdk:"error_code"`
 }
 type ADConnectorResourceModel struct {
 	ID types.String `tfsdk:"id"`
@@ -118,6 +120,11 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Sensitive:   true,
 				Description: "Resource ID.",
 			},
+			"connection_key": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Unique identifier of the connection returned by the API. Example: 1909",
+			},
+
 			"connection_name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
@@ -159,7 +166,7 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Description: "System admin username.",
 			},
 			"password": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Description: "Set the Password.",
 			},
 			"ldap_or_ad": schema.StringAttribute{
@@ -374,12 +381,12 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Optional:    true,
 				Description: "JSON for PAM bootstrap configuration. Example: '{\"Connection\":\"AD\",...}'",
 			},
-			"result": schema.StringAttribute{
-				Optional:    true,
-				Computed:    true,
-				Sensitive:   true,
-				Description: "The result of the API call.",
-			},
+			// "result": schema.StringAttribute{
+			// 	Optional:    true,
+			// 	Computed:    true,
+			// 	Sensitive:   true,
+			// 	Description: "The result of the API call.",
+			// },
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
@@ -417,10 +424,8 @@ func (r *adConnectionResource) Configure(ctx context.Context, req resource.Confi
 
 func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan ADConnectorResourceModel
-
 	// Extract plan from request
-	planGetDiagnostics := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(planGetDiagnostics...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -507,46 +512,23 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
-	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
-
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		log.Printf("JSON Marshalling failed: ", err)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
-	stateCreateDiagnostics := resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(stateCreateDiagnostics...)
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state ADConnectorResourceModel
 
-	stateRetrievalDiagnostics := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(stateRetrievalDiagnostics...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -562,28 +544,25 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	apiClient := openapi.NewAPIClient(cfg)
 	reqParams := openapi.GetConnectionDetailsRequest{}
 
-	// Set filters based on provided parameters
-	if !state.ConnectionName.IsNull() && state.ConnectionName.ValueString() != "" {
-		reqParams.SetConnectionname(state.ConnectionName.ValueString())
-	}
-	log.Printf("name of the connection %#v", state.ConnectionName.ValueString())
-	apiReq := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams)
-
-	// Execute API request
-	apiResp, httpResp, err := apiReq.Execute()
+	reqParams.SetConnectionname(state.ConnectionName.ValueString())
+	apiResp, httpResp, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("Unable to read properly baby gorl")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+
+	jsonResp, _ := json.MarshalIndent(apiResp, "", "  ")
+	log.Printf("apiResp (JSON):\n%s", string(jsonResp))
+
 	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-	state.ID = types.StringValue("test-connection-" + state.ConnectionName.ValueString())
+	state.ConnectionKey = types.Int64Value(int64(*apiResp.ADConnectionResponse.Connectionkey))
+	state.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ADConnectionResponse.Connectionkey))
 	state.ConnectionName = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionname)
 	state.Description = util.SafeStringDatasource(apiResp.ADConnectionResponse.Description)
 	state.DefaultSavRoles = util.SafeStringDatasource(apiResp.ADConnectionResponse.Defaultsavroles)
 	state.ConnectionType = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectiontype)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.ADConnectionResponse.Emailtemplate)
-
 	state.URL = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.URL)
 	state.ConnectionType = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectiontype)
 	state.Advsearch = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ADVSEARCH)
@@ -597,11 +576,8 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.ConfigJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ConfigJSON)
 	state.RemoveAccountAction = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.REMOVEACCOUNTACTION)
 	state.AccountAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTE)
-	log.Printf("[DEBUG] ACCOUNTNAMERULE raw API: %#v", util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNTNAMERULE))
-	log.Printf("[DEBUG] ACCOUNTNAMERULE in TF state: %#v", state.AccountNameRule.ValueString())
 	state.AccountNameRule = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ACCOUNTNAMERULE)
 	state.Username = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.USERNAME)
-	state.Password = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.PASSWORD)
 	state.LdapOrAd = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.LDAP_OR_AD)
 	state.EntitlementAttribute = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
 	state.Setrandompassword = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.SETRANDOMPASSWORD)
@@ -643,40 +619,24 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.MaxChangeNumber = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
 	state.IncrementalConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
 	state.CheckForUnique = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
-	msgValue := util.SafeDeref(apiResp.ADConnectionResponse.Msg)
-	errorCodeValue := util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
+	apiMessage := util.SafeDeref(apiResp.ADConnectionResponse.Msg)
+	if apiMessage == "success" {
+		state.Msg = types.StringValue("Connection Successful")
+	} else {
+		state.Msg = types.StringValue(apiMessage)
+	}
+	state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
 
-	// Set the individual fields
-	state.Msg = types.StringValue(msgValue)
-	state.ErrorCode = errorCodeValue
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue.ValueString(),
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		log.Printf("JSON Marshalling failed: ", err)
-		return
-	}
-	state.Result = types.StringValue(string(resultJSON))
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
 }
 
 func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
-
-	// Extract plan from request
-	planGetDiagnostics := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(planGetDiagnostics...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := r.client.APIBaseURL()
 	if strings.HasPrefix(apiBaseURL, "https://") {
@@ -763,43 +723,22 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
 
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
-
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
-		log.Printf("[ERROR] API Called Failed: ", err)
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("Unable to update properly baby gorl")
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
-
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Marshaling Result",
-			fmt.Sprintf("Could not marshal API response: %v", err),
-		)
-		log.Printf("JSON Marshalling failed: ", err)
-		return
-	}
-	plan.Result = types.StringValue(string(resultJSON))
-
-	// Store state
+	log.Printf("sab sahi chal raha hai update mei")
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	// plan.Password = plan.Password
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
+	// resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	// r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *adConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

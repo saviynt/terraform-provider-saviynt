@@ -6,7 +6,6 @@ package util
 
 import (
 	"encoding/json"
-	"regexp"
 	"sort"
 	"strconv"
 
@@ -31,7 +30,7 @@ func SafeBoolDatasource(b *bool) types.Bool {
 }
 
 func SafeStringDatasource(s *string) types.String {
-	if s == nil {
+	if s == nil || *s == "" {
 		return types.StringNull()
 	}
 	return types.StringValue(*s)
@@ -116,16 +115,24 @@ func MarshalDeterministic(m map[string]string) (string, error) {
 func StringPtr(v string) *string {
 	return &v
 }
+
+//	func SafeStringConnector(s string) *string {
+//		if s == "" {
+//			return nil
+//		}
+//		escaped := EscapeTerraformInterpolation(s)
+//		return &escaped
+//	}
+//
+//	func EscapeTerraformInterpolation(input string) string {
+//		re := regexp.MustCompile(`\$\{([^}]+)\}`)
+//		return re.ReplaceAllString(input, "$${$1}")
+//	}
 func SafeStringConnector(s string) *string {
 	if s == "" {
 		return nil
 	}
-	escaped := EscapeTerraformInterpolation(s)
-	return &escaped
-}
-func EscapeTerraformInterpolation(input string) string {
-	re := regexp.MustCompile(`\$\{([^}]+)\}`)
-	return re.ReplaceAllString(input, "$${$1}")
+	return &s
 }
 
 func SafeInt32(ptr *int32) types.Int32 {
