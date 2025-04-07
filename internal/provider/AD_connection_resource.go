@@ -537,7 +537,7 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	reqParams.SetConnectionname(state.ConnectionName.ValueString())
 	apiResp, httpResp, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
-		log.Printf("Unable to read properly baby gorl")
+		log.Printf("Problem with the get function")
 		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
@@ -711,11 +711,10 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
-		log.Printf("Unable to update properly baby gorl")
+		log.Printf("Problem with the update function")
 		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	log.Printf("sab sahi chal raha hai update mei")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
