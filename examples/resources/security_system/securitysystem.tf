@@ -12,6 +12,6 @@ terraform {
 	password   = var.SAVIYNT_PASSWORD
   }
   resource "saviynt_security_system_resource" "example" {
-    systemname="name of the security system"
-    display_name="display name of the security system"
+    systemname="shaleen1"
+    display_name="shaleen1"
   }
