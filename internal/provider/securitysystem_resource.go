@@ -14,8 +14,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	s "github.com/saviynt/saviynt-api-go-client"
 	openapi "github.com/saviynt/saviynt-api-go-client/securitysystems"
@@ -49,8 +47,10 @@ type securitySystemResourceModel struct {
 	ServiceDeskConnection              types.String   `tfsdk:"service_desk_connection"`
 	ExternalRiskConnectionJson         types.String   `tfsdk:"external_risk_connection_json"`
 	InherentSODReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
-	Msg                                types.String   `tfsdk:"msg"`
-	ErrorCode                          types.String   `tfsdk:"error_code"`
+
+	Result    types.String `tfsdk:"result"`
+	Msg       types.String `tfsdk:"msg"`
+	ErrorCode types.String `tfsdk:"error_code"`
 }
 
 type SecuritySystemResource struct {
@@ -71,10 +71,8 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 		Description: "Create and manage Security Systems in Saviynt",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
+				Computed:    true,
+				Description: "The unique ID of the resource.",
 			},
 			"systemname": schema.StringAttribute{
 				Required:    true,
@@ -177,21 +175,20 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 				Description: "You can use this option used to filter out columns in SOD.",
 			},
+			"result": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "The result of the API call.",
+			},
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "A message indicating the outcome of the operation.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"error_code": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "An error code where '0' signifies success and '1' signifies an unsuccessful operation.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 	}
@@ -225,6 +222,7 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
@@ -282,25 +280,42 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 		createReq.SetProvisioningcomments(plan.Provisioningcomments.ValueString())
 	}
 	// Execute the API call.
-	apiResp, _, err := apiClient.SecuritySystemsAPI.CreateSecuritySystem(ctx).
+	apiResp, httpResp, err := apiClient.SecuritySystemsAPI.CreateSecuritySystem(ctx).
 		CreateSecuritySystemRequest(createReq).
 		Execute()
 
-	if err != nil || *apiResp.ErrorCode != "0" {
-		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Creating Security System",
+			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
+		)
 		return
 	}
 
 	// Set the resource ID and store the API response in state.
-	plan.ID = plan.Systemname
-	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
-	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	plan.ID = types.StringValue("security-system-" + plan.Systemname.ValueString())
+
+	msgValue := util.SafeDeref(apiResp.Msg)
+	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
+
+	// Set the individual fields
+	plan.Msg = types.StringValue(msgValue)
+	plan.ErrorCode = types.StringValue(errorCodeValue)
+	resultObj := map[string]string{
+		"msg":        msgValue,
+		"error_code": errorCodeValue,
+	}
+	resultJSON, err := util.MarshalDeterministic(resultObj)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Marshaling Result",
+			fmt.Sprintf("Could not marshal API response: %v", err),
+		)
 		return
 	}
-	// r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
+	plan.Result = types.StringValue(string(resultJSON))
+	diags = resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(diags...)
 }
 
 func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -312,6 +327,7 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	// Initialize API client configuration
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
@@ -347,6 +363,7 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 
 	// Update state with the found item
+	state.ID = types.StringValue("security-system-" + state.Systemname.ValueString())
 	state.DisplayName = types.StringValue(util.SafeDeref(foundItem.DisplayName))
 	state.Hostname = types.StringValue(util.SafeDeref(foundItem.Hostname))
 	state.Port = types.StringValue(util.SafeDeref(foundItem.Port))
@@ -374,26 +391,41 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 	// Handle list attributes
 	state.InherentSODReportFields = util.ConvertStringsToTypesString(foundItem.InherentSODReportFields)
 
-	// Set the individual fields
-	apiMessage := util.SafeDeref(apiResp.Msg)
-	state.Msg = types.StringValue(apiMessage)
+	// Optional: Save response as debug info
+	msgValue := util.SafeDeref(apiResp.Msg)
 	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
+
+	// Set the individual fields
+	state.Msg = types.StringValue(msgValue)
 	state.ErrorCode = types.StringValue(errorCodeValue)
+	resultObj := map[string]string{
+		"msg":        msgValue,
+		"error_code": errorCodeValue,
+	}
+	resultJSON, err := util.MarshalDeterministic(resultObj)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Marshaling Result",
+			fmt.Sprintf("Could not marshal API response: %v", err),
+		)
+		return
+	}
+	state.Result = types.StringValue(string(resultJSON))
 
 	// Save updated state
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
 func (r *SecuritySystemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan securitySystemResourceModel
+
+	// Extract the desired state from the request.
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
@@ -482,75 +514,47 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 		updateReq.SetInherentSODReportFields(inherentFields)
 	}
 	// Execute the update API call.
-	apiResp, _, err := apiClient.SecuritySystemsAPI.
+	apiResp, httpResp, err := apiClient.SecuritySystemsAPI.
 		UpdateSecuritySystem(ctx).
 		UpdateSecuritySystemRequest(updateReq).
 		Execute()
-	if err != nil || *apiResp.ErrorCode != "0" {
-		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
-		return
-	}
-
-	getResp, httpResp, err := apiClient.SecuritySystemsAPI.GetSecuritySystems(ctx).Connectionname(plan.Systemname.ValueString()).Execute()
 	if err != nil {
-		// Handle 404: resource no longer exists, remove from state
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.State.RemoveResource(ctx)
-			return
-		}
-		resp.Diagnostics.AddError("Error Reading Security System", err.Error())
+		resp.Diagnostics.AddError(
+			"Error Updating Security System",
+			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
+		)
+		log.Printf("API call error: ", err)
 		return
 	}
 
-	var foundItem *openapi.GetSecuritySystems200ResponseSecuritySystemDetailsInner
-	for _, item := range getResp.SecuritySystemDetails {
-		if item.Systemname != nil && *item.Systemname == plan.Systemname.ValueString() {
-			foundItem = &item
-			break
-		}
+	// Ensure the resource ID is preserved.
+	if plan.ID.IsUnknown() || plan.ID.IsNull() {
+		plan.ID = types.StringValue("security-system-" + plan.Systemname.ValueString())
 	}
 
-	if foundItem == nil {
-		resp.State.RemoveResource(ctx)
+	// Update the state with the API response.
+	msgValue := util.SafeDeref(apiResp.Msg)
+	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
+
+	// Set the individual fields
+	plan.Msg = types.StringValue(msgValue)
+	plan.ErrorCode = types.StringValue(errorCodeValue)
+	resultObj := map[string]string{
+		"msg":        msgValue,
+		"error_code": errorCodeValue,
+	}
+	resultJSON, err := util.MarshalDeterministic(resultObj)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Marshaling Result",
+			fmt.Sprintf("Could not marshal API response: %v", err),
+		)
+		log.Printf("Error marshalling result: ", err)
 		return
 	}
-
-	// Update state with the found item
-	newState := securitySystemResourceModel{
-		ID:                                 types.StringValue(plan.Systemname.ValueString()),
-		Systemname:                         types.StringValue(plan.Systemname.ValueString()),
-		DisplayName:                        types.StringValue(util.SafeDeref(foundItem.DisplayName)),
-		Hostname:                           types.StringValue(util.SafeDeref(foundItem.Hostname)),
-		Port:                               types.StringValue(util.SafeDeref(foundItem.Port)),
-		AccessAddWorkflow:                  types.StringValue(util.SafeDeref(foundItem.AccessAddWorkflow)),
-		AccessRemoveWorkflow:               types.StringValue(util.SafeDeref(foundItem.AccessRemoveWorkflow)),
-		AddServiceAccountWorkflow:          types.StringValue(util.SafeDeref(foundItem.AddServiceAccountWorkflow)),
-		RemoveServiceAccountWorkflow:       types.StringValue(util.SafeDeref(foundItem.RemoveServiceAccountWorkflow)),
-		Connectionparameters:               types.StringValue(util.SafeDeref(foundItem.Connectionparameters)),
-		AutomatedProvisioning:              types.StringValue(util.SafeDeref(foundItem.AutomatedProvisioning)),
-		UseOpenConnector:                   types.StringValue(util.SafeDeref(foundItem.Useopenconnector)),
-		ReconApplication:                   types.StringValue(util.SafeDeref(foundItem.ReconApplication)),
-		InstantProvision:                   types.StringValue(util.SafeDeref(foundItem.Instantprovision)),
-		ProvisioningTries:                  types.StringValue(util.SafeDeref(foundItem.ProvisioningTries)),
-		Provisioningcomments:               types.StringValue(util.SafeDeref(foundItem.Provisioningcomments)),
-		ProposedAccountOwnersWorkflow:      types.StringValue(util.SafeDeref(foundItem.ProposedAccountOwnersworkflow)),
-		FirefighterIDWorkflow:              types.StringValue(util.SafeDeref(foundItem.FirefighteridWorkflow)),
-		FirefighterIDRequestAccessWorkflow: types.StringValue(util.SafeDeref(foundItem.FirefighteridRequestAccessWorkflow)),
-		PolicyRule:                         types.StringValue(util.SafeDeref(foundItem.PolicyRule)),
-		PolicyRuleServiceAccount:           types.StringValue(util.SafeDeref(foundItem.PolicyRuleServiceAccount)),
-		Connectionname:                     types.StringValue(util.SafeDeref(foundItem.Connectionname)),
-		ProvisioningConnection:             types.StringValue(util.SafeDeref(foundItem.ProvisioningConnection)),
-		ServiceDeskConnection:              types.StringValue(util.SafeDeref(foundItem.ServiceDeskConnection)),
-		ExternalRiskConnectionJson:         types.StringValue(util.SafeDeref(foundItem.ExternalRiskConnectionJson)),
-		InherentSODReportFields:            util.ConvertStringsToTypesString(foundItem.InherentSODReportFields),
-		Msg:                                types.StringValue(util.SafeDeref(apiResp.Msg)),
-		ErrorCode:                          types.StringValue(util.SafeDeref(apiResp.ErrorCode)),
-	}
-	diags = resp.State.Set(ctx, &newState)
+	plan.Result = types.StringValue(string(resultJSON))
+	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
 
 func (r *SecuritySystemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
