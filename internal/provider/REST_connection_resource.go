@@ -375,12 +375,8 @@ func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 }
 func (r *restConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan, state RESTConnectorResourceModel
+	var plan RESTConnectorResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
