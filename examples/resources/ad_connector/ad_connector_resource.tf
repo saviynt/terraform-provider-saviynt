@@ -14,7 +14,7 @@ provider "saviynt" {
 
 resource "saviynt_ad_connection_resource" "ss" {
   connection_type     = "AD"
-  connection_name     = "namefortheconnection"
+  connection_name     = "shaleentestingaftercommit2"
   url                 = format("%s://%s:%d", var.LDAP_PROTOCOL, var.IP_ADDRESS, var.LDAP_PORT)
   username            = var.BIND_USER
   password=var.PASSWORD
