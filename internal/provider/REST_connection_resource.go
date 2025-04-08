@@ -477,7 +477,7 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	plan.ConnectionKey = types.Int64Value(int64(*getResp.RESTConnectionResponse.Connectionkey))
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.RESTConnectionResponse.Connectionkey))
 	plan.ImportUserJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ImportUserJSON)
-	plan.ConnectionJSON = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ConnectionJSON)
+	// plan.ConnectionJSON = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ConnectionJSON)
 	plan.ImportAccountEntJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ImportAccountEntJSON)
 	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
 	plan.CreateAccountJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.CreateAccountJSON)
