@@ -41,7 +41,6 @@ type BaseConnectionDataSourceModel struct {
 	EmailTemplate   types.String `tfsdk:"email_template"`
 }
 
-// SecuritySysteADConnectionDataSourceModelmDetails represents a single security system details object.
 type ADConnectionDataSourceModel struct {
 	BaseConnectionDataSourceModel
 	ConnectionAttributes *ADConnectionAttributes `tfsdk:"connection_attributes"`
@@ -109,19 +108,29 @@ type ADConnectionAttributes struct {
 	MaxChangeNumber            types.String                                  `tfsdk:"max_change_number"`
 	IncrementalConfig          types.String                                  `tfsdk:"incremental_config"`
 	CheckForUnique             types.String                                  `tfsdk:"check_for_unique"`
-	ConnectionTimeoutConfig    ADConnectionAttributesConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
+	ConnectionTimeoutConfig    ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
 	IsTimeoutConfigValidated   types.Bool                                    `tfsdk:"is_timeout_config_validated"`
 	ResetAndChangePasswdJSON   types.String                                  `tfsdk:"reset_and_change_passwd_json"`
 }
 
-type ADConnectionAttributesConnectionTimeoutConfig struct {
+type ConnectionTimeoutConfig struct {
 	RetryWait               types.Int64 `tfsdk:"retry_wait"`
 	TokenRefreshMaxTryCount types.Int64 `tfsdk:"token_refresh_max_try_count"`
 	RetryWaitMaxValue       types.Int64 `tfsdk:"retry_wait_max_value"`
 	RetryCount              types.Int64 `tfsdk:"retry_count"`
 	ReadTimeout             types.Int64 `tfsdk:"read_timeout"`
 	ConnectionTimeout       types.Int64 `tfsdk:"connection_timeout"`
+	RetryFailureStatusCode  types.Int64 `tfsdk:"retry_failure_status_code"`
 }
+
+// type ADConnectionAttributesConnectionTimeoutConfig struct {
+// 	RetryWait               types.Int64 `tfsdk:"retry_wait"`
+// 	TokenRefreshMaxTryCount types.Int64 `tfsdk:"token_refresh_max_try_count"`
+// 	RetryWaitMaxValue       types.Int64 `tfsdk:"retry_wait_max_value"`
+// 	RetryCount              types.Int64 `tfsdk:"retry_count"`
+// 	ReadTimeout             types.Int64 `tfsdk:"read_timeout"`
+// 	ConnectionTimeout       types.Int64 `tfsdk:"connection_timeout"`
+// }
 
 var _ datasource.DataSource = &ADConnectionsDataSource{}
 
@@ -251,6 +260,7 @@ func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.Sch
 							"retry_count":                 schema.Int64Attribute{Computed: true},
 							"read_timeout":                schema.Int64Attribute{Computed: true},
 							"connection_timeout":          schema.Int64Attribute{Computed: true},
+							"retry_failure_status_code": schema.Float64Attribute{Computed: true},
 						},
 					},
 					"is_timeout_config_validated": schema.BoolAttribute{Computed: true},
@@ -288,7 +298,6 @@ func (d *ADConnectionsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	// Configure API client
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(d.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
@@ -395,13 +404,14 @@ func (d *ADConnectionsDataSource) Read(ctx context.Context, req datasource.ReadR
 			IncrementalConfig:         util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG),
 			CheckForUnique:            util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE),
 			IsTimeoutConfigValidated:  util.SafeBoolDatasource(apiResp.ADConnectionResponse.Connectionattributes.IsTimeoutConfigValidated),
-			ConnectionTimeoutConfig: ADConnectionAttributesConnectionTimeoutConfig{
+			ConnectionTimeoutConfig: ConnectionTimeoutConfig{
 				RetryWait:               util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
 				RetryWaitMaxValue:       util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
 				RetryCount:              util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
 				ReadTimeout:             util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
 				ConnectionTimeout:       util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
+				RetryFailureStatusCode: util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
 			},
 		}
 	}
