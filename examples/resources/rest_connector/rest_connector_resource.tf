@@ -14,11 +14,54 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name = "shaleen_test_rest_19"
+  connection_name = "shaleen_test_rest_22"
   config_json     = jsonencode({"showLogs":true})
   connection_json = jsonencode(
- {"authentications":{"acctAuth":{"authType":"basic","errorPath":"error.code","maxRefreshTryCount":6,"tokenResponsePath":"access_token","properties":{"userName":"***REMOVED***1","password":"sadfasdf"},"authError":["InvalidAuthenticationToken","AuthenticationFailed"],"retryFailureStatusCode":[]},"shaleen_test_rest_12":{"authType":"basic","maxRefreshTryCount":5,"properties":{"userName":"admin","password":"***REMOVED***"},"authError":[""],"retryFailureStatusCode":[]}}}
-  )
+{
+  "authentications": {
+    "acctAuth": {
+      "authType": "Basic",
+      "url": "https://nit2669.zendesk.com/",
+      "httpMethod": "POST",
+      "httpParams": {},
+      "httpHeaders": {},
+      "httpContentType": "text/html",
+      "properties": {
+        "userName":"***REMOVED***",
+        "password":"***REMOVED***"
+      },
+      "expiryError": "ExpiredAuthenticationToken",
+      "authError": [
+        "InvalidAuthenticationToken",
+        "AuthenticationFailed"
+      ],
+      "timeOutError": "Read timed out",
+      "errorPath": "error.code",
+      "maxRefreshTryCount": 5,
+      "tokenResponsePath": "access_token",
+      "tokenType": "Basic",
+      "accessToken": "Basic abcd",
+          "testConnectionParams": {
+        "http": {
+          "url": "https://nit2669.zendesk.com/api/v2/users.json",
+          "httpHeaders": {
+            "Authorization": "$${access_token}"
+          },
+          "httpContentType": "application/json",
+          "httpMethod": "GET"
+        },
+        "successResponse": [],
+        "successResponsePath": "",
+        "errors": [
+          "Couldn't authenticate you"
+        ],
+        "errorPath": "error"
+                
+      }
+         
+    }
+  }
+})
 
   create_account_json = jsonencode({
   "accountIdPath": "call1.message.user.id",
