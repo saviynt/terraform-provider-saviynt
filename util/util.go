@@ -135,7 +135,7 @@ func SafeStringConnector(s string) *string {
 	return &s
 }
 
-func SafeStringConnectorForNullHandling(s string) *string {
+func StringPointerOrEmpty(s string) *string {
 	//for .tf file where we have removed the data but we have the data in ui
 	if s == "" {
 		empty := ""
