@@ -165,3 +165,17 @@ func Int32PtrToTFString(val *int32) types.String {
 	}
 	return types.StringNull()
 }
+
+func NormalizeJSONString(jsonStr string) string {
+	var out interface{}
+	err := json.Unmarshal([]byte(jsonStr), &out)
+	if err != nil {
+		// Not a valid JSON — probably encrypted or malformed
+		return jsonStr
+	}
+	normalized, err := json.Marshal(out)
+	if err != nil {
+		return jsonStr
+	}
+	return string(normalized)
+}
