@@ -25,3 +25,7 @@ data "saviynt_adsi_connection_datasource" "adsi"{
 data "saviynt_rest_connection_datasource" "rest"{
     connection_key="4060"
 }
+
+data "saviynt_db_connection_datasource" "db" {
+  connection_key="4057"
+}
