@@ -18,6 +18,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -110,7 +112,10 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"connection_json": schema.StringAttribute{
-				Optional:    true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 				Description: "Dynamic JSON configuration for the connection. Must be a valid JSON object string.",
 			},
 			"import_user_json": schema.StringAttribute{
@@ -310,6 +315,7 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
@@ -341,7 +347,7 @@ func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 	state.ConnectionKey = types.Int64Value(int64(*apiResp.RESTConnectionResponse.Connectionkey))
 	state.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.RESTConnectionResponse.Connectionkey))
-	state.ConnectionJSON = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionJSON)
+	// state.ConnectionJSON = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionJSON)
 	state.ImportUserJson = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Connectionattributes.ImportUserJSON)
 	state.ImportAccountEntJson = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Connectionattributes.ImportAccountEntJSON)
 	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
