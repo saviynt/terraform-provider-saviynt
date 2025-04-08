@@ -32,6 +32,7 @@ type BaseConnector struct {
 	Msg                types.String `tfsdk:"msg"`
 	ErrorCode          types.String `tfsdk:"error_code"`
 }
+
 type ADConnectorResourceModel struct {
 	ID types.String `tfsdk:"id"`
 	BaseConnector
@@ -94,7 +95,6 @@ type ADConnectorResourceModel struct {
 }
 
 type adConnectionResource struct {
-	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
@@ -544,6 +544,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	var plan ADConnectorResourceModel
 
 	// Extract plan from request
+	fmt.Printf("plan req: ", req.Plan.Get(ctx, plan))
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

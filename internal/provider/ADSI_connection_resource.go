@@ -67,7 +67,6 @@ type ADSIConnectorResourceModel struct {
 }
 
 type adsiConnectionResource struct {
-	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
