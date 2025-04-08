@@ -14,7 +14,7 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name = "shaleen_test_rest_22"
+  connection_name = "shaleen_test_rest_24"
   config_json     = jsonencode({"showLogs":true})
   connection_json = jsonencode(
 {
