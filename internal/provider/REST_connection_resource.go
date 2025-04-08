@@ -18,8 +18,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -52,13 +50,11 @@ type RESTConnectorResourceModel struct {
 	PamConfig             types.String `tfsdk:"pam_config"`
 }
 
-// restConnectionResource implements the resource.Resource interface.
 type restConnectionResource struct {
 	client *s.Client
 	token  string
 }
 
-// NewTestConnectionResource returns a new instance of testConnectionResource.
 func RestNewTestConnectionResource() resource.Resource {
 	return &restConnectionResource{}
 }
@@ -112,10 +108,7 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"connection_json": schema.StringAttribute{
-				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
+				Optional:    true,
 				Description: "Dynamic JSON configuration for the connection. Must be a valid JSON object string.",
 			},
 			"import_user_json": schema.StringAttribute{
@@ -507,7 +500,3 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 func (r *restConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
 }
-
-// -->read tf.state
-// -->update tf.state
-// but connection json (read and update same)=>conflict

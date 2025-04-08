@@ -135,7 +135,7 @@ func SafeStringConnector(s string) *string {
 	return &s
 }
 
-func SafeStringConnectorForNullHandling(s string) *string {
+func StringPointerOrEmpty(s string) *string {
 	//for .tf file where we have removed the data but we have the data in ui
 	if s == "" {
 		empty := ""
@@ -164,18 +164,4 @@ func Int32PtrToTFString(val *int32) types.String {
 		return types.StringValue(str)
 	}
 	return types.StringNull()
-}
-
-func NormalizeJSONString(jsonStr string) string {
-	var out interface{}
-	err := json.Unmarshal([]byte(jsonStr), &out)
-	if err != nil {
-		// Not a valid JSON — probably encrypted or malformed
-		return jsonStr
-	}
-	normalized, err := json.Marshal(out)
-	if err != nil {
-		return jsonStr
-	}
-	return string(normalized)
 }
