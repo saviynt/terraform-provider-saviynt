@@ -310,7 +310,6 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
@@ -321,7 +320,6 @@ func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 	// Configure API client
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
@@ -376,16 +374,22 @@ func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	state.ErrorCode = util.Int32PtrToTFString(apiResp.RESTConnectionResponse.Errorcode)
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 func (r *restConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan RESTConnectorResourceModel
+	var plan, state RESTConnectorResourceModel
 
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	//for connJson data conversion from string to map[string]interface{}
 	var connJSON map[string]interface{}
 	if !plan.ConnectionJSON.IsNull() && plan.ConnectionJSON.ValueString() != "" {
@@ -454,10 +458,49 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
-	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
-	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	getResp, httpResp, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+	plan.ConnectionKey = types.Int64Value(int64(*getResp.RESTConnectionResponse.Connectionkey))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.RESTConnectionResponse.Connectionkey))
+	plan.ImportUserJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ImportUserJSON)
+	plan.ConnectionJSON = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ConnectionJSON)
+	plan.ImportAccountEntJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ImportAccountEntJSON)
+	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	plan.CreateAccountJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.CreateAccountJSON)
+	plan.UpdateAccountJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.UpdateAccountJSON)
+	plan.EnableAccountJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.EnableAccountJSON)
+	plan.DisableAccountJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.DisableAccountJSON)
+	plan.AddAccessJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.AddAccessJSON)
+	plan.RemoveAccessJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.RemoveAccessJSON)
+	plan.UpdateUserJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.UpdateUserJSON)
+	plan.ChangePassJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ChangePassJSON)
+	plan.RemoveAccountJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.RemoveAccountJSON)
+	plan.TicketStatusJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.TicketStatusJSON)
+	plan.CreateTicketJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.CreateTicketJSON)
+	plan.EndpointsFilter = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	plan.PasswdPolicyJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.PasswdPolicyJSON)
+	plan.ConfigJSON = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ConfigJSON)
+	plan.AddFFIDAccessJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.AddFFIDAccessJSON)
+	plan.RemoveFFIDAccessJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.RemoveFFIDAccessJSON)
+	plan.ModifyUserdataJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	plan.SendOtpJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.SendOtpJSON)
+	plan.ValidateOtpJson = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.ValidateOtpJSON)
+	plan.PamConfig = util.SafeStringDatasource(getResp.RESTConnectionResponse.Connectionattributes.PAM_CONFIG)
+	apiMessage := util.SafeDeref(getResp.RESTConnectionResponse.Msg)
+	if apiMessage == "success" {
+		plan.Msg = types.StringValue("Connection Successful")
+	} else {
+		plan.Msg = types.StringValue(apiMessage)
+	}
+	plan.ErrorCode = util.Int32PtrToTFString(getResp.RESTConnectionResponse.Errorcode)
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
@@ -465,3 +508,7 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 func (r *restConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
 }
+
+// -->read tf.state
+// -->update tf.state
+// but connection json (read and update same)=>conflict

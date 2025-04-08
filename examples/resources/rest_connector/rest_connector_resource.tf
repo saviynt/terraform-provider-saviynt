@@ -14,259 +14,452 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name = "Merserk_Release_3490_Rajiv_2"
-  config_json     = <<EOF
-  {"showLogs":true}
-   EOF
+  connection_name = "shaleen_test_rest_19"
+  config_json     = jsonencode({"showLogs":true})
+  connection_json = jsonencode(
+ {"authentications":{"acctAuth":{"authType":"basic","errorPath":"error.code","maxRefreshTryCount":6,"tokenResponsePath":"access_token","properties":{"userName":"***REMOVED***1","password":"sadfasdf"},"authError":["InvalidAuthenticationToken","AuthenticationFailed"],"retryFailureStatusCode":[]},"shaleen_test_rest_12":{"authType":"basic","maxRefreshTryCount":5,"properties":{"userName":"admin","password":"***REMOVED***"},"authError":[""],"retryFailureStatusCode":[]}}}
+  )
+
   create_account_json = jsonencode({
-    "accountIdPath" : "call1.message.id",
-    "dateFormat" : "yyyy-MM-dd'T'HH:mm:ssXXX",
-    "responseColsToPropsMap" : {
-      "displayName" : "call1.message.displayName~#~char",
-      "name" : "call1.message.userPrincipalName~#~char"
-    },
-    "call" : [
-      {
-        "name" : "call1",
-        "connection" : "EntraIDAuth",
-        "url" : "https://graph.microsoft.com",
-        "httpMethod" : "POST",
-        "httpParams" : "{\"accountEnabled\":true,\"displayName\":\"$${user.firstname} $${user.lastname}\",\"mailNickname\":\"$${user.firstname}\",\"userPrincipalName\":\"$${user.firstname}.$${user.lastname}@saviyntlivedev.onmicrosoft.com\",\"passwordProfile\":{\"forceChangePasswordNextSignIn\":true,\"password\":\"$${password}\"}}",
-        "httpHeaders" : {
-          "Authorization" : "$${access_token}"
-        },
-        "httpContentType" : "application/json",
-        "successResponses" : {
-          "statusCode" : [
-            200,
-            201,
-            204,
-            205
-          ]
-        }
-      }
-    ]
-  })
-  connection_json = jsonencode({
-    "authentications" : {
-      "EntraIDAuth" : {
-        "authType" : "oauth2",
-        "url" : "https://login.microsoftonline.com/oauth2/token",
-        "httpMethod" : "POST",
-        "httpParams" : {
-          "grant_type" : "client_credentials",
-          "client_secret" : "XXXXX",
-          "client_id" : "XXXX",
-          "resource" : "https://graph.microsoft.com"
-        },
-        "httpHeaders" : {
-          "contentType" : "application/x-www-form-urlencoded"
-        },
-        "httpContentType" : "application/x-www-form-urlencoded",
-        "errorPath" : "errors.type",
-        "retryFailureStatusCode" : [
-          401
-        ],
-        "maxRefreshTryCount" : 5,
-        "tokenResponsePath" : "access_token",
-        "tokenType" : "Bearer",
-        "accessToken" : "Bearer access_token"
+  "accountIdPath": "call1.message.user.id",
+  "dateFormat": "yyyy-MM-dd'T'HH:mm:ssXXX",
+  "responseColsToPropsMap": {
+    "displayname": "call1.message.user.name~#~char"
+  },
+  "call": [
+    {
+      "name": "call1",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users",
+      "httpMethod": "POST",
+      "httpParams": "{\"user\": {\"name\": \"$${user.firstname} $${user.lastname}\", \"email\": \"$${user.email}\", \"role\":\"agent\"}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
       }
     }
-  })
+  ]
+})
   import_account_ent_json = jsonencode({
-    "accountParams" : {
-      "connection" : "EntraIDAuth",
-      "processingType" : "SequentialAndIterative",
-      "call" : {
-        "call1" : {
-          "callOrder" : 0,
-          "stageNumber" : 0,
-          "showJobHistory" : true,
-          "http" : {
-            "url" : "https://graph.microsoft.com/v1.0/",
-            "httpContentType" : "application/json",
-            "httpMethod" : "GET",
-            "httpHeaders" : {
-              "Authorization" : "$${access_token}",
-              "Accept" : "application/json"
-            }
-          },
-          "listField" : "value",
-          "keyField" : "accountID",
-          "colsToPropsMap" : {
-            "accountID" : "id~#~char",
-            "name" : "userPrincipalName~#~char",
-            "displayName" : "displayName~#~char",
-            "customproperty10" : "accountEnabled~#~char",
-            "customproperty31" : "STORE#ACC#ENT#MAPPINGINFO~#~char"
-          },
-          "pagination" : {
-            "nextUrl" : {
-              "nextUrlPath" : "@odata.nextLink"
-            }
-          },
-          "disableDeletedAccounts" : true
-        }
-      },
-      "successResponses" : {
-        "statusCode" : [
-          200,
-          201,
-          202,
-          203,
-          204,
-          205
-        ]
-      }
+  "accountParams": {
+    "connection": "acctAuth",
+    "processingType": "SequentialAndIterative",
+    "statusAndThresholdConfig": {
+      "statusColumn": "customproperty11",
+      "activeStatus": [
+        "false"
+      ],
+      "deleteLinks": true,
+      "accountThresholdValue": 10,
+      "correlateInactiveAccounts": false,
+      "inactivateAccountsNotInFile": true,
+      "deleteAccEntForActiveAccounts": true
     },
-    "entitlementParams" : {
-      "connection" : "EntraIDAuth",
-      "processingType" : "SequentialAndIterative",
-      "unsuccessResponses" : null,
-      "doNotChangeIfFailed" : true,
-      "entTypes" : {
-        "AccessPackages" : {
-          "entTypeOrder" : 0,
-          "entTypeLabels" : {
-            "customproperty1" : "PolicyID"
+    "call": {
+      "call1": {
+        "callOrder": 0,
+        "stageNumber": 0,
+        "http": {
+          "url": "https://saviynt6799.zendesk.com/api/v2/users.json?role[]=admin&role[]=agent",
+          "httpHeaders": {
+            "Authorization": "$${access_token}",
+            "Accept": "application/json"
           },
-          "call" : {
-            "call1" : {
-              "connection" : "EntraIDAuth",
-              "callOrder" : 0,
-              "stageNumber" : 0,
-              "showJobHistory" : true,
-              "http" : {
-                "url" : "https://graph.microsoft.com/v1.0",
-                "httpContentType" : "application/json",
-                "httpMethod" : "GET",
-                "httpHeaders" : {
-                  "Authorization" : "$${access_token}",
-                  "Accept" : "application/json"
-                }
-              },
-              "listField" : "value",
-              "keyField" : "entitlementID",
-              "colsToPropsMap" : {
-                "entitlement_value" : "displayName~#~char",
-                "entitlementID" : "id~#~char",
-                "displayname" : "displayName~#~char",
-                "entitlementMappingJson" : "STORE#ENT#MAPPINGINFO~#~char"
-              }
-            }
-          },
-          "entMappings" : {
-            "AssignmentPolicy" : {
-              "listPath" : "assignmentPolicies",
-              "idPath" : "id",
-              "idColumn" : "entitlementID",
-              "mappingTypes" : [
-                "ENT2"
-              ]
-            }
-          }
+          "httpContentType": "application/json",
+          "httpMethod": "GET"
         },
-        "AssignmentPolicy" : {
-          "entTypeOrder" : 1,
-          "entTypeLabels" : {
-            "customproperty1" : "PolicyID"
-          },
-          "call" : {
-            "call1" : {
-              "connection" : "EntraIDAuth",
-              "callOrder" : 0,
-              "stageNumber" : 0,
-              "showJobHistory" : true,
-              "http" : {
-                "url" : "https://graph.microsoft.com/",
-                "httpContentType" : "application/json",
-                "httpMethod" : "GET",
-                "httpHeaders" : {
-                  "Authorization" : "$${access_token}",
-                  "Accept" : "application/json"
-                }
+        "listField": "users",
+        "keyField": "accountID",
+        "statusConfig": {
+          "active": "true",
+          "inactive": "false"
+        },
+        "colsToPropsMap": {
+          "accountID": "id~#~char",
+          "name": "email~#~char",
+          "displayName": "name~#~char",
+          "customproperty2": "email~#~char",
+          "customproperty3": "created_at~#~char",
+          "customproperty4": "updated_at~#~char",
+          "customproperty5": "role~#~char",
+          "status": "active~#~char",
+          "customproperty6": "last_login_at~#~char",
+          "customproperty7": "custom_role_id~#~char",
+          "customproperty8": "default_group_id~#~char",
+          "customproperty9": "created_at~#~char",
+          "customproperty10": "updated_at~#~char",
+          "customproperty11": "suspended~#~char",
+          "customproperty31": "STORE#ACC#ENT#MAPPINGINFO~#~char"
+        },
+        "pagination": {
+          "nextUrl": {
+            "nextUrlPath": "$${response?.completeResponseMap?.next_page==null?null:response.completeResponseMap.next_page}"
+          }
+        }
+      }
+    },
+    "acctEntMappings": {
+      "Role": {
+        "listPath": "",
+        "idPath": "custom_role_id",
+        "keyField": "entitlementID"
+      }
+    }
+  },
+  "entitlementParams": {
+    "connection": "acctAuth",
+    "processingType": "SequentialAndIterative",
+    "entTypes": {
+      "Group": {
+        "entTypeOrder": 0,
+        "entTypeLabels": {
+          "customproperty1": "Deleted",
+          "customproperty2": "CreatedAt",
+          "customproperty3": "UpdatedAt"
+        },
+        "call": {
+          "call1": {
+            "callOrder": 0,
+            "stageNumber": 0,
+            "http": {
+              "url": "https://saviynt6799.zendesk.com/api/v2/groups",
+              "httpHeaders": {
+                "Authorization": "$${access_token}",
+                "Accept": "application/json"
               },
-              "listField" : "value",
-              "keyField" : "entitlementID",
-              "colsToPropsMap" : {
-                "entitlement_value" : "displayName~#~char",
-                "entitlementID" : "id~#~char",
-                "displayname" : "displayName~#~char"
-              },
-              "pagination" : {
-                "nextUrl" : {
-                  "nextUrlPath" : "@odata.nextLink"
-                }
-              },
-              "disableDeletedEntitlements" : true
-            }
+              "httpContentType": "application/json",
+              "httpMethod": "GET"
+            },
+            "listField": "groups",
+            "keyField": "entitlementID",
+            "colsToPropsMap": {
+              "entitlementID": "id~#~char",
+              "entitlement_value": "name~#~char",
+              "customproperty1": "deleted~#~char",
+              "customproperty2": "created_at~#~char",
+              "customproperty3": "updated_at~#~char"
+            },
+            "pagination": {
+              "nextUrl": {
+                "nextUrlPath": "$${response?.completeResponseMap?.next_page==null?null:response.completeResponseMap.next_page}"
+              }
+            },
+            "disableDeletedEntitlements": true
           }
         }
       },
-      "successResponses" : {
-        "statusCode" : [
-          200,
-          201,
-          202,
-          203,
-          204,
-          205
-        ]
-      }
-    },
-    "acctEntParams" : {
-      "entTypes" : {
-        "AccessPackages" : {
-          "call" : {
-            "call1" : {
-              "connection" : "EntraIDAuth",
-              "showJobHistory" : true,
-              "callOrder" : 0,
-              "stageNumber" : 0,
-              "processingType" : "http",
-              "http" : {
-                "url" : "https://graph.microsoft.com/",
-
-                "httpContentType" : "application/json",
-                "httpMethod" : "GET",
-                "httpHeaders" : {
-                  "Authorization" : "$${access_token}",
-                  "Accept" : "application/json"
-                }
+      "Role": {
+        "entTypeOrder": 1,
+        "entTypeLabels": {
+          "customproperty1": "Description",
+          "customproperty2": "CreatedAt",
+          "customproperty3": "UpdatedAt"
+        },
+        "call": {
+          "call1": {
+            "callOrder": 0,
+            "stageNumber": 0,
+            "http": {
+              "url": "https://saviynt6799.zendesk.com/api/v2/custom_roles.json",
+              "httpHeaders": {
+                "Authorization": "$${access_token}",
+                "Accept": "application/json"
               },
-              "listField" : "value",
-              "acctIdPath" : "target.objectId",
-              "acctKeyField" : "accountID",
-              "entIdPath" : "accessPackage.id",
-              "entKeyField" : "entitlementID",
-              "pagination" : {
-                "nextUrl" : {
-                  "nextUrlPath" : "@odata.nextLink"
-                }
+              "httpContentType": "application/json",
+              "httpMethod": "GET"
+            },
+            "listField": "custom_roles",
+            "keyField": "entitlementID",
+            "colsToPropsMap": {
+              "entitlementID": "id~#~char",
+              "entitlement_value": "name~#~char",
+              "customproperty1": "description~#~char",
+              "customproperty2": "created_at~#~char",
+              "customproperty3": "updated_at~#~char"
+            },
+            "pagination": {
+              "nextUrl": {
+                "nextUrlPath": "$${response?.completeResponseMap?.next_page==null?null:response.completeResponseMap.next_page}"
+              }
+            },
+            "disableDeletedEntitlements": true
+          }
+        }
+      }
+    }
+  },
+  "acctEntParams": {
+    "connection": "acctAuth",
+    "entTypes": {
+      "Group": {
+        "call": {
+          "call1": {
+            "callOrder": 0,
+            "stageNumber": 0,
+            "processingType": "httpEntToAcct",
+            "http": {
+              "httpHeaders": {
+                "Authorization": "$${access_token}"
+              },
+              "url": "https://saviynt6799.zendesk.com/api/v2/groups/$${id}/memberships.json",
+              "httpContentType": "application/x-www-form-urlencoded",
+              "httpMethod": "GET"
+            },
+            "listField": "group_memberships",
+            "entKeyField": "entitlementID",
+            "acctIdPath": "user_id",
+            "acctKeyField": "accountID",
+            "pagination": {
+              "nextUrl": {
+                "nextUrlPath": "$${response?.completeResponseMap?.next_page==null?null:response.completeResponseMap.next_page}"
               }
             }
           }
         }
       },
-      "successResponses" : {
-        "statusCode" : [
+      "Role": {
+        "call": {
+          "call1": {
+            "callOrder": 0,
+            "stageNumber": 0,
+            "processingType": "acctToEntMapping"
+          }
+        }
+      }
+    }
+  }
+})
+update_account_json=jsonencode(
+  {
+  "dateFormat": "yyyy-MM-dd'T'HH:mm:ssXXX",
+  "responseColsToPropsMap": {
+    "displayName": "call1.message.user.name~#~char"
+  },
+  "call": [
+    {
+      "name": "Role",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users/$${account.accountID}",
+      "httpMethod": "PUT",
+      "httpParams": "{\"user\": {\"name\": \"$${user.firstname} $${user.lastname}\"}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    }
+  ]
+}
+)
+enable_account_json=jsonencode(
+  {
+  "call": [
+    {
+      "name": "call1",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users",
+      "httpMethod": "PUT",
+      "httpParams": "{\"user\":{\"suspended\": \"false\"}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    }
+  ]
+}
+)
+disable_account_json=jsonencode(
+  {
+  "call": [
+    {
+      "name": "call1",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users",
+      "httpMethod": "PUT",
+      "httpParams": "{\"user\":{\"suspended\": \"true\"}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    }
+  ]
+}
+)
+add_access_json=jsonencode(
+  {
+  "call": [
+    {
+      "name": "Group",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/group_memberships",
+      "httpMethod": "POST",
+      "httpParams": "{\"group_membership\": {\"user_id\": \"$${account.accountID}\", \"group_id\": \"$${entitlementValue.entitlementID}\"}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    },
+    {
+      "name": "Role",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users/$${account.accountID}",
+      "httpMethod": "PUT",
+      "httpParams": "{\"user\": {\"custom_role_id\": $${entitlementValue.entitlementID}}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    }
+  ]
+}
+)
+remove_access_json=jsonencode(
+  {
+  "call": [
+    {
+      "name": "Group",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users/$${account.accountID}/group_memberships",
+      "httpMethod": "GET",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    },
+    {
+      "name": "Group",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/group_memberships/$${for (Map map : response.Group1.message.group_memberships){if (map.group_id.toString().equals(entitlementValue.entitlementID)){return map.id;}}}",
+      "httpMethod": "DELETE",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+"successResponses": {
+        "statusCode": [
+          200,
+          204
+        ]
+      }
+    },
+    {
+      "name": "Role",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users/$${account.accountID}",
+      "httpMethod": "PUT",
+      "httpParams": "{\"user\": {\"custom_role_id\": $${entitlementValue.entitlementID}}}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201
+        ]
+      }
+    }
+  ]
+}
+)
+remove_account_json=jsonencode(
+  {
+  "call": [
+    {
+      "name": "call1",
+      "connection": "acctAuth",
+      "url": "https://saviynt6799.zendesk.com/api/v2/users/$${account.accountID}",
+      "httpMethod": "DELETE",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
           200,
           201,
-          202,
-          203,
-          204,
-          205
+204
         ]
-      },
-      "unsuccessResponses" : null
+      }
     }
-  })
+  ]
+}
+)
+change_pass_json=jsonencode(
+  {
+  "call": [
+    {
+      "name": "call1",
+      "connection": "acctAuth",
+      "url": "https://hostname/api/v2/users/$${account.accountID}/password.json",
+      "httpMethod": "POST",
+      "httpParams": "{\"password\": \"$${password}\"}",
+      "httpHeaders": {
+        "Authorization": "$${access_token}",
+        "Accept": "application/json"
+      },
+      "httpContentType": "application/json",
+      "successResponses": {
+        "statusCode": [
+          200,
+          201,
+          204
+        ]
+      }
+    }
+  ]
+}
+)
 }
 
-check "instance_health" {
-  assert {
-    condition     = saviynt_rest_connection_resource.example.error_code != "1"
-    error_message = "The error is: ${saviynt_rest_connection_resource.example.msg}"
-  }
-}
