@@ -428,19 +428,15 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	cfg.HTTPClient = http.DefaultClient
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "AD",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.StringPointerOrEmpty(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.StringPointerOrEmpty(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.StringPointerOrEmpty(plan.SaveInVault.ValueString()),
+			Connectiontype:  "AD",
+			ConnectionName:  plan.ConnectionName.ValueString(),
+			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 		},
-		URL:      util.StringPointerOrEmpty(plan.URL.ValueString()),
-		USERNAME: util.StringPointerOrEmpty(plan.Username.ValueString()),
-		// PASSWORD:                    plan.Password.ValueString(),
-		LDAP_OR_AD:                  util.StringPointerOrEmpty("AD"),
+		URL:                         util.StringPointerOrEmpty(plan.URL.ValueString()),
+		USERNAME:                    util.StringPointerOrEmpty(plan.Username.ValueString()),
+		LDAP_OR_AD:                  util.StringPointerOrEmpty(plan.LdapOrAd.ValueString()),
 		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
 		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique.ValueString()),
 		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN.ValueString()),
@@ -494,9 +490,14 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson.ValueString()),
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 	}
-	if *adConn.BaseConnector.VaultConfiguration == "" && *adConn.BaseConnector.VaultConnection == "" {
+	if (plan.VaultConfiguration.ValueString() == "") && (plan.VaultConnection.ValueString() == "") {
 		adConn.PASSWORD = plan.Password.ValueString()
+	} else {
+		adConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+		adConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+		adConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
 	}
+
 	adConnRequest := openapi.CreateOrUpdateRequest{
 		ADConnector: &adConn,
 	}
@@ -540,7 +541,7 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	reqParams.SetConnectionname(state.ConnectionName.ValueString())
 	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
-		log.Printf("Problem with the get function")
+		log.Printf("Problem with the get function in read block")
 		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
@@ -642,10 +643,9 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
 			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 		},
-		URL:      util.StringPointerOrEmpty(plan.URL.ValueString()),
-		USERNAME: util.StringPointerOrEmpty(plan.Username.ValueString()),
-		// PASSWORD:                    plan.Password.ValueString(),
-		LDAP_OR_AD:                  util.StringPointerOrEmpty("AD"),
+		URL:                         util.StringPointerOrEmpty(plan.URL.ValueString()),
+		USERNAME:                    util.StringPointerOrEmpty(plan.Username.ValueString()),
+		LDAP_OR_AD:                  util.StringPointerOrEmpty(plan.LdapOrAd.ValueString()),
 		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
 		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique.ValueString()),
 		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN.ValueString()),
@@ -699,20 +699,12 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson.ValueString()),
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 	}
-	if *adConn.BaseConnector.VaultConfiguration != "" {
-		log.Printf("VaultConfiguration: '%s'", *adConn.BaseConnector.VaultConfiguration)
-	} else {
-		log.Println("VaultConfiguration is nil")
-	}
-
-	if *adConn.BaseConnector.VaultConfiguration == "" && *adConn.BaseConnector.VaultConnection == "" {
-		log.Println("hellow world")
+	if (plan.VaultConfiguration.ValueString() == "") && (plan.VaultConnection.ValueString() == "") {
 		adConn.PASSWORD = plan.Password.ValueString()
-		log.Println(adConn.PASSWORD)
 	} else {
-		adConn.BaseConnector.VaultConnection = util.StringPointerOrEmpty(plan.VaultConnection.ValueString())
-		adConn.BaseConnector.VaultConfiguration = util.StringPointerOrEmpty(plan.VaultConfiguration.ValueString())
-		adConn.BaseConnector.Saveinvault = util.StringPointerOrEmpty(plan.SaveInVault.ValueString())
+		adConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+		adConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+		adConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
 	}
 	adConnRequest := openapi.CreateOrUpdateRequest{
 		ADConnector: &adConn,
@@ -727,10 +719,85 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
-	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
-	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in update block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ConnectionKey = types.Int64Value(int64(*getResp.ADConnectionResponse.Connectionkey))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.ADConnectionResponse.Connectionkey))
+	plan.ConnectionName = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionname)
+	plan.Description = util.SafeStringDatasource(getResp.ADConnectionResponse.Description)
+	plan.DefaultSavRoles = util.SafeStringDatasource(getResp.ADConnectionResponse.Defaultsavroles)
+	plan.ConnectionType = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectiontype)
+	plan.EmailTemplate = util.SafeStringDatasource(getResp.ADConnectionResponse.Emailtemplate)
+	plan.URL = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.URL)
+	plan.ConnectionType = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectiontype)
+	plan.Advsearch = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ADVSEARCH)
+	plan.CreateAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	plan.DisableAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON)
+	plan.GroupSearchBaseDN = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.GroupSearchBaseDN)
+	plan.PasswordNoofsplchars = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PASSWORD_NOOFSPLCHARS)
+	plan.PasswordNoofdigits = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PASSWORD_NOOFDIGITS)
+	plan.StatusKeyJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.STATUSKEYJSON)
+	plan.Searchfilter = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.SEARCHFILTER)
+	plan.ConfigJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ConfigJSON)
+	plan.RemoveAccountAction = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.REMOVEACCOUNTACTION)
+	plan.AccountAttribute = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTE)
+	plan.AccountNameRule = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ACCOUNTNAMERULE)
+	plan.Username = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.USERNAME)
+	plan.LdapOrAd = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.LDAP_OR_AD)
+	plan.EntitlementAttribute = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
+	plan.Setrandompassword = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.SETRANDOMPASSWORD)
+	plan.PasswordMinLength = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PASSWORD_MIN_LENGTH)
+	plan.PasswordMaxLength = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PASSWORD_MAX_LENGTH)
+	plan.PasswordNoofcapsalpha = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PASSWORD_NOOFCAPSALPHA)
+	plan.Setdefaultpagesize = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.SETDEFAULTPAGESIZE)
+	plan.ReuseInactiveAccount = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.REUSEINACTIVEACCOUNT)
+	plan.ImportJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.IMPORTJSON)
+	plan.CreateUpdateMappings = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.CreateUpdateMappings)
+	plan.AdvanceFilterJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ADVANCE_FILTER_JSON)
+	plan.PamConfig = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PAM_CONFIG)
+	plan.PageSize = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.PAGE_SIZE)
+	plan.Base = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.BASE)
+	plan.DcLocator = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.DC_LOCATOR)
+	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	plan.ResetAndChangePasswrdJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.RESETANDCHANGEPASSWRDJSON)
+	plan.SupportEmptyString = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.SUPPORTEMPTYSTRING)
+	plan.ReadOperationalAttributes = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.READ_OPERATIONAL_ATTRIBUTES)
+	plan.EnableAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON)
+	plan.UserAttribute = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.USER_ATTRIBUTE)
+	plan.DefaultUserRole = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.DEFAULT_USER_ROLE)
+	plan.EndpointsFilter = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	plan.UpdateAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON)
+	plan.ReuseAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.REUSEACCOUNTJSON)
+	plan.EnforceTreeDeletion = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ENFORCE_TREE_DELETION)
+	plan.Filter = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.FILTER)
+	plan.Objectfilter = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.OBJECTFILTER)
+	plan.UpdateUserJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.UPDATEUSERJSON)
+	plan.SaveConnection = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.Saveconnection)
+	plan.SystemName = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.Systemname)
+	plan.GroupImportMapping = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.GroupImportMapping)
+	plan.UnlockAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.UNLOCKACCOUNTJSON)
+	plan.ModifyUserdataJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	plan.OrgBase = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ORG_BASE)
+	plan.OrganizationAttribute = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ORGANIZATION_ATTRIBUTE)
+	plan.Createorgjson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.CREATEORGJSON)
+	plan.Updateorgjson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.UPDATEORGJSON)
+	plan.MaxChangeNumber = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
+	plan.IncrementalConfig = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
+	plan.CheckForUnique = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
+	apiMessage := util.SafeDeref(getResp.ADConnectionResponse.Msg)
+	if apiMessage == "success" {
+		plan.Msg = types.StringValue("Connection Successful")
+	} else {
+		plan.Msg = types.StringValue(apiMessage)
+	}
+	plan.ErrorCode = util.Int32PtrToTFString(getResp.ADConnectionResponse.Errorcode)
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
