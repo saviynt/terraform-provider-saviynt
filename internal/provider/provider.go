@@ -140,6 +140,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewRESTConnectionsDataSource,
 		NewADSIConnectionsDataSource,
 		NewDBConnectionsDataSource,
+		NewWorkdayConnectionsDataSource,
 	}
 }
 
