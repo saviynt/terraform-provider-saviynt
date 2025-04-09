@@ -11,7 +11,6 @@ variable "SAVIYNT_PASSWORD" {
   description = "Saviynt API Password"
   sensitive   = true
 }
-
 variable "IP_ADDRESS" {
   type        = string
   description = "Saviynt host server"
@@ -26,7 +25,6 @@ variable "LDAP_PROTOCOL" {
   type        = string
   description = "Protocol type (e.g., LDAP, HTTP, etc.)"
 }
-
 variable "PASSWORD" {
   type        = string
   description = "Connection password"
