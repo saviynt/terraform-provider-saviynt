@@ -427,8 +427,10 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	cfg.HTTPClient = http.DefaultClient
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:  "AD",
-			ConnectionName:  plan.ConnectionName.ValueString(),
+			//required field
+			Connectiontype: "AD",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional field
 			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
 			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
 			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
@@ -614,17 +616,22 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 		state.Msg = types.StringValue(apiMessage)
 	}
 	state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
-
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
+	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := r.client.APIBaseURL()
 	if strings.HasPrefix(apiBaseURL, "https://") {
@@ -711,7 +718,6 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("Problem with the update function")

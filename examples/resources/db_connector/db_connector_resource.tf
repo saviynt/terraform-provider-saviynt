@@ -14,9 +14,5 @@ provider "saviynt" {
 
 resource "saviynt_db_connection_resource" "example" {
   connection_type     = "DB"
-  connection_name     = "shaleen_db_12_april"
-  username            = "connadmin"
-  url="jdbc:mysql://34.139.69.20:3306"
-  password            = "MyOffice12#"
-  driver_name         = "com.mysql.jdbc.Driver"
+  connection_name     = "namefortheconnection"
 }  
