@@ -1,0 +1,345 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package provider
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"net/http"
+	"strings"
+	"terraform-provider-Saviynt/util"
+
+	openapi "github.com/saviynt/saviynt-api-go-client/connections"
+
+	s "github.com/saviynt/saviynt-api-go-client"
+
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+type SALESFORCEConnectorResourceModel struct {
+	BaseConnector
+	ID                     types.String `tfsdk:"id"`
+	ClientId               types.String `tfsdk:"client_id"`
+	ClientSecret           types.String `tfsdk:"client_secret"`
+	RefreshToken           types.String `tfsdk:"refresh_token"`
+	RedirectUri            types.String `tfsdk:"redirect_uri"`
+	InstanceUrl            types.String `tfsdk:"instance_url"`
+	ObjectToBeImported     types.String `tfsdk:"object_to_be_imported"`
+	FeatureLicenseJson     types.String `tfsdk:"feature_license_json"`
+	CustomCreateaccountUrl types.String `tfsdk:"custom_createaccount_url"`
+	Createaccountjson      types.String `tfsdk:"createaccountjson"`
+	AccountFilterQuery     types.String `tfsdk:"account_filter_query"`
+	AccountFieldQuery      types.String `tfsdk:"account_field_query"`
+	FieldMappingJson       types.String `tfsdk:"field_mapping_json"`
+	Modifyaccountjson      types.String `tfsdk:"modifyaccountjson"`
+	StatusThresholdConfig  types.String `tfsdk:"status_threshold_config"`
+	Customconfigjson       types.String `tfsdk:"customconfigjson"`
+	PamConfig              types.String `tfsdk:"pam_config"`
+}
+
+type salesforceConnectionResource struct {
+	client *s.Client
+	token  string
+}
+
+func SALESFORCENewTestConnectionResource() resource.Resource {
+	return &salesforceConnectionResource{}
+}
+
+func (r *salesforceConnectionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = "saviynt_salesforce_connection_resource"
+}
+
+func (r *salesforceConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "Create and Manage Connections",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "Resource ID.",
+			},
+			"connection_key": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Unique identifier of the connection returned by the API. Example: 1909",
+			},
+			"connection_name": schema.StringAttribute{
+				Required:    true,
+				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
+			},
+			"connection_type": schema.StringAttribute{
+				Required:    true,
+				Description: "Connection type (e.g., 'AD' for Active Directory). Example: \"AD\"",
+			},
+			"description": schema.StringAttribute{
+				Optional:    true,
+				Description: "Description for the connection. Example: \"ORG_AD\"",
+			},
+			"defaultsavroles": schema.StringAttribute{
+				Optional:    true,
+				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
+			},
+			"email_template": schema.StringAttribute{
+				Optional:    true,
+				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
+			},
+			"vault_connection": schema.StringAttribute{
+				Optional:    true,
+				Description: "Specifies the type of vault connection being used (e.g., 'Hashicorp'). Example: \"Hashicorp\"",
+			},
+			"vault_configuration": schema.StringAttribute{
+				Optional:    true,
+				Description: "JSON string specifying vault configuration. Example: '{\"path\":\"/secrets/data/kv-dev-intgn1/-AD_Credential\",\"keyMapping\":{\"PASSWORD\":\"AD_PASSWORD~#~None\"}}'",
+			},
+			"save_in_vault": schema.StringAttribute{
+				Optional:    true,
+				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
+			},
+			"client_id": schema.StringAttribute{
+				Required:    true,
+				Description: "The OAuth client ID for Salesforce.",
+			},
+			"client_secret": schema.StringAttribute{
+				Required:    true,
+				Sensitive:   true,
+				Description: "The OAuth client secret for Salesforce.",
+			},
+			"refresh_token": schema.StringAttribute{
+				Required:    true,
+				Sensitive:   true,
+				Description: "The OAuth refresh token used to get access tokens from Salesforce.",
+			},
+			"redirect_uri": schema.StringAttribute{
+				Optional:    true,
+				Description: "The redirect URI used in OAuth flows. Example: https://@INSTANCE_NAME@.salesforce.com/services/oauth2/success",
+			},
+			"instance_url": schema.StringAttribute{
+				Optional:    true,
+				Description: "Salesforce instance base URL. Example: https://@INSTANCE_NAME@.salesforce.com",
+			},
+			"object_to_be_imported": schema.StringAttribute{
+				Optional:    true,
+				Description: `Comma-separated list of Salesforce objects to import. Example: "Profile,Role,Group,PermissionSet"`,
+			},
+			"feature_license_json": schema.StringAttribute{
+				Optional:    true,
+				Description: "JSON mapping of feature licenses to permission fields in Salesforce.",
+			},
+			"custom_createaccount_url": schema.StringAttribute{
+				Optional:    true,
+				Description: "Custom URL used when creating a Salesforce account.",
+			},
+			"createaccountjson": schema.StringAttribute{
+				Optional:    true,
+				Description: "JSON template used for account creation in Salesforce.",
+			},
+			"account_filter_query": schema.StringAttribute{
+				Optional:    true,
+				Description: "Query used to filter Salesforce accounts.",
+			},
+			"account_field_query": schema.StringAttribute{
+				Optional:    true,
+				Description: "Fields to retrieve for Salesforce accounts. Example: Id, Username, LastName, FirstName, etc.",
+			},
+			"field_mapping_json": schema.StringAttribute{
+				Optional:    true,
+				Description: "JSON mapping of local fields to Salesforce fields with data types.",
+			},
+			"modifyaccountjson": schema.StringAttribute{
+				Optional:    true,
+				Description: "JSON template used for modifying Salesforce accounts.",
+			},
+			"status_threshold_config": schema.StringAttribute{
+				Optional:    true,
+				Description: "JSON configuration to define active/inactive thresholds and lock statuses.",
+			},
+			"customconfigjson": schema.StringAttribute{
+				Optional:    true,
+				Description: "Custom configuration options for Salesforce connector.",
+			},
+			"pam_config": schema.StringAttribute{
+				Optional:    true,
+				Description: "Privileged Access Management (PAM) configuration in JSON format.",
+			},
+			"msg": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "A message indicating the outcome of the operation.",
+			},
+			"error_code": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "An error code where '0' signifies success and '1' signifies an unsuccessful operation.",
+			},
+		},
+	}
+}
+
+func (r *salesforceConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	// Check if provider data is available.
+	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
+		return
+	}
+
+	// Cast provider data to your provider type.
+	prov, ok := req.ProviderData.(*saviyntProvider)
+	if !ok {
+		resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *saviyntProvider")
+		return
+	}
+
+	// Set the client and token from the provider state.
+	r.client = prov.client
+	r.token = prov.accessToken
+}
+
+func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan SALESFORCEConnectorResourceModel
+	// Extract plan from request
+	diags := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := r.client.APIBaseURL()
+	if strings.HasPrefix(apiBaseURL, "https://") {
+		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
+	}
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+	salesforceConn := openapi.SalesforceConnector{
+		BaseConnector: openapi.BaseConnector{
+			//required fields
+			Connectiontype: "SalesForce",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional fields
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+		},
+		CLIENT_ID:                util.StringPointerOrEmpty(plan.ClientId.ValueString()),
+		CLIENT_SECRET:            util.StringPointerOrEmpty(plan.ClientSecret.ValueString()),
+		REFRESH_TOKEN:            util.StringPointerOrEmpty(plan.RefreshToken.ValueString()),
+		REDIRECT_URI:             util.StringPointerOrEmpty(plan.RedirectUri.ValueString()),
+		INSTANCE_URL:             util.StringPointerOrEmpty(plan.InstanceUrl.ValueString()),
+		OBJECT_TO_BE_IMPORTED:    util.StringPointerOrEmpty(plan.ObjectToBeImported.ValueString()),
+		FEATURE_LICENSE_JSON:     util.StringPointerOrEmpty(plan.FeatureLicenseJson.ValueString()),
+		CUSTOM_CREATEACCOUNT_URL: util.StringPointerOrEmpty(plan.CustomCreateaccountUrl.ValueString()),
+		CREATEACCOUNTJSON:        util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()),
+		ACCOUNT_FILTER_QUERY:     util.StringPointerOrEmpty(plan.AccountFilterQuery.ValueString()),
+		ACCOUNT_FIELD_QUERY:      util.StringPointerOrEmpty(plan.AccountFieldQuery.ValueString()),
+		FIELD_MAPPING_JSON:       util.StringPointerOrEmpty(plan.FieldMappingJson.ValueString()),
+		MODIFYACCOUNTJSON:        util.StringPointerOrEmpty(plan.Modifyaccountjson.ValueString()),
+		STATUS_THRESHOLD_CONFIG:  util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
+		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()),
+		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+	}
+
+	salesforceConnRequest := openapi.CreateOrUpdateRequest{
+		SalesforceConnector: &salesforceConn,
+	}
+
+	// Initialize API client
+	apiClient := openapi.NewAPIClient(cfg)
+
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(salesforceConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
+}
+
+func (r *salesforceConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	// If the API does not support a separate read operation, you can pass through the state.
+}
+
+func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan SALESFORCEConnectorResourceModel
+	// Extract plan from request
+	diags := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := r.client.APIBaseURL()
+	if strings.HasPrefix(apiBaseURL, "https://") {
+		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
+	}
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+	salesforceConn := openapi.SalesforceConnector{
+		BaseConnector: openapi.BaseConnector{
+			//required fields
+			Connectiontype: "SalesForce",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional fields
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+		},
+		CLIENT_ID:                util.StringPointerOrEmpty(plan.ClientId.ValueString()),
+		CLIENT_SECRET:            util.StringPointerOrEmpty(plan.ClientSecret.ValueString()),
+		REFRESH_TOKEN:            util.StringPointerOrEmpty(plan.RefreshToken.ValueString()),
+		REDIRECT_URI:             util.StringPointerOrEmpty(plan.RedirectUri.ValueString()),
+		INSTANCE_URL:             util.StringPointerOrEmpty(plan.InstanceUrl.ValueString()),
+		OBJECT_TO_BE_IMPORTED:    util.StringPointerOrEmpty(plan.ObjectToBeImported.ValueString()),
+		FEATURE_LICENSE_JSON:     util.StringPointerOrEmpty(plan.FeatureLicenseJson.ValueString()),
+		CUSTOM_CREATEACCOUNT_URL: util.StringPointerOrEmpty(plan.CustomCreateaccountUrl.ValueString()),
+		CREATEACCOUNTJSON:        util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()),
+		ACCOUNT_FILTER_QUERY:     util.StringPointerOrEmpty(plan.AccountFilterQuery.ValueString()),
+		ACCOUNT_FIELD_QUERY:      util.StringPointerOrEmpty(plan.AccountFieldQuery.ValueString()),
+		FIELD_MAPPING_JSON:       util.StringPointerOrEmpty(plan.FieldMappingJson.ValueString()),
+		MODIFYACCOUNTJSON:        util.StringPointerOrEmpty(plan.Modifyaccountjson.ValueString()),
+		STATUS_THRESHOLD_CONFIG:  util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
+		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()),
+		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+	}
+
+	salesforceConnRequest := openapi.CreateOrUpdateRequest{
+		SalesforceConnector: &salesforceConn,
+	}
+
+	// Initialize API client
+	apiClient := openapi.NewAPIClient(cfg)
+
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(salesforceConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
+}
+func (r *salesforceConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	resp.State.RemoveResource(ctx)
+}
