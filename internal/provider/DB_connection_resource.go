@@ -6,8 +6,8 @@ package provider
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"log"
+	"net/http"
 	"strings"
 	"terraform-provider-Saviynt/util"
 
@@ -229,10 +229,10 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Optional:    true,
 				Description: "JSON to specify commands executable on the target server",
 			},
-			"result": schema.StringAttribute{
-				Computed:    true,
-				Description: "Result of the operation.",
-			},
+			// "result": schema.StringAttribute{
+			// 	Computed:    true,
+			// 	Description: "Result of the operation.",
+			// },
 			"msg": schema.StringAttribute{
 				Computed:    true,
 				Description: "Message returned from the operation.",
@@ -348,18 +348,18 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	// Set the individual fields
 	plan.Msg = types.StringValue(msgValue)
 	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		log.Printf("[ERROR] JSON marshal Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-		return
-	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-	plan.Result = types.StringValue(string(resultJSON))
+	// resultObj := map[string]string{
+	// 	"msg":        msgValue,
+	// 	"error_code": errorCodeValue,
+	// }
+	// resultJSON, err := util.MarshalDeterministic(resultObj)
+	// if err != nil {
+	// 	log.Printf("[ERROR] JSON marshal Failed: %v", err)
+	// 	resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+	// 	return
+	// }
+	// log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+	// plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
@@ -455,18 +455,18 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	// Set the individual fields
 	plan.Msg = types.StringValue(msgValue)
 	plan.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		log.Printf("JSON Marshaling Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-		return
-	}
+	// resultObj := map[string]string{
+	// 	"msg":        msgValue,
+	// 	"error_code": errorCodeValue,
+	// }
+	// resultJSON, err := util.MarshalDeterministic(resultObj)
+	// if err != nil {
+	// 	log.Printf("JSON Marshaling Failed: %v", err)
+	// 	resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+	// 	return
+	// }
 
-	plan.Result = types.StringValue(string(resultJSON))
+	// plan.Result = types.StringValue(string(resultJSON))
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 }
