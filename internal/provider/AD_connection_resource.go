@@ -120,7 +120,6 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:    true,
 				Description: "Unique identifier of the connection returned by the API. Example: 1909",
 			},
-
 			"connection_name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",

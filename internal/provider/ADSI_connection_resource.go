@@ -87,6 +87,10 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Computed:    true,
 				Description: "Resource ID.",
 			},
+			"connection_key": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Unique identifier of the connection returned by the API. Example: 1909",
+			},
 			"connection_name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
@@ -173,6 +177,7 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"entitlement_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Account attribute that contains group membership",
 			},
 			"user_attribute": schema.StringAttribute{
@@ -318,129 +323,8 @@ func (r *adsiConnectionResource) Configure(ctx context.Context, req resource.Con
 
 func (r *adsiConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan ADSIConnectorResourceModel
-
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
-	cfg.Host = apiBaseURL
-	cfg.Scheme = "https"
-	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	cfg.HTTPClient = http.DefaultClient
-
-	adsiConn := openapi.ADSIConnector{
-		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "ADSI",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.SafeStringConnector(plan.Description.ValueString()),
-			Defaultsavroles:    util.SafeStringConnector(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.SafeStringConnector(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
-		},
-		URL:                         plan.URL.ValueString(),
-		USERNAME:                    plan.Username.ValueString(),
-		PASSWORD:                    plan.Password.ValueString(),
-		CONNECTION_URL:              plan.ConnectionUrl.ValueString(),
-		FORESTLIST:                  plan.ForestList.ValueString(),
-		PROVISIONING_URL:            util.SafeStringConnector(plan.ProvisioningUrl.ValueString()),
-		DEFAULT_USER_ROLE:           util.SafeStringConnector(plan.DefaultUserRole.ValueString()),
-		UPDATEUSERJSON:              util.SafeStringConnector(plan.UpdateUserJson.ValueString()),
-		ENDPOINTS_FILTER:            util.SafeStringConnector(plan.EndpointsFilter.ValueString()),
-		SEARCHFILTER:                util.SafeStringConnector(plan.SearchFilter.ValueString()),
-		OBJECTFILTER:                util.SafeStringConnector(plan.ObjectFilter.ValueString()),
-		ACCOUNT_ATTRIBUTE:           util.SafeStringConnector(plan.AccountAttribute.ValueString()),
-		STATUS_THRESHOLD_CONFIG:     util.SafeStringConnector(plan.StatusThresholdConfig.ValueString()),
-		ENTITLEMENT_ATTRIBUTE:       util.SafeStringConnector(plan.EntitlementAttribute.ValueString()),
-		USER_ATTRIBUTE:              util.SafeStringConnector(plan.UserAttribute.ValueString()),
-		GroupSearchBaseDN:           util.SafeStringConnector(plan.GroupSearchBaseDN.ValueString()),
-		CHECKFORUNIQUE:              util.SafeStringConnector(plan.CheckForUnique.ValueString()),
-		STATUSKEYJSON:               util.SafeStringConnector(plan.StatusKeyJson.ValueString()),
-		GroupImportMapping:          util.SafeStringConnector(plan.GroupImportMapping.ValueString()),
-		ImportNestedMembership:      util.SafeStringConnector(plan.ImportNestedMembership.ValueString()),
-		PAGE_SIZE:                   util.SafeStringConnector(plan.PageSize.ValueString()),
-		ACCOUNTNAMERULE:             util.SafeStringConnector(plan.AccountNameRule.ValueString()),
-		CREATEACCOUNTJSON:           util.SafeStringConnector(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:           util.SafeStringConnector(plan.UpdateAccountJson.ValueString()),
-		ENABLEACCOUNTJSON:           util.SafeStringConnector(plan.EnableAccountJson.ValueString()),
-		DISABLEACCOUNTJSON:          util.SafeStringConnector(plan.DisableAccountJson.ValueString()),
-		REMOVEACCOUNTJSON:           util.SafeStringConnector(plan.RemoveAccessJson.ValueString()),
-		ADDACCESSJSON:               util.SafeStringConnector(plan.AddAccessJson.ValueString()),
-		REMOVEACCESSJSON:            util.SafeStringConnector(plan.RemoveAccountJson.ValueString()),
-		RESETANDCHANGEPASSWRDJSON:   util.SafeStringConnector(plan.ResetAndChangePasswrdJson.ValueString()),
-		CREATEGROUPJSON:             util.SafeStringConnector(plan.CreateGroupJson.ValueString()),
-		UPDATEGROUPJSON:             util.SafeStringConnector(plan.UpdateGroupJson.ValueString()),
-		REMOVEGROUPJSON:             util.SafeStringConnector(plan.RemoveGroupJson.ValueString()),
-		ADDACCESSENTITLEMENTJSON:    util.SafeStringConnector(plan.AddAccessEntitlementJson.ValueString()),
-		CUSTOMCONFIGJSON:            util.SafeStringConnector(plan.CustomConfigJson.ValueString()),
-		REMOVEACCESSENTITLEMENTJSON: util.SafeStringConnector(plan.RemoveAccessEntitlementJson.ValueString()),
-		CREATESERVICEACCOUNTJSON:    util.SafeStringConnector(plan.CreateServiceAccountJson.ValueString()),
-		UPDATESERVICEACCOUNTJSON:    util.SafeStringConnector(plan.UpdateServiceAccountJson.ValueString()),
-		REMOVESERVICEACCOUNTJSON:    util.SafeStringConnector(plan.RemoveServiceAccountJson.ValueString()),
-		PAM_CONFIG:                  util.SafeStringConnector(plan.PamConfig.ValueString()),
-		MODIFYUSERDATAJSON:          util.SafeStringConnector(plan.ModifyUserDataJson.ValueString()),
-	}
-
-	adsiConnRequest := openapi.CreateOrUpdateRequest{
-		ADSIConnector: &adsiConn,
-	}
-
-	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
-
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
-	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-		return
-	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
-
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	// resultObj := map[string]string{
-	// 	"msg":        msgValue,
-	// 	"error_code": errorCodeValue,
-	// }
-	// resultJSON, err := util.MarshalDeterministic(resultObj)
-	// if err != nil {
-	// 	resp.Diagnostics.AddError(
-	// 		"Error Marshaling Result",
-	// 		fmt.Sprintf("Could not marshal API response: %v", err),
-	// 	)
-	// 	log.Printf("JSON Marshalling failed: ", err)
-	// 	return
-	// }
-	// plan.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
-}
-
-func (r *adsiConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// If the API does not support a separate read operation, you can pass through the state.
-}
-
-func (r *adsiConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan ADSIConnectorResourceModel
-
-	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -452,102 +336,325 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
 
+	if plan.EntitlementAttribute.IsNull() || plan.EntitlementAttribute.IsUnknown() {
+		plan.EntitlementAttribute = types.StringValue("memberOf")
+	}
 	adsiConn := openapi.ADSIConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "ADSI",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.SafeStringConnector(plan.Description.ValueString()),
-			Defaultsavroles:    util.SafeStringConnector(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.SafeStringConnector(plan.EmailTemplate.ValueString()),
+			//required values
+			Connectiontype: "ADSI",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional values
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
-		URL:                         plan.URL.ValueString(),
-		USERNAME:                    plan.Username.ValueString(),
-		PASSWORD:                    plan.Password.ValueString(),
-		CONNECTION_URL:              plan.ConnectionUrl.ValueString(),
-		FORESTLIST:                  plan.ForestList.ValueString(),
-		PROVISIONING_URL:            util.SafeStringConnector(plan.ProvisioningUrl.ValueString()),
-		DEFAULT_USER_ROLE:           util.SafeStringConnector(plan.DefaultUserRole.ValueString()),
-		UPDATEUSERJSON:              util.SafeStringConnector(plan.UpdateUserJson.ValueString()),
-		ENDPOINTS_FILTER:            util.SafeStringConnector(plan.EndpointsFilter.ValueString()),
-		SEARCHFILTER:                util.SafeStringConnector(plan.SearchFilter.ValueString()),
-		OBJECTFILTER:                util.SafeStringConnector(plan.ObjectFilter.ValueString()),
-		ACCOUNT_ATTRIBUTE:           util.SafeStringConnector(plan.AccountAttribute.ValueString()),
-		STATUS_THRESHOLD_CONFIG:     util.SafeStringConnector(plan.StatusThresholdConfig.ValueString()),
-		ENTITLEMENT_ATTRIBUTE:       util.SafeStringConnector(plan.EntitlementAttribute.ValueString()),
-		USER_ATTRIBUTE:              util.SafeStringConnector(plan.UserAttribute.ValueString()),
-		GroupSearchBaseDN:           util.SafeStringConnector(plan.GroupSearchBaseDN.ValueString()),
-		CHECKFORUNIQUE:              util.SafeStringConnector(plan.CheckForUnique.ValueString()),
-		STATUSKEYJSON:               util.SafeStringConnector(plan.StatusKeyJson.ValueString()),
-		GroupImportMapping:          util.SafeStringConnector(plan.GroupImportMapping.ValueString()),
-		ImportNestedMembership:      util.SafeStringConnector(plan.ImportNestedMembership.ValueString()),
-		PAGE_SIZE:                   util.SafeStringConnector(plan.PageSize.ValueString()),
-		ACCOUNTNAMERULE:             util.SafeStringConnector(plan.AccountNameRule.ValueString()),
-		CREATEACCOUNTJSON:           util.SafeStringConnector(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:           util.SafeStringConnector(plan.UpdateAccountJson.ValueString()),
-		ENABLEACCOUNTJSON:           util.SafeStringConnector(plan.EnableAccountJson.ValueString()),
-		DISABLEACCOUNTJSON:          util.SafeStringConnector(plan.DisableAccountJson.ValueString()),
-		REMOVEACCOUNTJSON:           util.SafeStringConnector(plan.RemoveAccessJson.ValueString()),
-		ADDACCESSJSON:               util.SafeStringConnector(plan.AddAccessJson.ValueString()),
-		REMOVEACCESSJSON:            util.SafeStringConnector(plan.RemoveAccountJson.ValueString()),
-		RESETANDCHANGEPASSWRDJSON:   util.SafeStringConnector(plan.ResetAndChangePasswrdJson.ValueString()),
-		CREATEGROUPJSON:             util.SafeStringConnector(plan.CreateGroupJson.ValueString()),
-		UPDATEGROUPJSON:             util.SafeStringConnector(plan.UpdateGroupJson.ValueString()),
-		REMOVEGROUPJSON:             util.SafeStringConnector(plan.RemoveGroupJson.ValueString()),
-		ADDACCESSENTITLEMENTJSON:    util.SafeStringConnector(plan.AddAccessEntitlementJson.ValueString()),
-		CUSTOMCONFIGJSON:            util.SafeStringConnector(plan.CustomConfigJson.ValueString()),
-		REMOVEACCESSENTITLEMENTJSON: util.SafeStringConnector(plan.RemoveAccessEntitlementJson.ValueString()),
-		CREATESERVICEACCOUNTJSON:    util.SafeStringConnector(plan.CreateServiceAccountJson.ValueString()),
-		UPDATESERVICEACCOUNTJSON:    util.SafeStringConnector(plan.UpdateServiceAccountJson.ValueString()),
-		REMOVESERVICEACCOUNTJSON:    util.SafeStringConnector(plan.RemoveServiceAccountJson.ValueString()),
-		PAM_CONFIG:                  util.SafeStringConnector(plan.PamConfig.ValueString()),
-		MODIFYUSERDATAJSON:          util.SafeStringConnector(plan.ModifyUserDataJson.ValueString()),
+		//required values
+		URL:            plan.URL.ValueString(),
+		USERNAME:       plan.Username.ValueString(),
+		PASSWORD:       plan.Password.ValueString(),
+		CONNECTION_URL: plan.ConnectionUrl.ValueString(),
+		FORESTLIST:     plan.ForestList.ValueString(),
+		//optional values
+		PROVISIONING_URL:            util.StringPointerOrEmpty(plan.ProvisioningUrl.ValueString()),
+		DEFAULT_USER_ROLE:           util.StringPointerOrEmpty(plan.DefaultUserRole.ValueString()),
+		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
+		ENDPOINTS_FILTER:            util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
+		SEARCHFILTER:                util.StringPointerOrEmpty(plan.SearchFilter.ValueString()),
+		OBJECTFILTER:                util.StringPointerOrEmpty(plan.ObjectFilter.ValueString()),
+		ACCOUNT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.AccountAttribute.ValueString()),
+		STATUS_THRESHOLD_CONFIG:     util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
+		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
+		USER_ATTRIBUTE:              util.StringPointerOrEmpty(plan.UserAttribute.ValueString()),
+		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN.ValueString()),
+		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique.ValueString()),
+		STATUSKEYJSON:               util.StringPointerOrEmpty(plan.StatusKeyJson.ValueString()),
+		GroupImportMapping:          util.StringPointerOrEmpty(plan.GroupImportMapping.ValueString()),
+		ImportNestedMembership:      util.StringPointerOrEmpty(plan.ImportNestedMembership.ValueString()),
+		PAGE_SIZE:                   util.StringPointerOrEmpty(plan.PageSize.ValueString()),
+		ACCOUNTNAMERULE:             util.StringPointerOrEmpty(plan.AccountNameRule.ValueString()),
+		CREATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
+		UPDATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
+		ENABLEACCOUNTJSON:           util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
+		DISABLEACCOUNTJSON:          util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
+		REMOVEACCOUNTJSON:           util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()),
+		ADDACCESSJSON:               util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()),
+		REMOVEACCESSJSON:            util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()),
+		RESETANDCHANGEPASSWRDJSON:   util.StringPointerOrEmpty(plan.ResetAndChangePasswrdJson.ValueString()),
+		CREATEGROUPJSON:             util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()),
+		UPDATEGROUPJSON:             util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()),
+		REMOVEGROUPJSON:             util.StringPointerOrEmpty(plan.RemoveGroupJson.ValueString()),
+		ADDACCESSENTITLEMENTJSON:    util.StringPointerOrEmpty(plan.AddAccessEntitlementJson.ValueString()),
+		CUSTOMCONFIGJSON:            util.StringPointerOrEmpty(plan.CustomConfigJson.ValueString()),
+		REMOVEACCESSENTITLEMENTJSON: util.StringPointerOrEmpty(plan.RemoveAccessEntitlementJson.ValueString()),
+		CREATESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.CreateServiceAccountJson.ValueString()),
+		UPDATESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.UpdateServiceAccountJson.ValueString()),
+		REMOVESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.RemoveServiceAccountJson.ValueString()),
+		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
 	}
-
 	adsiConnRequest := openapi.CreateOrUpdateRequest{
 		ADSIConnector: &adsiConn,
 	}
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
-	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
+}
 
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
+func (r *adsiConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state ADSIConnectorResourceModel
 
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	// resultObj := map[string]string{
-	// 	"msg":        msgValue,
-	// 	"error_code": errorCodeValue,
-	// }
-	// resultJSON, err := util.MarshalDeterministic(resultObj)
-	// if err != nil {
-	// 	resp.Diagnostics.AddError(
-	// 		"Error Marshaling Result",
-	// 		fmt.Sprintf("Could not marshal API response: %v", err),
-	// 	)
-	// 	log.Printf("JSON Marshalling failed: ", err)
-	// 	return
-	// }
-	// plan.Result = types.StringValue(string(resultJSON))
+	// Configure API client
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
 
-	// Store state
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(state.ConnectionName.ValueString())
+	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	state.ConnectionKey = types.Int64Value(int64(*apiResp.ADSIConnectionResponse.Connectionkey))
+	state.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ADSIConnectionResponse.Connectionkey))
+	state.ConnectionName = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionname)
+	state.Description = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Description)
+	state.DefaultSavRoles = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Defaultsavroles)
+	state.ConnectionType = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectiontype)
+	state.Msg = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Msg)
+	state.EmailTemplate = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Emailtemplate)
+	state.ImportNestedMembership = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ImportNestedMembership)
+	state.CreateAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	state.EndpointsFilter = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	state.DisableAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON)
+	state.RemoveAccessEntitlementJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.REMOVEACCESSENTITLEMENTJSON)
+	state.GroupSearchBaseDN = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.GroupSearchBaseDN)
+	state.StatusKeyJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.STATUSKEYJSON)
+	state.DefaultUserRole = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.DEFAULT_USER_ROLE)
+	state.Username = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.USERNAME)
+	state.UpdateServiceAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.UPDATESERVICEACCOUNTJSON)
+	state.AddAccessJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ADDACCESSJSON)
+	state.CreateServiceAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.CREATESERVICEACCOUNTJSON)
+	state.AccountNameRule = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ACCOUNTNAMERULE)
+	state.ConnectionUrl = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.CONNECTION_URL)
+	state.AccountAttribute = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTE)
+	state.PamConfig = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.PAM_CONFIG)
+	state.PageSize = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.PAGE_SIZE)
+	state.SearchFilter = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.SEARCHFILTER)
+	state.UpdateGroupJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.UPDATEGROUPJSON)
+	state.CreateGroupJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.CREATEGROUPJSON)
+	state.EntitlementAttribute = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
+	state.CheckForUnique = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
+	state.RemoveServiceAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.REMOVESERVICEACCOUNTJSON)
+	state.UpdateUserJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.UPDATEUSERJSON)
+	state.URL = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.URL)
+	state.CustomConfigJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.CUSTOMCONFIGJSON)
+	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	state.GroupImportMapping = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.GroupImportMapping)
+	state.ProvisioningUrl = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.PROVISIONING_URL)
+	state.RemoveGroupJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.REMOVEGROUPJSON)
+	state.RemoveAccessJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.REMOVEACCESSJSON)
+	state.ResetAndChangePasswrdJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.RESETANDCHANGEPASSWRDJSON)
+	state.UserAttribute = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.USER_ATTRIBUTE)
+	state.AddAccessEntitlementJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ADDACCESSENTITLEMENTJSON)
+	state.ModifyUserDataJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	state.EnableAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON)
+	state.ForestList = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.FORESTLIST)
+	state.ObjectFilter = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.OBJECTFILTER)
+	state.UpdateAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON)
+	state.RemoveAccountJson = util.SafeStringDatasource(apiResp.ADSIConnectionResponse.Connectionattributes.REMOVEACCOUNTJSON)
+	apiMessage := util.SafeDeref(apiResp.ADSIConnectionResponse.Msg)
+	if apiMessage == "success" {
+		state.Msg = types.StringValue("Connection Successful")
+	} else {
+		state.Msg = types.StringValue(apiMessage)
+	}
+	state.ErrorCode = util.Int32PtrToTFString(apiResp.ADSIConnectionResponse.Errorcode)
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+}
+
+func (r *adsiConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan ADSIConnectorResourceModel
+	// Extract plan from request
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+	if plan.EntitlementAttribute.IsNull() || plan.EntitlementAttribute.IsUnknown() {
+		plan.EntitlementAttribute = types.StringValue("memberOf")
+	}
+	adsiConn := openapi.ADSIConnector{
+		BaseConnector: openapi.BaseConnector{
+			//required values
+			Connectiontype: "ADSI",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional values
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+		},
+		//required values
+		URL:            plan.URL.ValueString(),
+		USERNAME:       plan.Username.ValueString(),
+		PASSWORD:       plan.Password.ValueString(),
+		CONNECTION_URL: plan.ConnectionUrl.ValueString(),
+		FORESTLIST:     plan.ForestList.ValueString(),
+		//optional values
+		PROVISIONING_URL:            util.StringPointerOrEmpty(plan.ProvisioningUrl.ValueString()),
+		DEFAULT_USER_ROLE:           util.StringPointerOrEmpty(plan.DefaultUserRole.ValueString()),
+		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
+		ENDPOINTS_FILTER:            util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
+		SEARCHFILTER:                util.StringPointerOrEmpty(plan.SearchFilter.ValueString()),
+		OBJECTFILTER:                util.StringPointerOrEmpty(plan.ObjectFilter.ValueString()),
+		ACCOUNT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.AccountAttribute.ValueString()),
+		STATUS_THRESHOLD_CONFIG:     util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
+		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
+		USER_ATTRIBUTE:              util.StringPointerOrEmpty(plan.UserAttribute.ValueString()),
+		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN.ValueString()),
+		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique.ValueString()),
+		STATUSKEYJSON:               util.StringPointerOrEmpty(plan.StatusKeyJson.ValueString()),
+		GroupImportMapping:          util.StringPointerOrEmpty(plan.GroupImportMapping.ValueString()),
+		ImportNestedMembership:      util.StringPointerOrEmpty(plan.ImportNestedMembership.ValueString()),
+		PAGE_SIZE:                   util.StringPointerOrEmpty(plan.PageSize.ValueString()),
+		ACCOUNTNAMERULE:             util.StringPointerOrEmpty(plan.AccountNameRule.ValueString()),
+		CREATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
+		UPDATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
+		ENABLEACCOUNTJSON:           util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
+		DISABLEACCOUNTJSON:          util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
+		REMOVEACCOUNTJSON:           util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()),
+		ADDACCESSJSON:               util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()),
+		REMOVEACCESSJSON:            util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()),
+		RESETANDCHANGEPASSWRDJSON:   util.StringPointerOrEmpty(plan.ResetAndChangePasswrdJson.ValueString()),
+		CREATEGROUPJSON:             util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()),
+		UPDATEGROUPJSON:             util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()),
+		REMOVEGROUPJSON:             util.StringPointerOrEmpty(plan.RemoveGroupJson.ValueString()),
+		ADDACCESSENTITLEMENTJSON:    util.StringPointerOrEmpty(plan.AddAccessEntitlementJson.ValueString()),
+		CUSTOMCONFIGJSON:            util.StringPointerOrEmpty(plan.CustomConfigJson.ValueString()),
+		REMOVEACCESSENTITLEMENTJSON: util.StringPointerOrEmpty(plan.RemoveAccessEntitlementJson.ValueString()),
+		CREATESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.CreateServiceAccountJson.ValueString()),
+		UPDATESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.UpdateServiceAccountJson.ValueString()),
+		REMOVESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.RemoveServiceAccountJson.ValueString()),
+		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
+	}
+	adsiConnRequest := openapi.CreateOrUpdateRequest{
+		ADSIConnector: &adsiConn,
+	}
+
+	// Initialize API client
+	apiClient := openapi.NewAPIClient(cfg)
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("Problem with the update function")
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in update block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ConnectionKey = types.Int64Value(int64(*getResp.ADSIConnectionResponse.Connectionkey))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.ADSIConnectionResponse.Connectionkey))
+	plan.ConnectionName = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionname)
+	plan.Description = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Description)
+	plan.DefaultSavRoles = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Defaultsavroles)
+	plan.ConnectionType = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectiontype)
+	plan.Msg = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Msg)
+	plan.EmailTemplate = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Emailtemplate)
+	plan.ImportNestedMembership = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ImportNestedMembership)
+	plan.CreateAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	plan.EndpointsFilter = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	plan.DisableAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON)
+	plan.RemoveAccessEntitlementJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.REMOVEACCESSENTITLEMENTJSON)
+	plan.GroupSearchBaseDN = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.GroupSearchBaseDN)
+	plan.StatusKeyJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.STATUSKEYJSON)
+	plan.DefaultUserRole = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.DEFAULT_USER_ROLE)
+	plan.Username = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.USERNAME)
+	plan.UpdateServiceAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.UPDATESERVICEACCOUNTJSON)
+	plan.AddAccessJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ADDACCESSJSON)
+	plan.CreateServiceAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.CREATESERVICEACCOUNTJSON)
+	plan.AccountNameRule = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ACCOUNTNAMERULE)
+	plan.ConnectionUrl = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.CONNECTION_URL)
+	plan.AccountAttribute = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTE)
+	plan.PamConfig = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.PAM_CONFIG)
+	plan.PageSize = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.PAGE_SIZE)
+	plan.SearchFilter = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.SEARCHFILTER)
+	plan.UpdateGroupJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.UPDATEGROUPJSON)
+	plan.CreateGroupJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.CREATEGROUPJSON)
+	plan.EntitlementAttribute = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
+	plan.CheckForUnique = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
+	plan.RemoveServiceAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.REMOVESERVICEACCOUNTJSON)
+	plan.UpdateUserJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.UPDATEUSERJSON)
+	plan.URL = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.URL)
+	plan.CustomConfigJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.CUSTOMCONFIGJSON)
+	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	plan.GroupImportMapping = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.GroupImportMapping)
+	plan.ProvisioningUrl = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.PROVISIONING_URL)
+	plan.RemoveGroupJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.REMOVEGROUPJSON)
+	plan.RemoveAccessJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.REMOVEACCESSJSON)
+	plan.ResetAndChangePasswrdJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.RESETANDCHANGEPASSWRDJSON)
+	plan.UserAttribute = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.USER_ATTRIBUTE)
+	plan.AddAccessEntitlementJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ADDACCESSENTITLEMENTJSON)
+	plan.ModifyUserDataJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	plan.EnableAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON)
+	plan.ForestList = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.FORESTLIST)
+	plan.ObjectFilter = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.OBJECTFILTER)
+	plan.UpdateAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON)
+	plan.RemoveAccountJson = util.SafeStringDatasource(getResp.ADSIConnectionResponse.Connectionattributes.REMOVEACCOUNTJSON)
+	apiMessage := util.SafeDeref(getResp.ADSIConnectionResponse.Msg)
+	if apiMessage == "success" {
+		plan.Msg = types.StringValue("Connection Successful")
+	} else {
+		plan.Msg = types.StringValue(apiMessage)
+	}
+	plan.ErrorCode = util.Int32PtrToTFString(getResp.ADSIConnectionResponse.Errorcode)
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 
 func (r *adsiConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
