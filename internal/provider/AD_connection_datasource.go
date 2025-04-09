@@ -42,6 +42,7 @@ type BaseConnectionDataSourceModel struct {
 }
 
 type ADConnectionDataSourceModel struct {
+	ID types.String `tfsdk:"id"`
 	BaseConnectionDataSourceModel
 	ConnectionAttributes *ADConnectionAttributes `tfsdk:"connection_attributes"`
 }
@@ -146,6 +147,10 @@ func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.Sch
 	resp.Schema = schema.Schema{
 		Description: "Retrieve the details for a given AD connector by its name or key",
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "Resource ID.",
+			},
 			"connection_name": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
