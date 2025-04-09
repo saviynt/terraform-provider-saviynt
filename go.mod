@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/hashicorp/terraform-plugin-framework v1.14.1
-	github.com/saviynt/saviynt-api-go-client v0.9.61
+	github.com/saviynt/saviynt-api-go-client v0.9.71
 )
 
 require (
