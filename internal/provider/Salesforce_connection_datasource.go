@@ -21,7 +21,7 @@ import (
 )
 
 // SalesforceConnectionResponse defines the data source
-type SalesforceConnectionResponse struct {
+type SalesforceConnectionDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -54,17 +54,17 @@ type SalesforceConnectionAttributes struct {
 	InstanceUrl              types.String             `tfsdk:"instance_url"`
 }
 
-var _ datasource.DataSource = &SalesforceConnectionResponse{}
+var _ datasource.DataSource = &SalesforceConnectionDataSource{}
 
 func NewSalesforceConnectionsDataSource() datasource.DataSource {
-	return &SalesforceConnectionResponse{}
+	return &SalesforceConnectionDataSource{}
 }
 
-func (d *SalesforceConnectionResponse) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *SalesforceConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_salesforce_connection_datasource"
 }
 
-func (d *SalesforceConnectionResponse) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *SalesforceConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
@@ -185,7 +185,7 @@ func (d *SalesforceConnectionResponse) Schema(ctx context.Context, req datasourc
 	}
 }
 
-func (d *SalesforceConnectionResponse) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *SalesforceConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -204,7 +204,7 @@ func (d *SalesforceConnectionResponse) Configure(ctx context.Context, req dataso
 	d.token = prov.accessToken
 }
 
-func (d *SalesforceConnectionResponse) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *SalesforceConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state SalesforceConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)
