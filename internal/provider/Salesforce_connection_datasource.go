@@ -20,7 +20,7 @@ import (
 	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 )
 
-// SalesforceConnectionResponse defines the data source
+// SalesforceConnectionDataSource defines the data source
 type SalesforceConnectionDataSource struct {
 	client *s.Client
 	token  string
