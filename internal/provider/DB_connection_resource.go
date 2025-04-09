@@ -76,6 +76,10 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:    true,
 				Description: "Resource ID.",
 			},
+			"connection_key": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Unique identifier of the connection returned by the API. Example: 1909",
+			},
 			"connection_name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
@@ -228,10 +232,6 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Optional:    true,
 				Description: "JSON to specify commands executable on the target server",
 			},
-			// "result": schema.StringAttribute{
-			// 	Computed:    true,
-			// 	Description: "Result of the operation.",
-			// },
 			"msg": schema.StringAttribute{
 				Computed:    true,
 				Description: "Message returned from the operation.",
@@ -265,8 +265,6 @@ func (r *dbConnectionResource) Configure(ctx context.Context, req resource.Confi
 
 func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan DBConnectorResourceModel
-
-	// Extract plan from request
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -282,45 +280,49 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 
 	dbConn := openapi.DBConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "DB",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.SafeStringConnector(plan.Description.ValueString()),
-			Defaultsavroles:    util.SafeStringConnector(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.SafeStringConnector(plan.EmailTemplate.ValueString()),
+			//required field
+			Connectiontype: "DB",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional field
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
-		URL:                     plan.URL.ValueString(),
-		USERNAME:                plan.Username.ValueString(),
-		PASSWORD:                plan.Password.ValueString(),
-		DRIVERNAME:              plan.DriverName.ValueString(),
-		CONNECTIONPROPERTIES:    util.SafeStringConnector(plan.ConnectionProperties.ValueString()),
-		PASSWORD_MIN_LENGTH:     util.SafeStringConnector(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:     util.SafeStringConnector(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:  util.SafeStringConnector(plan.PasswordNoOfCapsAlpha.ValueString()),
-		PASSWORD_NOOFDIGITS:     util.SafeStringConnector(plan.PasswordNoOfDigits.ValueString()),
-		PASSWORD_NOOFSPLCHARS:   util.SafeStringConnector(plan.PasswordNoOfSplChars.ValueString()),
-		CREATEACCOUNTJSON:       util.SafeStringConnector(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:       util.SafeStringConnector(plan.UpdateAccountJson.ValueString()),
-		GRANTACCESSJSON:         util.SafeStringConnector(plan.GrantAccessJson.ValueString()),
-		REVOKEACCESSJSON:        util.SafeStringConnector(plan.RevokeAccessJson.ValueString()),
-		CHANGEPASSJSON:          util.SafeStringConnector(plan.ChangePassJson.ValueString()),
-		DELETEACCOUNTJSON:       util.SafeStringConnector(plan.DeleteAccountJson.ValueString()),
-		ENABLEACCOUNTJSON:       util.SafeStringConnector(plan.EnableAccountJson.ValueString()),
-		DISABLEACCOUNTJSON:      util.SafeStringConnector(plan.DisableAccountJson.ValueString()),
-		ACCOUNTEXISTSJSON:       util.SafeStringConnector(plan.AccountExistsJson.ValueString()),
-		UPDATEUSERJSON:          util.SafeStringConnector(plan.UpdateUserJson.ValueString()),
-		ACCOUNTSIMPORT:          util.SafeStringConnector(plan.AccountsImport.ValueString()),
-		ENTITLEMENTVALUEIMPORT:  util.SafeStringConnector(plan.EntitlementValueImport.ValueString()),
-		ROLEOWNERIMPORT:         util.SafeStringConnector(plan.RoleOwnerImport.ValueString()),
-		ROLESIMPORT:             util.SafeStringConnector(plan.RolesImport.ValueString()),
-		SYSTEMIMPORT:            util.SafeStringConnector(plan.SystemImport.ValueString()),
-		USERIMPORT:              util.SafeStringConnector(plan.UserImport.ValueString()),
-		MODIFYUSERDATAJSON:      util.SafeStringConnector(plan.ModifyUserDataJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.SafeStringConnector(plan.StatusThresholdConfig.ValueString()),
-		MAX_PAGINATION_SIZE:     util.SafeStringConnector(plan.MaxPaginationSize.ValueString()),
-		CLI_COMMAND_JSON:        util.SafeStringConnector(plan.CliCommandJson.ValueString()),
+		//required field
+		URL:        plan.URL.ValueString(),
+		USERNAME:   plan.Username.ValueString(),
+		PASSWORD:   plan.Password.ValueString(),
+		DRIVERNAME: plan.DriverName.ValueString(),
+		//optional field
+		CONNECTIONPROPERTIES:    util.StringPointerOrEmpty(plan.ConnectionProperties.ValueString()),
+		PASSWORD_MIN_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
+		PASSWORD_MAX_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
+		PASSWORD_NOOFCAPSALPHA:  util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha.ValueString()),
+		PASSWORD_NOOFDIGITS:     util.StringPointerOrEmpty(plan.PasswordNoOfDigits.ValueString()),
+		PASSWORD_NOOFSPLCHARS:   util.StringPointerOrEmpty(plan.PasswordNoOfSplChars.ValueString()),
+		CREATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
+		UPDATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
+		GRANTACCESSJSON:         util.StringPointerOrEmpty(plan.GrantAccessJson.ValueString()),
+		REVOKEACCESSJSON:        util.StringPointerOrEmpty(plan.RevokeAccessJson.ValueString()),
+		CHANGEPASSJSON:          util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
+		DELETEACCOUNTJSON:       util.StringPointerOrEmpty(plan.DeleteAccountJson.ValueString()),
+		ENABLEACCOUNTJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
+		DISABLEACCOUNTJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
+		ACCOUNTEXISTSJSON:       util.StringPointerOrEmpty(plan.AccountExistsJson.ValueString()),
+		UPDATEUSERJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
+		ACCOUNTSIMPORT:          util.StringPointerOrEmpty(plan.AccountsImport.ValueString()),
+		ENTITLEMENTVALUEIMPORT:  util.StringPointerOrEmpty(plan.EntitlementValueImport.ValueString()),
+		ROLEOWNERIMPORT:         util.StringPointerOrEmpty(plan.RoleOwnerImport.ValueString()),
+		ROLESIMPORT:             util.StringPointerOrEmpty(plan.RolesImport.ValueString()),
+		SYSTEMIMPORT:            util.StringPointerOrEmpty(plan.SystemImport.ValueString()),
+		USERIMPORT:              util.StringPointerOrEmpty(plan.UserImport.ValueString()),
+		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
+		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
+		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()),
+		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()),
 	}
 	dbConnRequest := openapi.CreateOrUpdateRequest{
 		DBConnector: &dbConn,
@@ -328,49 +330,97 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(dbConnRequest).Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
-		log.Printf("[ERROR] API Call Failed: ", err)
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(dbConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
-
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	// resultObj := map[string]string{
-	// 	"msg":        msgValue,
-	// 	"error_code": errorCodeValue,
-	// }
-	// resultJSON, err := util.MarshalDeterministic(resultObj)
-	// if err != nil {
-	// 	log.Printf("[ERROR] JSON marshal Failed: %v", err)
-	// 	resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-	// 	return
-	// }
-	// log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-	// plan.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *dbConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// If the API does not support a separate read operation, you can pass through the state.
+	var state DBConnectorResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Configure API client
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(state.ConnectionName.ValueString())
+	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	state.ConnectionKey = types.Int64Value(int64(*apiResp.DBConnectionResponse.Connectionkey))
+	state.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.DBConnectionResponse.Connectionkey))
+	state.ConnectionName = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionname)
+	state.ConnectionKey = util.SafeInt64(apiResp.DBConnectionResponse.Connectionkey)
+	state.Description = util.SafeStringDatasource(apiResp.DBConnectionResponse.Description)
+	state.DefaultSavRoles = util.SafeStringDatasource(apiResp.DBConnectionResponse.Defaultsavroles)
+	state.ConnectionType = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectiontype)
+	state.EmailTemplate = util.SafeStringDatasource(apiResp.DBConnectionResponse.Emailtemplate)
+	state.PasswordMinLength = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_MIN_LENGTH)
+	state.AccountExistsJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ACCOUNTEXISTSJSON)
+	state.RolesImport = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ROLESIMPORT)
+	state.RoleOwnerImport = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ROLEOWNERIMPORT)
+	state.CreateAccountJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	state.UserImport = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.USERIMPORT)
+	state.DisableAccountJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON)
+	state.EntitlementValueImport = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ENTITLEMENTVALUEIMPORT)
+	state.UpdateUserJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.UPDATEUSERJSON)
+	state.PasswordNoOfSplChars = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFSPLCHARS)
+	state.RevokeAccessJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.REVOKEACCESSJSON)
+	state.URL = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.URL)
+	state.SystemImport = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.SYSTEMIMPORT)
+	state.DriverName = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DRIVERNAME)
+	state.DeleteAccountJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DELETEACCOUNTJSON)
+	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	state.Username = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.USERNAME)
+	state.PasswordNoOfCapsAlpha = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFCAPSALPHA)
+	state.PasswordNoOfDigits = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFDIGITS)
+	state.ConnectionProperties = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CONNECTIONPROPERTIES)
+	state.ModifyUserDataJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	state.AccountsImport = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ACCOUNTSIMPORT)
+	state.EnableAccountJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON)
+	state.PasswordMaxLength = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_MAX_LENGTH)
+	state.MaxPaginationSize = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.MAX_PAGINATION_SIZE)
+	state.UpdateAccountJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON)
+	state.GrantAccessJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.GRANTACCESSJSON)
+	state.CliCommandJson = util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CLI_COMMAND_JSON)
+	apiMessage := util.SafeDeref(apiResp.DBConnectionResponse.Msg)
+	if apiMessage == "success" {
+		state.Msg = types.StringValue("Connection Successful")
+	} else {
+		state.Msg = types.StringValue(apiMessage)
+	}
+	state.ErrorCode = util.Int32PtrToTFString(apiResp.DBConnectionResponse.Errorcode)
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan DBConnectorResourceModel
-
-	// Extract plan from request
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -378,10 +428,7 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -389,45 +436,49 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 
 	dbConn := openapi.DBConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "DB",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.SafeStringConnector(plan.Description.ValueString()),
-			Defaultsavroles:    util.SafeStringConnector(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.SafeStringConnector(plan.EmailTemplate.ValueString()),
+			//required field
+			Connectiontype: "DB",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional field
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
-		URL:                     plan.URL.ValueString(),
-		USERNAME:                plan.Username.ValueString(),
-		PASSWORD:                plan.Password.ValueString(),
-		DRIVERNAME:              plan.DriverName.ValueString(),
-		CONNECTIONPROPERTIES:    util.SafeStringConnector(plan.ConnectionProperties.ValueString()),
-		PASSWORD_MIN_LENGTH:     util.SafeStringConnector(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:     util.SafeStringConnector(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:  util.SafeStringConnector(plan.PasswordNoOfCapsAlpha.ValueString()),
-		PASSWORD_NOOFDIGITS:     util.SafeStringConnector(plan.PasswordNoOfDigits.ValueString()),
-		PASSWORD_NOOFSPLCHARS:   util.SafeStringConnector(plan.PasswordNoOfSplChars.ValueString()),
-		CREATEACCOUNTJSON:       util.SafeStringConnector(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:       util.SafeStringConnector(plan.UpdateAccountJson.ValueString()),
-		GRANTACCESSJSON:         util.SafeStringConnector(plan.GrantAccessJson.ValueString()),
-		REVOKEACCESSJSON:        util.SafeStringConnector(plan.RevokeAccessJson.ValueString()),
-		CHANGEPASSJSON:          util.SafeStringConnector(plan.ChangePassJson.ValueString()),
-		DELETEACCOUNTJSON:       util.SafeStringConnector(plan.DeleteAccountJson.ValueString()),
-		ENABLEACCOUNTJSON:       util.SafeStringConnector(plan.EnableAccountJson.ValueString()),
-		DISABLEACCOUNTJSON:      util.SafeStringConnector(plan.DisableAccountJson.ValueString()),
-		ACCOUNTEXISTSJSON:       util.SafeStringConnector(plan.AccountExistsJson.ValueString()),
-		UPDATEUSERJSON:          util.SafeStringConnector(plan.UpdateUserJson.ValueString()),
-		ACCOUNTSIMPORT:          util.SafeStringConnector(plan.AccountsImport.ValueString()),
-		ENTITLEMENTVALUEIMPORT:  util.SafeStringConnector(plan.EntitlementValueImport.ValueString()),
-		ROLEOWNERIMPORT:         util.SafeStringConnector(plan.RoleOwnerImport.ValueString()),
-		ROLESIMPORT:             util.SafeStringConnector(plan.RolesImport.ValueString()),
-		SYSTEMIMPORT:            util.SafeStringConnector(plan.SystemImport.ValueString()),
-		USERIMPORT:              util.SafeStringConnector(plan.UserImport.ValueString()),
-		MODIFYUSERDATAJSON:      util.SafeStringConnector(plan.ModifyUserDataJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.SafeStringConnector(plan.StatusThresholdConfig.ValueString()),
-		MAX_PAGINATION_SIZE:     util.SafeStringConnector(plan.MaxPaginationSize.ValueString()),
-		CLI_COMMAND_JSON:        util.SafeStringConnector(plan.CliCommandJson.ValueString()),
+		//required field
+		URL:        plan.URL.ValueString(),
+		USERNAME:   plan.Username.ValueString(),
+		PASSWORD:   plan.Password.ValueString(),
+		DRIVERNAME: plan.DriverName.ValueString(),
+		//optional field
+		CONNECTIONPROPERTIES:    util.StringPointerOrEmpty(plan.ConnectionProperties.ValueString()),
+		PASSWORD_MIN_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
+		PASSWORD_MAX_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
+		PASSWORD_NOOFCAPSALPHA:  util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha.ValueString()),
+		PASSWORD_NOOFDIGITS:     util.StringPointerOrEmpty(plan.PasswordNoOfDigits.ValueString()),
+		PASSWORD_NOOFSPLCHARS:   util.StringPointerOrEmpty(plan.PasswordNoOfSplChars.ValueString()),
+		CREATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
+		UPDATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
+		GRANTACCESSJSON:         util.StringPointerOrEmpty(plan.GrantAccessJson.ValueString()),
+		REVOKEACCESSJSON:        util.StringPointerOrEmpty(plan.RevokeAccessJson.ValueString()),
+		CHANGEPASSJSON:          util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
+		DELETEACCOUNTJSON:       util.StringPointerOrEmpty(plan.DeleteAccountJson.ValueString()),
+		ENABLEACCOUNTJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
+		DISABLEACCOUNTJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
+		ACCOUNTEXISTSJSON:       util.StringPointerOrEmpty(plan.AccountExistsJson.ValueString()),
+		UPDATEUSERJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
+		ACCOUNTSIMPORT:          util.StringPointerOrEmpty(plan.AccountsImport.ValueString()),
+		ENTITLEMENTVALUEIMPORT:  util.StringPointerOrEmpty(plan.EntitlementValueImport.ValueString()),
+		ROLEOWNERIMPORT:         util.StringPointerOrEmpty(plan.RoleOwnerImport.ValueString()),
+		ROLESIMPORT:             util.StringPointerOrEmpty(plan.RolesImport.ValueString()),
+		SYSTEMIMPORT:            util.StringPointerOrEmpty(plan.SystemImport.ValueString()),
+		USERIMPORT:              util.StringPointerOrEmpty(plan.UserImport.ValueString()),
+		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
+		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
+		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()),
+		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()),
 	}
 	dbConnRequest := openapi.CreateOrUpdateRequest{
 		DBConnector: &dbConn,
@@ -435,39 +486,66 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
-	apiResp, httpResp, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(dbConnRequest).Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Creating AD Connector",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
-		log.Printf("[ERROR] API Call Failed: ", err)
+	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(dbConnRequest).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("Problem with the update function")
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	// Assign ID and result to the plan
-	plan.ID = types.StringValue("test-connection-" + plan.ConnectionName.ValueString())
+	reqParams := openapi.GetConnectionDetailsRequest{}
 
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	// resultObj := map[string]string{
-	// 	"msg":        msgValue,
-	// 	"error_code": errorCodeValue,
-	// }
-	// resultJSON, err := util.MarshalDeterministic(resultObj)
-	// if err != nil {
-	// 	log.Printf("JSON Marshaling Failed: %v", err)
-	// 	resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-	// 	return
-	// }
-
-	// plan.Result = types.StringValue(string(resultJSON))
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in update block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ConnectionKey = types.Int64Value(int64(*getResp.DBConnectionResponse.Connectionkey))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.DBConnectionResponse.Connectionkey))
+	plan.ConnectionName = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionname)
+	plan.ConnectionKey = util.SafeInt64(getResp.DBConnectionResponse.Connectionkey)
+	plan.Description = util.SafeStringDatasource(getResp.DBConnectionResponse.Description)
+	plan.DefaultSavRoles = util.SafeStringDatasource(getResp.DBConnectionResponse.Defaultsavroles)
+	plan.ConnectionType = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectiontype)
+	plan.EmailTemplate = util.SafeStringDatasource(getResp.DBConnectionResponse.Emailtemplate)
+	plan.PasswordMinLength = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.PASSWORD_MIN_LENGTH)
+	plan.AccountExistsJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.ACCOUNTEXISTSJSON)
+	plan.RolesImport = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.ROLESIMPORT)
+	plan.RoleOwnerImport = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.ROLEOWNERIMPORT)
+	plan.CreateAccountJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	plan.UserImport = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.USERIMPORT)
+	plan.DisableAccountJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON)
+	plan.EntitlementValueImport = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.ENTITLEMENTVALUEIMPORT)
+	plan.UpdateUserJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.UPDATEUSERJSON)
+	plan.PasswordNoOfSplChars = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFSPLCHARS)
+	plan.RevokeAccessJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.REVOKEACCESSJSON)
+	plan.URL = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.URL)
+	plan.SystemImport = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.SYSTEMIMPORT)
+	plan.DriverName = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.DRIVERNAME)
+	plan.DeleteAccountJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.DELETEACCOUNTJSON)
+	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	plan.Username = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.USERNAME)
+	plan.PasswordNoOfCapsAlpha = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFCAPSALPHA)
+	plan.PasswordNoOfDigits = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFDIGITS)
+	plan.ConnectionProperties = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.CONNECTIONPROPERTIES)
+	plan.ModifyUserDataJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	plan.AccountsImport = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.ACCOUNTSIMPORT)
+	plan.EnableAccountJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON)
+	plan.PasswordMaxLength = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.PASSWORD_MAX_LENGTH)
+	plan.MaxPaginationSize = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.MAX_PAGINATION_SIZE)
+	plan.UpdateAccountJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON)
+	plan.GrantAccessJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.GRANTACCESSJSON)
+	plan.CliCommandJson = util.SafeStringDatasource(getResp.DBConnectionResponse.Connectionattributes.CLI_COMMAND_JSON)
+	apiMessage := util.SafeDeref(getResp.DBConnectionResponse.Msg)
+	if apiMessage == "success" {
+		plan.Msg = types.StringValue("Connection Successful")
+	} else {
+		plan.Msg = types.StringValue(apiMessage)
+	}
+	plan.ErrorCode = util.Int32PtrToTFString(getResp.DBConnectionResponse.Errorcode)
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 
 func (r *dbConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
