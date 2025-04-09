@@ -6,12 +6,22 @@ terraform {
     }
   }
 }
+
 provider "saviynt" {
   server_url = var.SAVIYNT_SERVER_URL
   username   = var.SAVIYNT_USERNAME
   password   = var.SAVIYNT_PASSWORD
 }
-resource "saviynt_security_system_resource" "example" {
-  systemname   = "name of the security system"
-  display_name = "display name of the security system"
+
+data "saviynt_ad_connection_datasource" "ad"{
+    # connection_key=""
+    connection_name="dellwireles349012"
+}
+
+data "saviynt_adsi_connection_datasource" "adsi"{
+    connection_key="4061"
+}
+
+data "saviynt_rest_connection_datasource" "rest"{
+    connection_key="4060"
 }
