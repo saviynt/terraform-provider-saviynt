@@ -25,7 +25,6 @@ type SecuritySystemsDataSource struct {
 	token  string
 }
 
-// SecuritySystemsDataSourceModel maps the API response and user inputs
 type SecuritySystemsDataSourceModel struct {
 	Systemname     types.String            `tfsdk:"systemname"`
 	Max            types.Int64             `tfsdk:"max"`
@@ -86,12 +85,10 @@ func NewSecuritySystemsDataSource() datasource.DataSource {
 	return &SecuritySystemsDataSource{}
 }
 
-// Metadata defines the data source name
 func (d *SecuritySystemsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_security_systems_datasource"
 }
 
-// Schema defines the attributes for the data source
 func (d *SecuritySystemsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "List of the security systems",
