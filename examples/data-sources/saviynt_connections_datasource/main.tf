@@ -14,29 +14,33 @@ provider "saviynt" {
 }
 
 data "saviynt_ad_connection_datasource" "ad"{
-    connection_key="4064"
+    connection_key="123"
 }
 
 data "saviynt_adsi_connection_datasource" "adsi"{
-    connection_key="4061"
+    connection_key="123"
 }
 
 data "saviynt_rest_connection_datasource" "rest"{
-    connection_key="4060"
+    connection_key="123"
 }
 
 data "saviynt_db_connection_datasource" "db" {
-  connection_key="4057"
+  connection_key="123"
 }
 
 data "saviynt_workday_connection_datasource" "w"{
-    connection_key="276"
+    connection_key="123"
 }
 
 data "saviynt_salesforce_connection_datasource" "s"{
-    connection_key="3563"
+    connection_key="123"
 }
 
 data "saviynt_entraid_connection_datasource" "en"{
-    connection_key="2881"
+    connection_key="123"
+}
+
+data "saviynt_sap_connection_datasource" "sap" {
+  connection_key="123"
 }
