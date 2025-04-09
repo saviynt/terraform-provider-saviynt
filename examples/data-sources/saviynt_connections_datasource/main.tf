@@ -14,8 +14,7 @@ provider "saviynt" {
 }
 
 data "saviynt_ad_connection_datasource" "ad"{
-    # connection_key=""
-    connection_name="dellwireles349012"
+    connection_key="4064"
 }
 
 data "saviynt_adsi_connection_datasource" "adsi"{
@@ -36,4 +35,8 @@ data "saviynt_workday_connection_datasource" "w"{
 
 data "saviynt_salesforce_connection_datasource" "s"{
     connection_key="3563"
+}
+
+data "saviynt_entraid_connection_datasource" "en"{
+    connection_key="2881"
 }
