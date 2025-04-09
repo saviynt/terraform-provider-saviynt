@@ -33,3 +33,7 @@ data "saviynt_db_connection_datasource" "db" {
 data "saviynt_workday_connection_datasource" "w"{
     connection_key="276"
 }
+
+data "saviynt_salesforce_connection_datasource" "s"{
+    connection_key="3563"
+}
