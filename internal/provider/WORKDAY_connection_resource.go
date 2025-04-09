@@ -313,6 +313,7 @@ func (r *workdayConnectionResource) Configure(ctx context.Context, req resource.
 
 func (r *workdayConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan WORKDAYConnectorResourceModel
+	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -326,8 +327,10 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	cfg.HTTPClient = http.DefaultClient
 	workdayConn := openapi.WorkdayConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "Workday",
-			ConnectionName:     plan.ConnectionName.ValueString(),
+			//required fields
+			Connectiontype: "Workday",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional fields
 			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
 			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
 			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
@@ -335,6 +338,9 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
+		//required fields
+		USE_OAUTH: plan.UseOAuth.ValueString(),
+		//optional fields
 		USERS_LAST_IMPORT_TIME:        util.StringPointerOrEmpty(plan.UsersLastImportTime.ValueString()),
 		ACCOUNTS_LAST_IMPORT_TIME:     util.StringPointerOrEmpty(plan.AccountsLastImportTime.ValueString()),
 		ACCESS_LAST_IMPORT_TIME:       util.StringPointerOrEmpty(plan.AccessLastImportTime.ValueString()),
@@ -342,7 +348,6 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 		API_VERSION:                   util.StringPointerOrEmpty(plan.APIVersion.ValueString()),
 		TENANT_NAME:                   util.StringPointerOrEmpty(plan.TenantName.ValueString()),
 		REPORT_OWNER:                  util.StringPointerOrEmpty(plan.ReportOwner.ValueString()),
-		USE_OAUTH:                     plan.UseOAuth.ValueString(), //Required Field
 		INCLUDE_REFERENCE_DESCRIPTORS: util.StringPointerOrEmpty(plan.IncludeReferenceDesc.ValueString()),
 		USE_ENHANCED_ORGROLE:          util.StringPointerOrEmpty(plan.UseEnhancedOrgRole.ValueString()),
 		USEX509AUTHFORSOAP:            util.StringPointerOrEmpty(plan.UseX509AuthForSOAP.ValueString()),
@@ -380,9 +385,9 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(workdayConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
 		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
@@ -411,7 +416,6 @@ func (r *workdayConnectionResource) Read(ctx context.Context, req resource.ReadR
 
 	apiClient := openapi.NewAPIClient(cfg)
 	reqParams := openapi.GetConnectionDetailsRequest{}
-
 	reqParams.SetConnectionname(state.ConnectionName.ValueString())
 	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
@@ -477,6 +481,7 @@ func (r *workdayConnectionResource) Read(ctx context.Context, req resource.ReadR
 }
 func (r *workdayConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan WORKDAYConnectorResourceModel
+	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -490,8 +495,10 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 	cfg.HTTPClient = http.DefaultClient
 	workdayConn := openapi.WorkdayConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "Workday",
-			ConnectionName:     plan.ConnectionName.ValueString(),
+			//required fields
+			Connectiontype: "Workday",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional fields
 			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
 			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
 			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
@@ -499,6 +506,9 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
+		//required fields
+		USE_OAUTH: plan.UseOAuth.ValueString(),
+		//optional fields
 		USERS_LAST_IMPORT_TIME:        util.StringPointerOrEmpty(plan.UsersLastImportTime.ValueString()),
 		ACCOUNTS_LAST_IMPORT_TIME:     util.StringPointerOrEmpty(plan.AccountsLastImportTime.ValueString()),
 		ACCESS_LAST_IMPORT_TIME:       util.StringPointerOrEmpty(plan.AccessLastImportTime.ValueString()),
@@ -506,7 +516,6 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 		API_VERSION:                   util.StringPointerOrEmpty(plan.APIVersion.ValueString()),
 		TENANT_NAME:                   util.StringPointerOrEmpty(plan.TenantName.ValueString()),
 		REPORT_OWNER:                  util.StringPointerOrEmpty(plan.ReportOwner.ValueString()),
-		USE_OAUTH:                     plan.UseOAuth.ValueString(), //Required Field
 		INCLUDE_REFERENCE_DESCRIPTORS: util.StringPointerOrEmpty(plan.IncludeReferenceDesc.ValueString()),
 		USE_ENHANCED_ORGROLE:          util.StringPointerOrEmpty(plan.UseEnhancedOrgRole.ValueString()),
 		USEX509AUTHFORSOAP:            util.StringPointerOrEmpty(plan.UseX509AuthForSOAP.ValueString()),
@@ -544,14 +553,13 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(workdayConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
 	reqParams := openapi.GetConnectionDetailsRequest{}
-
+	
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
 	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
