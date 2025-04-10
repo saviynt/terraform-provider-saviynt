@@ -85,26 +85,32 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specifies the type of vault connection being used (e.g., 'Hashicorp'). Example: \"Hashicorp\"",
 			},
 			"vault_configuration": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON string specifying vault configuration. Example: '{\"path\":\"/secrets/data/kv-dev-intgn1/-AD_Credential\",\"keyMapping\":{\"PASSWORD\":\"AD_PASSWORD~#~None\"}}'",
 			},
 			"save_in_vault": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"connection_json": schema.StringAttribute{
@@ -113,101 +119,126 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"import_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for importing users.",
 			},
 			"import_account_ent_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for importing accounts and entitlements.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration for status thresholds.",
 			},
 			"create_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create an account.",
 			},
 			"update_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update an account.",
 			},
 			"enable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to enable an account.",
 			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to disable an account.",
 			},
 			"add_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to add access.",
 			},
 			"remove_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove access.",
 			},
 			"update_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update a user.",
 			},
 			"change_pass_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to change a user’s password.",
 			},
 			"remove_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove an account.",
 			},
 			"ticket_status_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to check ticket status.",
 			},
 			"create_ticket_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create a ticket.",
 			},
 			"endpoints_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Filter criteria for endpoints.",
 			},
 			"passwd_policy_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON defining the password policy.",
 			},
 			"config_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "General configuration JSON for the REST connector.",
 			},
 			"add_ffid_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to add FFID access.",
 			},
 			"remove_ffid_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove FFID access.",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for modifying user data.",
 			},
 			"send_otp_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to send OTP.",
 			},
 			"validate_otp_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to validate OTP.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "PAM configuration JSON.",
 			},
 			"msg": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Message returned from the operation.",
 			},
 			"error_code": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Error code if the operation fails.",
 			},
@@ -257,15 +288,15 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.HTTPClient = http.DefaultClient
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "REST",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			//required fields
+			Connectiontype: "REST",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional fields
+			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 		},
+		//optional fields
 		ConnectionJSON:          connJSON,
 		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
 		ImportAccountEntJSON:    util.StringPointerOrEmpty(plan.ImportAccountEntJson.ValueString()),
@@ -291,6 +322,13 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()),
 		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 	}
+	if !plan.VaultConnection.IsNull() && !plan.VaultConnection.IsUnknown() {
+		if plan.VaultConnection.ValueString() != "" {
+			restConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+			restConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+			restConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+		}
+	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
 	}
@@ -306,6 +344,32 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
+	plan.ImportUserJson = types.StringValue(plan.ImportUserJson.ValueString())
+	plan.ImportAccountEntJson = types.StringValue(plan.ImportAccountEntJson.ValueString())
+	plan.StatusThresholdConfig = types.StringValue(plan.StatusThresholdConfig.ValueString())
+	plan.CreateAccountJson = types.StringValue(plan.CreateAccountJson.ValueString())
+	plan.UpdateAccountJson = types.StringValue(plan.UpdateAccountJson.ValueString())
+	plan.EnableAccountJson = types.StringValue(plan.EnableAccountJson.ValueString())
+	plan.DisableAccountJson = types.StringValue(plan.DisableAccountJson.ValueString())
+	plan.AddAccessJson = types.StringValue(plan.AddAccessJson.ValueString())
+	plan.RemoveAccessJson = types.StringValue(plan.RemoveAccessJson.ValueString())
+	plan.UpdateUserJson = types.StringValue(plan.UpdateUserJson.ValueString())
+	plan.ChangePassJson = types.StringValue(plan.ChangePassJson.ValueString())
+	plan.RemoveAccountJson = types.StringValue(plan.RemoveAccountJson.ValueString())
+	plan.TicketStatusJson = types.StringValue(plan.TicketStatusJson.ValueString())
+	plan.CreateTicketJson = types.StringValue(plan.CreateTicketJson.ValueString())
+	plan.EndpointsFilter = types.StringValue(plan.EndpointsFilter.ValueString())
+	plan.PasswdPolicyJson = types.StringValue(plan.PasswdPolicyJson.ValueString())
+	plan.ConfigJSON = types.StringValue(plan.ConfigJSON.ValueString())
+	plan.AddFFIDAccessJson = types.StringValue(plan.AddFFIDAccessJson.ValueString())
+	plan.RemoveFFIDAccessJson = types.StringValue(plan.RemoveFFIDAccessJson.ValueString())
+	plan.ModifyUserdataJson = types.StringValue(plan.ModifyUserdataJson.ValueString())
+	plan.SendOtpJson = types.StringValue(plan.SendOtpJson.ValueString())
+	plan.ValidateOtpJson = types.StringValue(plan.ValidateOtpJson.ValueString())
+	plan.PamConfig = types.StringValue(plan.PamConfig.ValueString())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -408,14 +472,11 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.HTTPClient = http.DefaultClient
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "REST",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			Connectiontype:  "REST",
+			ConnectionName:  plan.ConnectionName.ValueString(),
+			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 		},
 		ConnectionJSON:          connJSON,
 		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
@@ -441,6 +502,18 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 		SendOtpJSON:             util.StringPointerOrEmpty(plan.SendOtpJson.ValueString()),
 		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()),
 		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+	}
+	if !plan.VaultConnection.IsNull() && !plan.VaultConnection.IsUnknown() {
+		if plan.VaultConnection.ValueString() != "" {
+			restConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+			restConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+			restConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+		} else {
+			emptyStr := ""
+			restConn.BaseConnector.VaultConnection = &emptyStr
+			restConn.BaseConnector.VaultConfiguration = &emptyStr
+			restConn.BaseConnector.Saveinvault = &emptyStr
+		}
 	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
