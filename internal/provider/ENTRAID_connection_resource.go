@@ -353,17 +353,13 @@ func (r *entraidConnectionResource) Configure(ctx context.Context, req resource.
 func (r *entraidConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan ENTRAIDConnectorResourceModel
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -492,11 +488,9 @@ func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadR
 	state.EndpointsFilter = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
 	state.ImportUserJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ImportUserJSON)
 	state.EnableAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.EnableAccountJSON)
-	state.ConnectionJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionJSON)
 	state.ClientId = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CLIENT_ID)
 	state.DeleteGroupJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.DeleteGroupJSON)
 	state.ConfigJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ConfigJSON)
-	state.AccessToken = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ACCESS_TOKEN)
 	state.AddAccessJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AddAccessJSON)
 	state.CreateChannelJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateChannelJSON)
 	state.UpdateAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.UpdateAccountJSON)
@@ -508,16 +502,13 @@ func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadR
 	state.AzureManagementEndpoint = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AZURE_MANAGEMENT_ENDPOINT)
 	state.EntitlementAttribute = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
 	state.AccountsFilter = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNTS_FILTER)
-	state.WindowsConnectorJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.WINDOWS_CONNECTOR_JSON)
 	state.DeltaTokensJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.DELTATOKENSJSON)
-	state.AzureMgmtAccessToken = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AZURE_MGMT_ACCESS_TOKEN)
 	state.CreateTeamJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateTeamJSON)
 	state.EnhancedDirectoryRoles = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENHANCEDDIRECTORYROLES)
 	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
 	state.AccountImportFields = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNT_IMPORT_FIELDS)
 	state.RemoveAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccountJSON)
 	state.ChangePassJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ChangePassJSON)
-	state.ClientSecret = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CLIENT_SECRET)
 	state.EntitlementFilterJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_FILTER_JSON)
 	state.ServiceAccountAttributes = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.SERVICE_ACCOUNT_ATTRIBUTES)
 	state.AddAccessToEntitlementJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AddAccessToEntitlementJSON)
@@ -559,10 +550,7 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -666,11 +654,9 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 	plan.EndpointsFilter = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
 	plan.ImportUserJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ImportUserJSON)
 	plan.EnableAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.EnableAccountJSON)
-	plan.ConnectionJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ConnectionJSON)
 	plan.ClientId = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CLIENT_ID)
 	plan.DeleteGroupJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.DeleteGroupJSON)
 	plan.ConfigJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ConfigJSON)
-	plan.AccessToken = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ACCESS_TOKEN)
 	plan.AddAccessJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AddAccessJSON)
 	plan.CreateChannelJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateChannelJSON)
 	plan.UpdateAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.UpdateAccountJSON)
@@ -682,16 +668,13 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 	plan.AzureManagementEndpoint = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AZURE_MANAGEMENT_ENDPOINT)
 	plan.EntitlementAttribute = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
 	plan.AccountsFilter = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNTS_FILTER)
-	plan.WindowsConnectorJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.WINDOWS_CONNECTOR_JSON)
 	plan.DeltaTokensJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.DELTATOKENSJSON)
-	plan.AzureMgmtAccessToken = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AZURE_MGMT_ACCESS_TOKEN)
 	plan.CreateTeamJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateTeamJSON)
 	plan.EnhancedDirectoryRoles = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENHANCEDDIRECTORYROLES)
 	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
 	plan.AccountImportFields = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNT_IMPORT_FIELDS)
 	plan.RemoveAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccountJSON)
 	plan.ChangePassJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ChangePassJSON)
-	plan.ClientSecret = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CLIENT_SECRET)
 	plan.EntitlementFilterJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_FILTER_JSON)
 	plan.ServiceAccountAttributes = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.SERVICE_ACCOUNT_ATTRIBUTES)
 	plan.AddAccessToEntitlementJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AddAccessToEntitlementJSON)
