@@ -109,7 +109,7 @@ func (r *adConnectionResource) Metadata(ctx context.Context, req resource.Metada
 
 func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage AD Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -120,7 +120,6 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:    true,
 				Description: "Unique identifier of the connection returned by the API. Example: 1909",
 			},
-
 			"connection_name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
@@ -131,14 +130,17 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -155,238 +157,291 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 			"url": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "LDAP or target system URL. Example: \"ldap://uscentral.com:8972/\"",
 			},
 			"username": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "System admin username.",
 			},
 			"password": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Set the Password.",
 			},
 			"ldap_or_ad": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Type of Endpoint - LDAP or AD. Default is 'AD'. Example: \"AD\"",
 			},
 			"entitlement_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attribute used for entitlements. Example: \"memberOf\"",
 			},
 			"check_for_unique": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Uniqueness validation rule JSON. Example: '{\"sAMAccountName\":\"${task.accountName}\"}'",
 			},
 			"group_search_base_dn": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Base DN for group search. Example: \"CN=Users,DC=Saviynt,DC=ABC,DC=Com\"",
 			},
 			"create_update_mappings": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Mapping for group creation/updation (JSON string). Example: '{\"cn\":\"${role?.customproperty27}\",\"objectCategory\":\"CN=Group,CN=Schema,CN=Configuration,...}'",
 			},
 			"incremental_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Incremental import configuration.",
 			},
 			"max_changenumber": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Maximum change number. Example: \"4\"",
 			},
 			"read_operational_attributes": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Flag for reading operational attributes. Example: \"FALSE\"",
 			},
 			"base": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "LDAP base DN. Example: \"CN=Users,DC=Saviynt,DC=ABC,DC=Com\"",
 			},
 			"dc_locator": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Domain controller locator.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration for status thresholds. Example: '{\"statusAndThresholdConfig\":{...}}'",
 			},
 			"remove_account_action": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Action on account removal. Example: '{\"removeAction\":\"DELETE\"}'",
 			},
 			"account_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Mapping for LDAP user to EIC account attribute. Example: '[\"ACCOUNTID::objectGUID#Binary\", \"NAME::sAMAccountName#String\", ...]'",
 			},
 			"account_name_rule": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Rule to generate account name. Example: \"uid=${task.accountName.toString().toLowerCase()},ou=People,dc=racf,dc=com\"",
 			},
 			"advsearch": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Advanced search settings.",
 			},
 			"setdefaultpagesize": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default page size setting. Example: \"FALSE\"",
 			},
 			"reset_and_change_passwrd_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for reset/change password actions. Example: '{\"RESET\":{\"pwdLastSet\":\"0\",\"title\":\"password reset\"},\"CHANGE\":{\"pwdLastSet\":\"-1\",\"title\":\"password changed\"}}'",
 			},
 			"reuse_inactive_account": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Reuse inactive account flag. Example: \"TRUE\"",
 			},
 			"import_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON import configuration. Example: '{\"envproperties\":{\"com.sun.jndi.ldap.connect.timeout\":\"10000\",...}}'",
 			},
 			"support_empty_string": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Flag for sending empty values. Example: \"FALSE\"",
 			},
 			"enable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to enable account actions. Example: '{\"USEDNFROMACCOUNT\":\"NO\", ...}'",
 			},
 			"page_size": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "LDAP page size. Example: \"1000\"",
 			},
 			"user_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Mapping for LDAP user to EIC user attribute. Example: '[\"USERNAME::sAMAccountName#String\", ...]'",
 			},
 			"default_user_role": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV Role for imported users. Example: \"ROLE_TASK_ADMIN\"",
 			},
 			"searchfilter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "LDAP search filter for users. Example: \"OU=Users,DC=domainname,DC=com\"",
 			},
 			"endpoints_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration for child endpoints.",
 			},
 			"create_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create an account. Example: '{\"cn\":\"${cn}\",\"displayname\":\"${user.displayname}\", ...}'",
 			},
 			"update_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update an account. Example: '{\"uid\":\"${task.accountName.toString().toLowerCase()}\", ...}'",
 			},
 			"reuse_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to reuse an account. Example: '{\"ATTRIBUTESTOCHECK\":{\"userAccountControl\":\"514\",...}}'",
 			},
 			"enforce_tree_deletion": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Enforce tree deletion flag. Example: \"TRUE\"",
 			},
 			"advance_filter_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Advanced filter JSON configuration.",
 			},
 			"filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Simple filter string.",
 			},
 			"objectfilter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "LDAP object filter. Example: \"(objectClass=inetorgperson)\"",
 			},
 			"update_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update a user. Example: '{\"mail\":\"${user.email}\", ...}'",
 			},
 			"save_connection": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Flag to permanently save connection. Example: \"N\"",
 			},
 			"system_name": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Associated system name. Example: \"Dummyapplication\"",
 			},
 			"set_random_password": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Option to set a random password.",
 			},
 			"password_min_length": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Minimum password length. Example: \"8\"",
 			},
 			"password_max_length": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Maximum password length. Example: \"12\"",
 			},
 			"password_noofcapsalpha": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Number of capital letters required. Example: \"2\"",
 			},
 			"password_noofsplchars": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Number of special characters required. Example: \"1\"",
 			},
 			"password_noofdigits": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Number of digits required. Example: \"5\"",
 			},
 			"group_import_mapping": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON mapping for LDAP groups. Example: '{\"entitlementTypeName\":\"memberOf\", ...}'",
 			},
 			"unlock_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to unlock accounts. Example: '{\"lockoutTime\":\"0\"}'",
 			},
 			"status_key_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for account status keys. Example: '{\"STATUS_ACTIVE\":[\"512\",\"544\"], ...}'",
 			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to disable an account. Example: '{\"userAccountControl\":\"546\", ...}'",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for inline user data transformation.",
 			},
 			"org_base": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Organization BASE for provisioning.",
 			},
 			"organization_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Organization attributes.",
 			},
 			"create_org_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for organization creation.",
 			},
 			"update_org_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for organization update.",
 			},
 			"config_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for connection timeout configuration. Example: '{\"connectionTimeoutConfig\":{\"connectionTimeout\":10,\"readTimeout\":50,\"retryWait\":2,\"retryCount\":3}}'",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for PAM bootstrap configuration. Example: '{\"Connection\":\"AD\",...}'",
 			},
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
-				Sensitive:   true,
 				Description: "A message indicating the outcome of the operation.",
 			},
 			"error_code": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
-				Sensitive:   true,
 				Description: "An error code where '0' signifies success and '1' signifies an unsuccessful operation.",
 			},
 		},
@@ -428,71 +483,75 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	cfg.HTTPClient = http.DefaultClient
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:  "AD",
-			ConnectionName:  plan.ConnectionName.ValueString(),
-			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			//required field
+			Connectiontype: "AD",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional field
+			Description:     util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate),
 		},
-		URL:                         util.StringPointerOrEmpty(plan.URL.ValueString()),
-		USERNAME:                    util.StringPointerOrEmpty(plan.Username.ValueString()),
-		LDAP_OR_AD:                  util.StringPointerOrEmpty(plan.LdapOrAd.ValueString()),
-		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
-		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique.ValueString()),
-		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN.ValueString()),
-		CreateUpdateMappings:        util.StringPointerOrEmpty(plan.CreateUpdateMappings.ValueString()),
-		INCREMENTAL_CONFIG:          util.StringPointerOrEmpty(plan.IncrementalConfig.ValueString()),
-		MAX_CHANGENUMBER:            util.StringPointerOrEmpty(plan.MaxChangeNumber.ValueString()),
-		READ_OPERATIONAL_ATTRIBUTES: util.StringPointerOrEmpty(plan.ReadOperationalAttributes.ValueString()),
-		BASE:                        util.StringPointerOrEmpty(plan.Base.ValueString()),
-		DC_LOCATOR:                  util.StringPointerOrEmpty(plan.DcLocator.ValueString()),
-		STATUS_THRESHOLD_CONFIG:     util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		REMOVEACCOUNTACTION:         util.StringPointerOrEmpty(plan.RemoveAccountAction.ValueString()),
-		ACCOUNT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.AccountAttribute.ValueString()),
-		ACCOUNTNAMERULE:             util.StringPointerOrEmpty(plan.AccountNameRule.ValueString()),
-		ADVSEARCH:                   util.StringPointerOrEmpty(plan.Advsearch.ValueString()),
-		SETDEFAULTPAGESIZE:          util.StringPointerOrEmpty(plan.Setdefaultpagesize.ValueString()),
-		RESETANDCHANGEPASSWRDJSON:   util.StringPointerOrEmpty(plan.ResetAndChangePasswrdJson.ValueString()),
-		REUSEINACTIVEACCOUNT:        util.StringPointerOrEmpty(plan.ReuseInactiveAccount.ValueString()),
-		IMPORTJSON:                  util.StringPointerOrEmpty(plan.ImportJson.ValueString()),
-		SUPPORTEMPTYSTRING:          util.StringPointerOrEmpty(plan.SupportEmptyString.ValueString()),
-		ENABLEACCOUNTJSON:           util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		PAGE_SIZE:                   util.StringPointerOrEmpty(plan.PageSize.ValueString()),
-		USER_ATTRIBUTE:              util.StringPointerOrEmpty(plan.UserAttribute.ValueString()),
-		DEFAULT_USER_ROLE:           util.StringPointerOrEmpty(plan.DefaultUserRole.ValueString()),
-		SEARCHFILTER:                util.StringPointerOrEmpty(plan.Searchfilter.ValueString()),
-		ENDPOINTS_FILTER:            util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
-		CREATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		REUSEACCOUNTJSON:            util.StringPointerOrEmpty(plan.ReuseAccountJson.ValueString()),
-		ENFORCE_TREE_DELETION:       util.StringPointerOrEmpty(plan.EnforceTreeDeletion.ValueString()),
-		ADVANCE_FILTER_JSON:         util.StringPointerOrEmpty(plan.AdvanceFilterJson.ValueString()),
-		FILTER:                      util.StringPointerOrEmpty(plan.Filter.ValueString()),
-		OBJECTFILTER:                util.StringPointerOrEmpty(plan.Objectfilter.ValueString()),
-		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		Saveconnection:              util.StringPointerOrEmpty(plan.SaveConnection.ValueString()),
-		Systemname:                  util.StringPointerOrEmpty(plan.SystemName.ValueString()),
-		SETRANDOMPASSWORD:           util.StringPointerOrEmpty(plan.Setrandompassword.ValueString()),
-		PASSWORD_MIN_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:      util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha.ValueString()),
-		PASSWORD_NOOFSPLCHARS:       util.StringPointerOrEmpty(plan.PasswordNoofsplchars.ValueString()),
-		PASSWORD_NOOFDIGITS:         util.StringPointerOrEmpty(plan.PasswordNoofdigits.ValueString()),
-		GroupImportMapping:          util.StringPointerOrEmpty(plan.GroupImportMapping.ValueString()),
-		UNLOCKACCOUNTJSON:           util.StringPointerOrEmpty(plan.UnlockAccountJson.ValueString()),
-		STATUSKEYJSON:               util.StringPointerOrEmpty(plan.StatusKeyJson.ValueString()),
-		DISABLEACCOUNTJSON:          util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()),
-		ORG_BASE:                    util.StringPointerOrEmpty(plan.OrgBase.ValueString()),
-		ORGANIZATION_ATTRIBUTE:      util.StringPointerOrEmpty(plan.OrganizationAttribute.ValueString()),
-		CREATEORGJSON:               util.StringPointerOrEmpty(plan.Createorgjson.ValueString()),
-		UPDATEORGJSON:               util.StringPointerOrEmpty(plan.Updateorgjson.ValueString()),
-		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson.ValueString()),
-		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		//required field
+		PASSWORD: plan.Password.ValueString(),
+		//optional field
+		URL:                         util.StringPointerOrEmpty(plan.URL),
+		USERNAME:                    util.StringPointerOrEmpty(plan.Username),
+		LDAP_OR_AD:                  util.StringPointerOrEmpty(plan.LdapOrAd),
+		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute),
+		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique),
+		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN),
+		CreateUpdateMappings:        util.StringPointerOrEmpty(plan.CreateUpdateMappings),
+		INCREMENTAL_CONFIG:          util.StringPointerOrEmpty(plan.IncrementalConfig),
+		MAX_CHANGENUMBER:            util.StringPointerOrEmpty(plan.MaxChangeNumber),
+		READ_OPERATIONAL_ATTRIBUTES: util.StringPointerOrEmpty(plan.ReadOperationalAttributes),
+		BASE:                        util.StringPointerOrEmpty(plan.Base),
+		DC_LOCATOR:                  util.StringPointerOrEmpty(plan.DcLocator),
+		STATUS_THRESHOLD_CONFIG:     util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		REMOVEACCOUNTACTION:         util.StringPointerOrEmpty(plan.RemoveAccountAction),
+		ACCOUNT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.AccountAttribute),
+		ACCOUNTNAMERULE:             util.StringPointerOrEmpty(plan.AccountNameRule),
+		ADVSEARCH:                   util.StringPointerOrEmpty(plan.Advsearch),
+		SETDEFAULTPAGESIZE:          util.StringPointerOrEmpty(plan.Setdefaultpagesize),
+		RESETANDCHANGEPASSWRDJSON:   util.StringPointerOrEmpty(plan.ResetAndChangePasswrdJson),
+		REUSEINACTIVEACCOUNT:        util.StringPointerOrEmpty(plan.ReuseInactiveAccount),
+		IMPORTJSON:                  util.StringPointerOrEmpty(plan.ImportJson),
+		SUPPORTEMPTYSTRING:          util.StringPointerOrEmpty(plan.SupportEmptyString),
+		ENABLEACCOUNTJSON:           util.StringPointerOrEmpty(plan.EnableAccountJson),
+		PAGE_SIZE:                   util.StringPointerOrEmpty(plan.PageSize),
+		USER_ATTRIBUTE:              util.StringPointerOrEmpty(plan.UserAttribute),
+		DEFAULT_USER_ROLE:           util.StringPointerOrEmpty(plan.DefaultUserRole),
+		SEARCHFILTER:                util.StringPointerOrEmpty(plan.Searchfilter),
+		ENDPOINTS_FILTER:            util.StringPointerOrEmpty(plan.EndpointsFilter),
+		CREATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UPDATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		REUSEACCOUNTJSON:            util.StringPointerOrEmpty(plan.ReuseAccountJson),
+		ENFORCE_TREE_DELETION:       util.StringPointerOrEmpty(plan.EnforceTreeDeletion),
+		ADVANCE_FILTER_JSON:         util.StringPointerOrEmpty(plan.AdvanceFilterJson),
+		FILTER:                      util.StringPointerOrEmpty(plan.Filter),
+		OBJECTFILTER:                util.StringPointerOrEmpty(plan.Objectfilter),
+		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson),
+		Saveconnection:              util.StringPointerOrEmpty(plan.SaveConnection),
+		Systemname:                  util.StringPointerOrEmpty(plan.SystemName),
+		SETRANDOMPASSWORD:           util.StringPointerOrEmpty(plan.Setrandompassword),
+		PASSWORD_MIN_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMinLength),
+		PASSWORD_MAX_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMaxLength),
+		PASSWORD_NOOFCAPSALPHA:      util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha),
+		PASSWORD_NOOFSPLCHARS:       util.StringPointerOrEmpty(plan.PasswordNoofsplchars),
+		PASSWORD_NOOFDIGITS:         util.StringPointerOrEmpty(plan.PasswordNoofdigits),
+		GroupImportMapping:          util.StringPointerOrEmpty(plan.GroupImportMapping),
+		UNLOCKACCOUNTJSON:           util.StringPointerOrEmpty(plan.UnlockAccountJson),
+		STATUSKEYJSON:               util.StringPointerOrEmpty(plan.StatusKeyJson),
+		DISABLEACCOUNTJSON:          util.StringPointerOrEmpty(plan.DisableAccountJson),
+		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserdataJson),
+		ORG_BASE:                    util.StringPointerOrEmpty(plan.OrgBase),
+		ORGANIZATION_ATTRIBUTE:      util.StringPointerOrEmpty(plan.OrganizationAttribute),
+		CREATEORGJSON:               util.StringPointerOrEmpty(plan.Createorgjson),
+		UPDATEORGJSON:               util.StringPointerOrEmpty(plan.Updateorgjson),
+		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson),
+		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig),
 	}
-	if (plan.VaultConfiguration.ValueString() == "") && (plan.VaultConnection.ValueString() == "") {
-		adConn.PASSWORD = plan.Password.ValueString()
-	} else {
+	log.Print("[DEBUG] AD Connector: ", adConn.PASSWORD)
+	if plan.VaultConnection.ValueString() != "" {
 		adConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
 		adConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
 		adConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
@@ -513,6 +572,64 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.URL = util.SafeStringDatasource(plan.URL.ValueStringPointer())
+	plan.Username = util.SafeStringDatasource(plan.Username.ValueStringPointer())
+	plan.LdapOrAd = util.SafeStringDatasource(plan.LdapOrAd.ValueStringPointer())
+	plan.EntitlementAttribute = util.SafeStringDatasource(plan.EntitlementAttribute.ValueStringPointer())
+	plan.CheckForUnique = util.SafeStringDatasource(plan.CheckForUnique.ValueStringPointer())
+	plan.GroupSearchBaseDN = util.SafeStringDatasource(plan.GroupSearchBaseDN.ValueStringPointer())
+	plan.CreateUpdateMappings = util.SafeStringDatasource(plan.CreateUpdateMappings.ValueStringPointer())
+	plan.IncrementalConfig = util.SafeStringDatasource(plan.IncrementalConfig.ValueStringPointer())
+	plan.MaxChangeNumber = util.SafeStringDatasource(plan.MaxChangeNumber.ValueStringPointer())
+	plan.ReadOperationalAttributes = util.SafeStringDatasource(plan.ReadOperationalAttributes.ValueStringPointer())
+	plan.Base = util.SafeStringDatasource(plan.Base.ValueStringPointer())
+	plan.DcLocator = util.SafeStringDatasource(plan.DcLocator.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.RemoveAccountAction = util.SafeStringDatasource(plan.RemoveAccountAction.ValueStringPointer())
+	plan.AccountAttribute = util.SafeStringDatasource(plan.AccountAttribute.ValueStringPointer())
+	plan.AccountNameRule = util.SafeStringDatasource(plan.AccountNameRule.ValueStringPointer())
+	plan.Advsearch = util.SafeStringDatasource(plan.Advsearch.ValueStringPointer())
+	plan.Setdefaultpagesize = util.SafeStringDatasource(plan.Setdefaultpagesize.ValueStringPointer())
+	plan.ResetAndChangePasswrdJson = util.SafeStringDatasource(plan.ResetAndChangePasswrdJson.ValueStringPointer())
+	plan.ReuseInactiveAccount = util.SafeStringDatasource(plan.ReuseInactiveAccount.ValueStringPointer())
+	plan.ImportJson = util.SafeStringDatasource(plan.ImportJson.ValueStringPointer())
+	plan.SupportEmptyString = util.SafeStringDatasource(plan.SupportEmptyString.ValueStringPointer())
+	plan.EnableAccountJson = util.SafeStringDatasource(plan.EnableAccountJson.ValueStringPointer())
+	plan.PageSize = util.SafeStringDatasource(plan.PageSize.ValueStringPointer())
+	plan.UserAttribute = util.SafeStringDatasource(plan.UserAttribute.ValueStringPointer())
+	plan.DefaultUserRole = util.SafeStringDatasource(plan.DefaultUserRole.ValueStringPointer())
+	plan.Searchfilter = util.SafeStringDatasource(plan.Searchfilter.ValueStringPointer())
+	plan.EndpointsFilter = util.SafeStringDatasource(plan.EndpointsFilter.ValueStringPointer())
+	plan.CreateAccountJson = util.SafeStringDatasource(plan.CreateAccountJson.ValueStringPointer())
+	plan.UpdateAccountJson = util.SafeStringDatasource(plan.UpdateAccountJson.ValueStringPointer())
+	plan.ReuseAccountJson = util.SafeStringDatasource(plan.ReuseAccountJson.ValueStringPointer())
+	plan.EnforceTreeDeletion = util.SafeStringDatasource(plan.EnforceTreeDeletion.ValueStringPointer())
+	plan.AdvanceFilterJson = util.SafeStringDatasource(plan.AdvanceFilterJson.ValueStringPointer())
+	plan.Filter = util.SafeStringDatasource(plan.Filter.ValueStringPointer())
+	plan.Objectfilter = util.SafeStringDatasource(plan.Objectfilter.ValueStringPointer())
+	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
+	plan.SaveConnection = util.SafeStringDatasource(plan.SaveConnection.ValueStringPointer())
+	plan.SystemName = util.SafeStringDatasource(plan.SystemName.ValueStringPointer())
+	plan.Setrandompassword = util.SafeStringDatasource(plan.Setrandompassword.ValueStringPointer())
+	plan.PasswordMinLength = util.SafeStringDatasource(plan.PasswordMinLength.ValueStringPointer())
+	plan.PasswordMaxLength = util.SafeStringDatasource(plan.PasswordMaxLength.ValueStringPointer())
+	plan.PasswordNoofcapsalpha = util.SafeStringDatasource(plan.PasswordNoofcapsalpha.ValueStringPointer())
+	plan.PasswordNoofsplchars = util.SafeStringDatasource(plan.PasswordNoofsplchars.ValueStringPointer())
+	plan.PasswordNoofdigits = util.SafeStringDatasource(plan.PasswordNoofdigits.ValueStringPointer())
+	plan.GroupImportMapping = util.SafeStringDatasource(plan.GroupImportMapping.ValueStringPointer())
+	plan.UnlockAccountJson = util.SafeStringDatasource(plan.UnlockAccountJson.ValueStringPointer())
+	plan.StatusKeyJson = util.SafeStringDatasource(plan.StatusKeyJson.ValueStringPointer())
+	plan.DisableAccountJson = util.SafeStringDatasource(plan.DisableAccountJson.ValueStringPointer())
+	plan.ModifyUserdataJson = util.SafeStringDatasource(plan.ModifyUserdataJson.ValueStringPointer())
+	plan.OrgBase = util.SafeStringDatasource(plan.OrgBase.ValueStringPointer())
+	plan.OrganizationAttribute = util.SafeStringDatasource(plan.OrganizationAttribute.ValueStringPointer())
+	plan.Createorgjson = util.SafeStringDatasource(plan.Createorgjson.ValueStringPointer())
+	plan.Updateorgjson = util.SafeStringDatasource(plan.Updateorgjson.ValueStringPointer())
+	plan.ConfigJson = util.SafeStringDatasource(plan.ConfigJson.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -615,17 +732,22 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 		state.Msg = types.StringValue(apiMessage)
 	}
 	state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
-
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
+	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := r.client.APIBaseURL()
 	if strings.HasPrefix(apiBaseURL, "https://") {
@@ -637,74 +759,83 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.HTTPClient = http.DefaultClient
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:  "AD",
-			ConnectionName:  plan.ConnectionName.ValueString(),
-			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			//required field
+			Connectiontype: "AD",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional field
+			Description:     util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate),
 		},
-		URL:                         util.StringPointerOrEmpty(plan.URL.ValueString()),
-		USERNAME:                    util.StringPointerOrEmpty(plan.Username.ValueString()),
-		LDAP_OR_AD:                  util.StringPointerOrEmpty(plan.LdapOrAd.ValueString()),
-		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
-		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique.ValueString()),
-		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN.ValueString()),
-		CreateUpdateMappings:        util.StringPointerOrEmpty(plan.CreateUpdateMappings.ValueString()),
-		INCREMENTAL_CONFIG:          util.StringPointerOrEmpty(plan.IncrementalConfig.ValueString()),
-		MAX_CHANGENUMBER:            util.StringPointerOrEmpty(plan.MaxChangeNumber.ValueString()),
-		READ_OPERATIONAL_ATTRIBUTES: util.StringPointerOrEmpty(plan.ReadOperationalAttributes.ValueString()),
-		BASE:                        util.StringPointerOrEmpty(plan.Base.ValueString()),
-		DC_LOCATOR:                  util.StringPointerOrEmpty(plan.DcLocator.ValueString()),
-		STATUS_THRESHOLD_CONFIG:     util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		REMOVEACCOUNTACTION:         util.StringPointerOrEmpty(plan.RemoveAccountAction.ValueString()),
-		ACCOUNT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.AccountAttribute.ValueString()),
-		ACCOUNTNAMERULE:             util.StringPointerOrEmpty(plan.AccountNameRule.ValueString()),
-		ADVSEARCH:                   util.StringPointerOrEmpty(plan.Advsearch.ValueString()),
-		SETDEFAULTPAGESIZE:          util.StringPointerOrEmpty(plan.Setdefaultpagesize.ValueString()),
-		RESETANDCHANGEPASSWRDJSON:   util.StringPointerOrEmpty(plan.ResetAndChangePasswrdJson.ValueString()),
-		REUSEINACTIVEACCOUNT:        util.StringPointerOrEmpty(plan.ReuseInactiveAccount.ValueString()),
-		IMPORTJSON:                  util.StringPointerOrEmpty(plan.ImportJson.ValueString()),
-		SUPPORTEMPTYSTRING:          util.StringPointerOrEmpty(plan.SupportEmptyString.ValueString()),
-		ENABLEACCOUNTJSON:           util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		PAGE_SIZE:                   util.StringPointerOrEmpty(plan.PageSize.ValueString()),
-		USER_ATTRIBUTE:              util.StringPointerOrEmpty(plan.UserAttribute.ValueString()),
-		DEFAULT_USER_ROLE:           util.StringPointerOrEmpty(plan.DefaultUserRole.ValueString()),
-		SEARCHFILTER:                util.StringPointerOrEmpty(plan.Searchfilter.ValueString()),
-		ENDPOINTS_FILTER:            util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
-		CREATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		REUSEACCOUNTJSON:            util.StringPointerOrEmpty(plan.ReuseAccountJson.ValueString()),
-		ENFORCE_TREE_DELETION:       util.StringPointerOrEmpty(plan.EnforceTreeDeletion.ValueString()),
-		ADVANCE_FILTER_JSON:         util.StringPointerOrEmpty(plan.AdvanceFilterJson.ValueString()),
-		FILTER:                      util.StringPointerOrEmpty(plan.Filter.ValueString()),
-		OBJECTFILTER:                util.StringPointerOrEmpty(plan.Objectfilter.ValueString()),
-		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		Saveconnection:              util.StringPointerOrEmpty(plan.SaveConnection.ValueString()),
-		Systemname:                  util.StringPointerOrEmpty(plan.SystemName.ValueString()),
-		SETRANDOMPASSWORD:           util.StringPointerOrEmpty(plan.Setrandompassword.ValueString()),
-		PASSWORD_MIN_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:      util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha.ValueString()),
-		PASSWORD_NOOFSPLCHARS:       util.StringPointerOrEmpty(plan.PasswordNoofsplchars.ValueString()),
-		PASSWORD_NOOFDIGITS:         util.StringPointerOrEmpty(plan.PasswordNoofdigits.ValueString()),
-		GroupImportMapping:          util.StringPointerOrEmpty(plan.GroupImportMapping.ValueString()),
-		UNLOCKACCOUNTJSON:           util.StringPointerOrEmpty(plan.UnlockAccountJson.ValueString()),
-		STATUSKEYJSON:               util.StringPointerOrEmpty(plan.StatusKeyJson.ValueString()),
-		DISABLEACCOUNTJSON:          util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()),
-		ORG_BASE:                    util.StringPointerOrEmpty(plan.OrgBase.ValueString()),
-		ORGANIZATION_ATTRIBUTE:      util.StringPointerOrEmpty(plan.OrganizationAttribute.ValueString()),
-		CREATEORGJSON:               util.StringPointerOrEmpty(plan.Createorgjson.ValueString()),
-		UPDATEORGJSON:               util.StringPointerOrEmpty(plan.Updateorgjson.ValueString()),
-		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson.ValueString()),
-		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		//required field
+		PASSWORD: plan.Password.ValueString(),
+		//optional field
+		URL:                         util.StringPointerOrEmpty(plan.URL),
+		USERNAME:                    util.StringPointerOrEmpty(plan.Username),
+		LDAP_OR_AD:                  util.StringPointerOrEmpty(plan.LdapOrAd),
+		ENTITLEMENT_ATTRIBUTE:       util.StringPointerOrEmpty(plan.EntitlementAttribute),
+		CHECKFORUNIQUE:              util.StringPointerOrEmpty(plan.CheckForUnique),
+		GroupSearchBaseDN:           util.StringPointerOrEmpty(plan.GroupSearchBaseDN),
+		CreateUpdateMappings:        util.StringPointerOrEmpty(plan.CreateUpdateMappings),
+		INCREMENTAL_CONFIG:          util.StringPointerOrEmpty(plan.IncrementalConfig),
+		MAX_CHANGENUMBER:            util.StringPointerOrEmpty(plan.MaxChangeNumber),
+		READ_OPERATIONAL_ATTRIBUTES: util.StringPointerOrEmpty(plan.ReadOperationalAttributes),
+		BASE:                        util.StringPointerOrEmpty(plan.Base),
+		DC_LOCATOR:                  util.StringPointerOrEmpty(plan.DcLocator),
+		STATUS_THRESHOLD_CONFIG:     util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		REMOVEACCOUNTACTION:         util.StringPointerOrEmpty(plan.RemoveAccountAction),
+		ACCOUNT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.AccountAttribute),
+		ACCOUNTNAMERULE:             util.StringPointerOrEmpty(plan.AccountNameRule),
+		ADVSEARCH:                   util.StringPointerOrEmpty(plan.Advsearch),
+		SETDEFAULTPAGESIZE:          util.StringPointerOrEmpty(plan.Setdefaultpagesize),
+		RESETANDCHANGEPASSWRDJSON:   util.StringPointerOrEmpty(plan.ResetAndChangePasswrdJson),
+		REUSEINACTIVEACCOUNT:        util.StringPointerOrEmpty(plan.ReuseInactiveAccount),
+		IMPORTJSON:                  util.StringPointerOrEmpty(plan.ImportJson),
+		SUPPORTEMPTYSTRING:          util.StringPointerOrEmpty(plan.SupportEmptyString),
+		ENABLEACCOUNTJSON:           util.StringPointerOrEmpty(plan.EnableAccountJson),
+		PAGE_SIZE:                   util.StringPointerOrEmpty(plan.PageSize),
+		USER_ATTRIBUTE:              util.StringPointerOrEmpty(plan.UserAttribute),
+		DEFAULT_USER_ROLE:           util.StringPointerOrEmpty(plan.DefaultUserRole),
+		SEARCHFILTER:                util.StringPointerOrEmpty(plan.Searchfilter),
+		ENDPOINTS_FILTER:            util.StringPointerOrEmpty(plan.EndpointsFilter),
+		CREATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UPDATEACCOUNTJSON:           util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		REUSEACCOUNTJSON:            util.StringPointerOrEmpty(plan.ReuseAccountJson),
+		ENFORCE_TREE_DELETION:       util.StringPointerOrEmpty(plan.EnforceTreeDeletion),
+		ADVANCE_FILTER_JSON:         util.StringPointerOrEmpty(plan.AdvanceFilterJson),
+		FILTER:                      util.StringPointerOrEmpty(plan.Filter),
+		OBJECTFILTER:                util.StringPointerOrEmpty(plan.Objectfilter),
+		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson),
+		Saveconnection:              util.StringPointerOrEmpty(plan.SaveConnection),
+		Systemname:                  util.StringPointerOrEmpty(plan.SystemName),
+		SETRANDOMPASSWORD:           util.StringPointerOrEmpty(plan.Setrandompassword),
+		PASSWORD_MIN_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMinLength),
+		PASSWORD_MAX_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMaxLength),
+		PASSWORD_NOOFCAPSALPHA:      util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha),
+		PASSWORD_NOOFSPLCHARS:       util.StringPointerOrEmpty(plan.PasswordNoofsplchars),
+		PASSWORD_NOOFDIGITS:         util.StringPointerOrEmpty(plan.PasswordNoofdigits),
+		GroupImportMapping:          util.StringPointerOrEmpty(plan.GroupImportMapping),
+		UNLOCKACCOUNTJSON:           util.StringPointerOrEmpty(plan.UnlockAccountJson),
+		STATUSKEYJSON:               util.StringPointerOrEmpty(plan.StatusKeyJson),
+		DISABLEACCOUNTJSON:          util.StringPointerOrEmpty(plan.DisableAccountJson),
+		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserdataJson),
+		ORG_BASE:                    util.StringPointerOrEmpty(plan.OrgBase),
+		ORGANIZATION_ATTRIBUTE:      util.StringPointerOrEmpty(plan.OrganizationAttribute),
+		CREATEORGJSON:               util.StringPointerOrEmpty(plan.Createorgjson),
+		UPDATEORGJSON:               util.StringPointerOrEmpty(plan.Updateorgjson),
+		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson),
+		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig),
 	}
-	if (plan.VaultConfiguration.ValueString() == "") && (plan.VaultConnection.ValueString() == "") {
-		adConn.PASSWORD = plan.Password.ValueString()
-	} else {
+	log.Print("[DEBUG] AD Connector: ", adConn.PASSWORD)
+	if plan.VaultConnection.ValueString() != "" {
 		adConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
 		adConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
 		adConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+	} else {
+		emptyStr := ""
+		adConn.BaseConnector.VaultConnection = &emptyStr
+		adConn.BaseConnector.VaultConfiguration = &emptyStr
+		adConn.BaseConnector.Saveinvault = &emptyStr
 	}
 	adConnRequest := openapi.CreateOrUpdateRequest{
 		ADConnector: &adConn,
@@ -712,7 +843,6 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("Problem with the update function")

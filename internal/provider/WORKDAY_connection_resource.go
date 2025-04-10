@@ -80,7 +80,7 @@ func (r *workdayConnectionResource) Metadata(ctx context.Context, req resource.M
 
 func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage Workday Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -369,9 +369,9 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 			Connectiontype: "Workday",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
@@ -379,43 +379,43 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 		//required fields
 		USE_OAUTH: plan.UseOAuth.ValueString(),
 		//optional fields
-		USERS_LAST_IMPORT_TIME:        util.StringPointerOrEmpty(plan.UsersLastImportTime.ValueString()),
-		ACCOUNTS_LAST_IMPORT_TIME:     util.StringPointerOrEmpty(plan.AccountsLastImportTime.ValueString()),
-		ACCESS_LAST_IMPORT_TIME:       util.StringPointerOrEmpty(plan.AccessLastImportTime.ValueString()),
-		BASE_URL:                      util.StringPointerOrEmpty(plan.BaseURL.ValueString()),
-		API_VERSION:                   util.StringPointerOrEmpty(plan.APIVersion.ValueString()),
-		TENANT_NAME:                   util.StringPointerOrEmpty(plan.TenantName.ValueString()),
-		REPORT_OWNER:                  util.StringPointerOrEmpty(plan.ReportOwner.ValueString()),
-		INCLUDE_REFERENCE_DESCRIPTORS: util.StringPointerOrEmpty(plan.IncludeReferenceDesc.ValueString()),
-		USE_ENHANCED_ORGROLE:          util.StringPointerOrEmpty(plan.UseEnhancedOrgRole.ValueString()),
-		USEX509AUTHFORSOAP:            util.StringPointerOrEmpty(plan.UseX509AuthForSOAP.ValueString()),
-		X509KEY:                       util.StringPointerOrEmpty(plan.X509Key.ValueString()),
-		X509CERT:                      util.StringPointerOrEmpty(plan.X509Cert.ValueString()),
-		USERNAME:                      util.StringPointerOrEmpty(plan.Username.ValueString()),
-		PASSWORD:                      util.StringPointerOrEmpty(plan.Password.ValueString()),
-		CLIENT_ID:                     util.StringPointerOrEmpty(plan.ClientID.ValueString()),
-		CLIENT_SECRET:                 util.StringPointerOrEmpty(plan.ClientSecret.ValueString()),
-		REFRESH_TOKEN:                 util.StringPointerOrEmpty(plan.RefreshToken.ValueString()),
-		PAGE_SIZE:                     util.StringPointerOrEmpty(plan.PageSize.ValueString()),
-		USER_IMPORT_PAYLOAD:           util.StringPointerOrEmpty(plan.UserImportPayload.ValueString()),
-		USER_IMPORT_MAPPING:           util.StringPointerOrEmpty(plan.UserImportMapping.ValueString()),
-		ACCOUNT_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.AccountImportPayload.ValueString()),
-		ACCOUNT_IMPORT_MAPPING:        util.StringPointerOrEmpty(plan.AccountImportMapping.ValueString()),
-		ACCESS_IMPORT_LIST:            util.StringPointerOrEmpty(plan.AccessImportList.ValueString()),
-		RAAS_MAPPING_JSON:             util.StringPointerOrEmpty(plan.RAASMappingJSON.ValueString()),
-		ACCESS_IMPORT_MAPPING:         util.StringPointerOrEmpty(plan.AccessImportMapping.ValueString()),
-		ORGROLE_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.OrgRoleImportPayload.ValueString()),
-		STATUS_KEY_JSON:               util.StringPointerOrEmpty(plan.StatusKeyJSON.ValueString()),
-		USERATTRIBUTEJSON:             util.StringPointerOrEmpty(plan.UserAttributeJSON.ValueString()),
-		CUSTOM_CONFIG:                 util.StringPointerOrEmpty(plan.CustomConfig.ValueString()),
-		PAM_CONFIG:                    util.StringPointerOrEmpty(plan.PAMConfig.ValueString()),
-		MODIFYUSERDATAJSON:            util.StringPointerOrEmpty(plan.ModifyUserDataJSON.ValueString()),
-		STATUS_THRESHOLD_CONFIG:       util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		CREATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.CreateAccountPayload.ValueString()),
-		UPDATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.UpdateAccountPayload.ValueString()),
-		UPDATE_USER_PAYLOAD:           util.StringPointerOrEmpty(plan.UpdateUserPayload.ValueString()),
-		ASSIGN_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.AssignOrgRolePayload.ValueString()),
-		REMOVE_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.RemoveOrgRolePayload.ValueString()),
+		USERS_LAST_IMPORT_TIME:        util.StringPointerOrEmpty(plan.UsersLastImportTime),
+		ACCOUNTS_LAST_IMPORT_TIME:     util.StringPointerOrEmpty(plan.AccountsLastImportTime),
+		ACCESS_LAST_IMPORT_TIME:       util.StringPointerOrEmpty(plan.AccessLastImportTime),
+		BASE_URL:                      util.StringPointerOrEmpty(plan.BaseURL),
+		API_VERSION:                   util.StringPointerOrEmpty(plan.APIVersion),
+		TENANT_NAME:                   util.StringPointerOrEmpty(plan.TenantName),
+		REPORT_OWNER:                  util.StringPointerOrEmpty(plan.ReportOwner),
+		INCLUDE_REFERENCE_DESCRIPTORS: util.StringPointerOrEmpty(plan.IncludeReferenceDesc),
+		USE_ENHANCED_ORGROLE:          util.StringPointerOrEmpty(plan.UseEnhancedOrgRole),
+		USEX509AUTHFORSOAP:            util.StringPointerOrEmpty(plan.UseX509AuthForSOAP),
+		X509KEY:                       util.StringPointerOrEmpty(plan.X509Key),
+		X509CERT:                      util.StringPointerOrEmpty(plan.X509Cert),
+		USERNAME:                      util.StringPointerOrEmpty(plan.Username),
+		PASSWORD:                      util.StringPointerOrEmpty(plan.Password),
+		CLIENT_ID:                     util.StringPointerOrEmpty(plan.ClientID),
+		CLIENT_SECRET:                 util.StringPointerOrEmpty(plan.ClientSecret),
+		REFRESH_TOKEN:                 util.StringPointerOrEmpty(plan.RefreshToken),
+		PAGE_SIZE:                     util.StringPointerOrEmpty(plan.PageSize),
+		USER_IMPORT_PAYLOAD:           util.StringPointerOrEmpty(plan.UserImportPayload),
+		USER_IMPORT_MAPPING:           util.StringPointerOrEmpty(plan.UserImportMapping),
+		ACCOUNT_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.AccountImportPayload),
+		ACCOUNT_IMPORT_MAPPING:        util.StringPointerOrEmpty(plan.AccountImportMapping),
+		ACCESS_IMPORT_LIST:            util.StringPointerOrEmpty(plan.AccessImportList),
+		RAAS_MAPPING_JSON:             util.StringPointerOrEmpty(plan.RAASMappingJSON),
+		ACCESS_IMPORT_MAPPING:         util.StringPointerOrEmpty(plan.AccessImportMapping),
+		ORGROLE_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.OrgRoleImportPayload),
+		STATUS_KEY_JSON:               util.StringPointerOrEmpty(plan.StatusKeyJSON),
+		USERATTRIBUTEJSON:             util.StringPointerOrEmpty(plan.UserAttributeJSON),
+		CUSTOM_CONFIG:                 util.StringPointerOrEmpty(plan.CustomConfig),
+		PAM_CONFIG:                    util.StringPointerOrEmpty(plan.PAMConfig),
+		MODIFYUSERDATAJSON:            util.StringPointerOrEmpty(plan.ModifyUserDataJSON),
+		STATUS_THRESHOLD_CONFIG:       util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		CREATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.CreateAccountPayload),
+		UPDATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.UpdateAccountPayload),
+		UPDATE_USER_PAYLOAD:           util.StringPointerOrEmpty(plan.UpdateUserPayload),
+		ASSIGN_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.AssignOrgRolePayload),
+		REMOVE_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.RemoveOrgRolePayload),
 	}
 	workdayConnRequest := openapi.CreateOrUpdateRequest{
 		WorkdayConnector: &workdayConn,
@@ -431,43 +431,43 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
-	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
-	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.UsersLastImportTime = types.StringValue(*util.StringPointerOrEmpty(plan.UsersLastImportTime.ValueString()))
-	plan.AccountsLastImportTime = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsLastImportTime.ValueString()))
-	plan.AccessLastImportTime = types.StringValue(*util.StringPointerOrEmpty(plan.AccessLastImportTime.ValueString()))
-	plan.BaseURL = types.StringValue(*util.StringPointerOrEmpty(plan.BaseURL.ValueString()))
-	plan.APIVersion = types.StringValue(*util.StringPointerOrEmpty(plan.APIVersion.ValueString()))
-	plan.TenantName = types.StringValue(*util.StringPointerOrEmpty(plan.TenantName.ValueString()))
-	plan.ReportOwner = types.StringValue(*util.StringPointerOrEmpty(plan.ReportOwner.ValueString()))
-	plan.IncludeReferenceDesc = types.StringValue(*util.StringPointerOrEmpty(plan.IncludeReferenceDesc.ValueString()))
-	plan.UseEnhancedOrgRole = types.StringValue(*util.StringPointerOrEmpty(plan.UseEnhancedOrgRole.ValueString()))
-	plan.UseX509AuthForSOAP = types.StringValue(*util.StringPointerOrEmpty(plan.UseX509AuthForSOAP.ValueString()))
-	plan.X509Key = types.StringValue(*util.StringPointerOrEmpty(plan.X509Key.ValueString()))
-	plan.X509Cert = types.StringValue(*util.StringPointerOrEmpty(plan.X509Cert.ValueString()))
-	plan.Username = types.StringValue(*util.StringPointerOrEmpty(plan.Username.ValueString()))
-	plan.ClientID = types.StringValue(*util.StringPointerOrEmpty(plan.ClientID.ValueString()))
-	plan.PageSize = types.StringValue(*util.StringPointerOrEmpty(plan.PageSize.ValueString()))
-	plan.UserImportPayload = types.StringValue(*util.StringPointerOrEmpty(plan.UserImportPayload.ValueString()))
-	plan.UserImportMapping = types.StringValue(*util.StringPointerOrEmpty(plan.UserImportMapping.ValueString()))
-	plan.AccountImportPayload = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportPayload.ValueString()))
-	plan.AccountImportMapping = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportMapping.ValueString()))
-	plan.AccessImportList = types.StringValue(*util.StringPointerOrEmpty(plan.AccessImportList.ValueString()))
-	plan.RAASMappingJSON = types.StringValue(*util.StringPointerOrEmpty(plan.RAASMappingJSON.ValueString()))
-	plan.AccessImportMapping = types.StringValue(*util.StringPointerOrEmpty(plan.AccessImportMapping.ValueString()))
-	plan.OrgRoleImportPayload = types.StringValue(*util.StringPointerOrEmpty(plan.OrgRoleImportPayload.ValueString()))
-	plan.StatusKeyJSON = types.StringValue(*util.StringPointerOrEmpty(plan.StatusKeyJSON.ValueString()))
-	plan.UserAttributeJSON = types.StringValue(*util.StringPointerOrEmpty(plan.UserAttributeJSON.ValueString()))
-	plan.CustomConfig = types.StringValue(*util.StringPointerOrEmpty(plan.CustomConfig.ValueString()))
-	plan.PAMConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PAMConfig.ValueString()))
-	plan.ModifyUserDataJSON = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserDataJSON.ValueString()))
-	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
-	plan.CreateAccountPayload = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountPayload.ValueString()))
-	plan.UpdateAccountPayload = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountPayload.ValueString()))
-	plan.UpdateUserPayload = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserPayload.ValueString()))
-	plan.AssignOrgRolePayload = types.StringValue(*util.StringPointerOrEmpty(plan.AssignOrgRolePayload.ValueString()))
-	plan.RemoveOrgRolePayload = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveOrgRolePayload.ValueString()))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.UsersLastImportTime = util.SafeStringDatasource(plan.UsersLastImportTime.ValueStringPointer())
+	plan.AccountsLastImportTime = util.SafeStringDatasource(plan.AccountsLastImportTime.ValueStringPointer())
+	plan.AccessLastImportTime = util.SafeStringDatasource(plan.AccessLastImportTime.ValueStringPointer())
+	plan.BaseURL = util.SafeStringDatasource(plan.BaseURL.ValueStringPointer())
+	plan.APIVersion = util.SafeStringDatasource(plan.APIVersion.ValueStringPointer())
+	plan.TenantName = util.SafeStringDatasource(plan.TenantName.ValueStringPointer())
+	plan.ReportOwner = util.SafeStringDatasource(plan.ReportOwner.ValueStringPointer())
+	plan.IncludeReferenceDesc = util.SafeStringDatasource(plan.IncludeReferenceDesc.ValueStringPointer())
+	plan.UseEnhancedOrgRole = util.SafeStringDatasource(plan.UseEnhancedOrgRole.ValueStringPointer())
+	plan.UseX509AuthForSOAP = util.SafeStringDatasource(plan.UseX509AuthForSOAP.ValueStringPointer())
+	plan.X509Key = util.SafeStringDatasource(plan.X509Key.ValueStringPointer())
+	plan.X509Cert = util.SafeStringDatasource(plan.X509Cert.ValueStringPointer())
+	plan.Username = util.SafeStringDatasource(plan.Username.ValueStringPointer())
+	plan.ClientID = util.SafeStringDatasource(plan.ClientID.ValueStringPointer())
+	plan.PageSize = util.SafeStringDatasource(plan.PageSize.ValueStringPointer())
+	plan.UserImportPayload = util.SafeStringDatasource(plan.UserImportPayload.ValueStringPointer())
+	plan.UserImportMapping = util.SafeStringDatasource(plan.UserImportMapping.ValueStringPointer())
+	plan.AccountImportPayload = util.SafeStringDatasource(plan.AccountImportPayload.ValueStringPointer())
+	plan.AccountImportMapping = util.SafeStringDatasource(plan.AccountImportMapping.ValueStringPointer())
+	plan.AccessImportList = util.SafeStringDatasource(plan.AccessImportList.ValueStringPointer())
+	plan.RAASMappingJSON = util.SafeStringDatasource(plan.RAASMappingJSON.ValueStringPointer())
+	plan.AccessImportMapping = util.SafeStringDatasource(plan.AccessImportMapping.ValueStringPointer())
+	plan.OrgRoleImportPayload = util.SafeStringDatasource(plan.OrgRoleImportPayload.ValueStringPointer())
+	plan.StatusKeyJSON = util.SafeStringDatasource(plan.StatusKeyJSON.ValueStringPointer())
+	plan.UserAttributeJSON = util.SafeStringDatasource(plan.UserAttributeJSON.ValueStringPointer())
+	plan.CustomConfig = util.SafeStringDatasource(plan.CustomConfig.ValueStringPointer())
+	plan.PAMConfig = util.SafeStringDatasource(plan.PAMConfig.ValueStringPointer())
+	plan.ModifyUserDataJSON = util.SafeStringDatasource(plan.ModifyUserDataJSON.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.CreateAccountPayload = util.SafeStringDatasource(plan.CreateAccountPayload.ValueStringPointer())
+	plan.UpdateAccountPayload = util.SafeStringDatasource(plan.UpdateAccountPayload.ValueStringPointer())
+	plan.UpdateUserPayload = util.SafeStringDatasource(plan.UpdateUserPayload.ValueStringPointer())
+	plan.AssignOrgRolePayload = util.SafeStringDatasource(plan.AssignOrgRolePayload.ValueStringPointer())
+	plan.RemoveOrgRolePayload = util.SafeStringDatasource(plan.RemoveOrgRolePayload.ValueStringPointer())	
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -574,9 +574,9 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 			Connectiontype: "Workday",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
@@ -584,43 +584,43 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 		//required fields
 		USE_OAUTH: plan.UseOAuth.ValueString(),
 		//optional fields
-		USERS_LAST_IMPORT_TIME:        util.StringPointerOrEmpty(plan.UsersLastImportTime.ValueString()),
-		ACCOUNTS_LAST_IMPORT_TIME:     util.StringPointerOrEmpty(plan.AccountsLastImportTime.ValueString()),
-		ACCESS_LAST_IMPORT_TIME:       util.StringPointerOrEmpty(plan.AccessLastImportTime.ValueString()),
-		BASE_URL:                      util.StringPointerOrEmpty(plan.BaseURL.ValueString()),
-		API_VERSION:                   util.StringPointerOrEmpty(plan.APIVersion.ValueString()),
-		TENANT_NAME:                   util.StringPointerOrEmpty(plan.TenantName.ValueString()),
-		REPORT_OWNER:                  util.StringPointerOrEmpty(plan.ReportOwner.ValueString()),
-		INCLUDE_REFERENCE_DESCRIPTORS: util.StringPointerOrEmpty(plan.IncludeReferenceDesc.ValueString()),
-		USE_ENHANCED_ORGROLE:          util.StringPointerOrEmpty(plan.UseEnhancedOrgRole.ValueString()),
-		USEX509AUTHFORSOAP:            util.StringPointerOrEmpty(plan.UseX509AuthForSOAP.ValueString()),
-		X509KEY:                       util.StringPointerOrEmpty(plan.X509Key.ValueString()),
-		X509CERT:                      util.StringPointerOrEmpty(plan.X509Cert.ValueString()),
-		USERNAME:                      util.StringPointerOrEmpty(plan.Username.ValueString()),
-		PASSWORD:                      util.StringPointerOrEmpty(plan.Password.ValueString()),
-		CLIENT_ID:                     util.StringPointerOrEmpty(plan.ClientID.ValueString()),
-		CLIENT_SECRET:                 util.StringPointerOrEmpty(plan.ClientSecret.ValueString()),
-		REFRESH_TOKEN:                 util.StringPointerOrEmpty(plan.RefreshToken.ValueString()),
-		PAGE_SIZE:                     util.StringPointerOrEmpty(plan.PageSize.ValueString()),
-		USER_IMPORT_PAYLOAD:           util.StringPointerOrEmpty(plan.UserImportPayload.ValueString()),
-		USER_IMPORT_MAPPING:           util.StringPointerOrEmpty(plan.UserImportMapping.ValueString()),
-		ACCOUNT_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.AccountImportPayload.ValueString()),
-		ACCOUNT_IMPORT_MAPPING:        util.StringPointerOrEmpty(plan.AccountImportMapping.ValueString()),
-		ACCESS_IMPORT_LIST:            util.StringPointerOrEmpty(plan.AccessImportList.ValueString()),
-		RAAS_MAPPING_JSON:             util.StringPointerOrEmpty(plan.RAASMappingJSON.ValueString()),
-		ACCESS_IMPORT_MAPPING:         util.StringPointerOrEmpty(plan.AccessImportMapping.ValueString()),
-		ORGROLE_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.OrgRoleImportPayload.ValueString()),
-		STATUS_KEY_JSON:               util.StringPointerOrEmpty(plan.StatusKeyJSON.ValueString()),
-		USERATTRIBUTEJSON:             util.StringPointerOrEmpty(plan.UserAttributeJSON.ValueString()),
-		CUSTOM_CONFIG:                 util.StringPointerOrEmpty(plan.CustomConfig.ValueString()),
-		PAM_CONFIG:                    util.StringPointerOrEmpty(plan.PAMConfig.ValueString()),
-		MODIFYUSERDATAJSON:            util.StringPointerOrEmpty(plan.ModifyUserDataJSON.ValueString()),
-		STATUS_THRESHOLD_CONFIG:       util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		CREATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.CreateAccountPayload.ValueString()),
-		UPDATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.UpdateAccountPayload.ValueString()),
-		UPDATE_USER_PAYLOAD:           util.StringPointerOrEmpty(plan.UpdateUserPayload.ValueString()),
-		ASSIGN_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.AssignOrgRolePayload.ValueString()),
-		REMOVE_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.RemoveOrgRolePayload.ValueString()),
+		USERS_LAST_IMPORT_TIME:        util.StringPointerOrEmpty(plan.UsersLastImportTime),
+		ACCOUNTS_LAST_IMPORT_TIME:     util.StringPointerOrEmpty(plan.AccountsLastImportTime),
+		ACCESS_LAST_IMPORT_TIME:       util.StringPointerOrEmpty(plan.AccessLastImportTime),
+		BASE_URL:                      util.StringPointerOrEmpty(plan.BaseURL),
+		API_VERSION:                   util.StringPointerOrEmpty(plan.APIVersion),
+		TENANT_NAME:                   util.StringPointerOrEmpty(plan.TenantName),
+		REPORT_OWNER:                  util.StringPointerOrEmpty(plan.ReportOwner),
+		INCLUDE_REFERENCE_DESCRIPTORS: util.StringPointerOrEmpty(plan.IncludeReferenceDesc),
+		USE_ENHANCED_ORGROLE:          util.StringPointerOrEmpty(plan.UseEnhancedOrgRole),
+		USEX509AUTHFORSOAP:            util.StringPointerOrEmpty(plan.UseX509AuthForSOAP),
+		X509KEY:                       util.StringPointerOrEmpty(plan.X509Key),
+		X509CERT:                      util.StringPointerOrEmpty(plan.X509Cert),
+		USERNAME:                      util.StringPointerOrEmpty(plan.Username),
+		PASSWORD:                      util.StringPointerOrEmpty(plan.Password),
+		CLIENT_ID:                     util.StringPointerOrEmpty(plan.ClientID),
+		CLIENT_SECRET:                 util.StringPointerOrEmpty(plan.ClientSecret),
+		REFRESH_TOKEN:                 util.StringPointerOrEmpty(plan.RefreshToken),
+		PAGE_SIZE:                     util.StringPointerOrEmpty(plan.PageSize),
+		USER_IMPORT_PAYLOAD:           util.StringPointerOrEmpty(plan.UserImportPayload),
+		USER_IMPORT_MAPPING:           util.StringPointerOrEmpty(plan.UserImportMapping),
+		ACCOUNT_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.AccountImportPayload),
+		ACCOUNT_IMPORT_MAPPING:        util.StringPointerOrEmpty(plan.AccountImportMapping),
+		ACCESS_IMPORT_LIST:            util.StringPointerOrEmpty(plan.AccessImportList),
+		RAAS_MAPPING_JSON:             util.StringPointerOrEmpty(plan.RAASMappingJSON),
+		ACCESS_IMPORT_MAPPING:         util.StringPointerOrEmpty(plan.AccessImportMapping),
+		ORGROLE_IMPORT_PAYLOAD:        util.StringPointerOrEmpty(plan.OrgRoleImportPayload),
+		STATUS_KEY_JSON:               util.StringPointerOrEmpty(plan.StatusKeyJSON),
+		USERATTRIBUTEJSON:             util.StringPointerOrEmpty(plan.UserAttributeJSON),
+		CUSTOM_CONFIG:                 util.StringPointerOrEmpty(plan.CustomConfig),
+		PAM_CONFIG:                    util.StringPointerOrEmpty(plan.PAMConfig),
+		MODIFYUSERDATAJSON:            util.StringPointerOrEmpty(plan.ModifyUserDataJSON),
+		STATUS_THRESHOLD_CONFIG:       util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		CREATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.CreateAccountPayload),
+		UPDATE_ACCOUNT_PAYLOAD:        util.StringPointerOrEmpty(plan.UpdateAccountPayload),
+		UPDATE_USER_PAYLOAD:           util.StringPointerOrEmpty(plan.UpdateUserPayload),
+		ASSIGN_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.AssignOrgRolePayload),
+		REMOVE_ORGROLE_PAYLOAD:        util.StringPointerOrEmpty(plan.RemoveOrgRolePayload),
 	}
 	workdayConnRequest := openapi.CreateOrUpdateRequest{
 		WorkdayConnector: &workdayConn,

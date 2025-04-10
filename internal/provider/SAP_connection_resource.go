@@ -100,7 +100,7 @@ func (r *sapConnectionResource) Metadata(ctx context.Context, req resource.Metad
 
 func (r *sapConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage SAP Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -496,74 +496,74 @@ func (r *sapConnectionResource) Create(ctx context.Context, req resource.CreateR
 			Connectiontype: "SAP",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional field
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		//optional field
-		MESSAGESERVER:                      util.StringPointerOrEmpty(plan.Messageserver.ValueString()),
-		JCO_ASHOST:                         util.StringPointerOrEmpty(plan.JcoAshost.ValueString()),
-		JCO_SYSNR:                          util.StringPointerOrEmpty(plan.JcoSysnr.ValueString()),
-		JCO_CLIENT:                         util.StringPointerOrEmpty(plan.JcoClient.ValueString()),
-		JCO_USER:                           util.StringPointerOrEmpty(plan.JcoUser.ValueString()),
-		PASSWORD:                           util.StringPointerOrEmpty(plan.Password.ValueString()),
-		JCO_LANG:                           util.StringPointerOrEmpty(plan.JcoLang.ValueString()),
-		JCOR3NAME:                          util.StringPointerOrEmpty(plan.JcoR3Name.ValueString()),
-		JCO_MSHOST:                         util.StringPointerOrEmpty(plan.JcoMshost.ValueString()),
-		JCO_MSSERV:                         util.StringPointerOrEmpty(plan.JcoMsserv.ValueString()),
-		JCO_GROUP:                          util.StringPointerOrEmpty(plan.JcoGroup.ValueString()),
-		SNC:                                util.StringPointerOrEmpty(plan.Snc.ValueString()),
-		JCO_SNC_MODE:                       util.StringPointerOrEmpty(plan.JcoSncMode.ValueString()),
-		JCO_SNC_PARTNERNAME:                util.StringPointerOrEmpty(plan.JcoSncPartnername.ValueString()),
-		JCO_SNC_MYNAME:                     util.StringPointerOrEmpty(plan.JcoSncMyname.ValueString()),
-		JCO_SNC_LIBRARY:                    util.StringPointerOrEmpty(plan.JcoSncLibrary.ValueString()),
-		JCO_SNC_QOP:                        util.StringPointerOrEmpty(plan.JcoSncQop.ValueString()),
-		TABLES:                             util.StringPointerOrEmpty(plan.Tables.ValueString()),
-		SYSTEMNAME:                         util.StringPointerOrEmpty(plan.Systemname.ValueString()),
-		TERMINATEDUSERGROUP:                util.StringPointerOrEmpty(plan.Terminatedusergroup.ValueString()),
-		TERMINATED_USER_ROLE_ACTION:        util.StringPointerOrEmpty(plan.TerminatedUserRoleAction.ValueString()),
-		CREATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()),
-		PROV_JCO_ASHOST:                    util.StringPointerOrEmpty(plan.ProvJcoAshost.ValueString()),
-		PROV_JCO_SYSNR:                     util.StringPointerOrEmpty(plan.ProvJcoSysnr.ValueString()),
-		PROV_JCO_CLIENT:                    util.StringPointerOrEmpty(plan.ProvJcoClient.ValueString()),
-		PROV_JCO_USER:                      util.StringPointerOrEmpty(plan.ProvJcoUser.ValueString()),
-		PROV_PASSWORD:                      util.StringPointerOrEmpty(plan.ProvPassword.ValueString()),
-		PROV_JCO_LANG:                      util.StringPointerOrEmpty(plan.ProvJcoLang.ValueString()),
-		PROVJCOR3NAME:                      util.StringPointerOrEmpty(plan.ProvJcoR3Name.ValueString()),
-		PROV_JCO_MSHOST:                    util.StringPointerOrEmpty(plan.ProvJcoMshost.ValueString()),
-		PROV_JCO_MSSERV:                    util.StringPointerOrEmpty(plan.ProvJcoMsserv.ValueString()),
-		PROV_JCO_GROUP:                     util.StringPointerOrEmpty(plan.ProvJcoGroup.ValueString()),
-		PROV_CUA_ENABLED:                   util.StringPointerOrEmpty(plan.ProvCuaEnabled.ValueString()),
-		PROV_CUA_SNC:                       util.StringPointerOrEmpty(plan.ProvCuaSnc.ValueString()),
-		RESET_PWD_FOR_NEWACCOUNT:           util.StringPointerOrEmpty(plan.ResetPwdForNewaccount.ValueString()),
-		ENFORCEPASSWORDCHANGE:              util.StringPointerOrEmpty(plan.Enforcepasswordchange.ValueString()),
-		PASSWORD_MIN_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:             util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha.ValueString()),
-		PASSWORD_NOOFDIGITS:                util.StringPointerOrEmpty(plan.PasswordNoofdigits.ValueString()),
-		PASSWORD_NOOFSPLCHARS:              util.StringPointerOrEmpty(plan.PasswordNoofsplchars.ValueString()),
-		HANAREFTABLEJSON:                   util.StringPointerOrEmpty(plan.Hanareftablejson.ValueString()),
-		ENABLEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Enableaccountjson.ValueString()),
-		UPDATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Updateaccountjson.ValueString()),
-		USERIMPORTJSON:                     util.StringPointerOrEmpty(plan.Userimportjson.ValueString()),
-		STATUS_THRESHOLD_CONFIG:            util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		SETCUASYSTEM:                       util.StringPointerOrEmpty(plan.Setcuasystem.ValueString()),
-		FIREFIGHTERID_GRANT_ACCESS_JSON:    util.StringPointerOrEmpty(plan.FirefighteridGrantAccessJson.ValueString()),
-		FIREFIGHTERID_REVOKE_ACCESS_JSON:   util.StringPointerOrEmpty(plan.FirefighteridRevokeAccessJson.ValueString()),
-		MODIFYUSERDATAJSON:                 util.StringPointerOrEmpty(plan.Modifyuserdatajson.ValueString()),
-		EXTERNAL_SOD_EVAL_JSON:             util.StringPointerOrEmpty(plan.ExternalSodEvalJson.ValueString()),
-		EXTERNAL_SOD_EVAL_JSON_DETAIL:      util.StringPointerOrEmpty(plan.ExternalSodEvalJsonDetail.ValueString()),
-		LOGS_TABLE_FILTER:                  util.StringPointerOrEmpty(plan.LogsTableFilter.ValueString()),
-		PAM_CONFIG:                         util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
-		SAPTABLE_FILTER_LANG:               util.StringPointerOrEmpty(plan.SaptableFilterLang.ValueString()),
-		ALTERNATE_OUTPUT_PARAMETER_ET_DATA: util.StringPointerOrEmpty(plan.AlternateOutputParameterEtData.ValueString()),
-		AUDIT_LOG_JSON:                     util.StringPointerOrEmpty(plan.AuditLogJson.ValueString()),
-		ECCORS4HANA:                        util.StringPointerOrEmpty(plan.EccOrS4Hana.ValueString()),
-		DATA_IMPORT_FILTER:                 util.StringPointerOrEmpty(plan.DataImportFilter.ValueString()),
-		ConfigJSON:                         util.StringPointerOrEmpty(plan.Configjson.ValueString()),
+		MESSAGESERVER:                      util.StringPointerOrEmpty(plan.Messageserver),
+		JCO_ASHOST:                         util.StringPointerOrEmpty(plan.JcoAshost),
+		JCO_SYSNR:                          util.StringPointerOrEmpty(plan.JcoSysnr),
+		JCO_CLIENT:                         util.StringPointerOrEmpty(plan.JcoClient),
+		JCO_USER:                           util.StringPointerOrEmpty(plan.JcoUser),
+		PASSWORD:                           util.StringPointerOrEmpty(plan.Password),
+		JCO_LANG:                           util.StringPointerOrEmpty(plan.JcoLang),
+		JCOR3NAME:                          util.StringPointerOrEmpty(plan.JcoR3Name),
+		JCO_MSHOST:                         util.StringPointerOrEmpty(plan.JcoMshost),
+		JCO_MSSERV:                         util.StringPointerOrEmpty(plan.JcoMsserv),
+		JCO_GROUP:                          util.StringPointerOrEmpty(plan.JcoGroup),
+		SNC:                                util.StringPointerOrEmpty(plan.Snc),
+		JCO_SNC_MODE:                       util.StringPointerOrEmpty(plan.JcoSncMode),
+		JCO_SNC_PARTNERNAME:                util.StringPointerOrEmpty(plan.JcoSncPartnername),
+		JCO_SNC_MYNAME:                     util.StringPointerOrEmpty(plan.JcoSncMyname),
+		JCO_SNC_LIBRARY:                    util.StringPointerOrEmpty(plan.JcoSncLibrary),
+		JCO_SNC_QOP:                        util.StringPointerOrEmpty(plan.JcoSncQop),
+		TABLES:                             util.StringPointerOrEmpty(plan.Tables),
+		SYSTEMNAME:                         util.StringPointerOrEmpty(plan.Systemname),
+		TERMINATEDUSERGROUP:                util.StringPointerOrEmpty(plan.Terminatedusergroup),
+		TERMINATED_USER_ROLE_ACTION:        util.StringPointerOrEmpty(plan.TerminatedUserRoleAction),
+		CREATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Createaccountjson),
+		PROV_JCO_ASHOST:                    util.StringPointerOrEmpty(plan.ProvJcoAshost),
+		PROV_JCO_SYSNR:                     util.StringPointerOrEmpty(plan.ProvJcoSysnr),
+		PROV_JCO_CLIENT:                    util.StringPointerOrEmpty(plan.ProvJcoClient),
+		PROV_JCO_USER:                      util.StringPointerOrEmpty(plan.ProvJcoUser),
+		PROV_PASSWORD:                      util.StringPointerOrEmpty(plan.ProvPassword),
+		PROV_JCO_LANG:                      util.StringPointerOrEmpty(plan.ProvJcoLang),
+		PROVJCOR3NAME:                      util.StringPointerOrEmpty(plan.ProvJcoR3Name),
+		PROV_JCO_MSHOST:                    util.StringPointerOrEmpty(plan.ProvJcoMshost),
+		PROV_JCO_MSSERV:                    util.StringPointerOrEmpty(plan.ProvJcoMsserv),
+		PROV_JCO_GROUP:                     util.StringPointerOrEmpty(plan.ProvJcoGroup),
+		PROV_CUA_ENABLED:                   util.StringPointerOrEmpty(plan.ProvCuaEnabled),
+		PROV_CUA_SNC:                       util.StringPointerOrEmpty(plan.ProvCuaSnc),
+		RESET_PWD_FOR_NEWACCOUNT:           util.StringPointerOrEmpty(plan.ResetPwdForNewaccount),
+		ENFORCEPASSWORDCHANGE:              util.StringPointerOrEmpty(plan.Enforcepasswordchange),
+		PASSWORD_MIN_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMinLength),
+		PASSWORD_MAX_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMaxLength),
+		PASSWORD_NOOFCAPSALPHA:             util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha),
+		PASSWORD_NOOFDIGITS:                util.StringPointerOrEmpty(plan.PasswordNoofdigits),
+		PASSWORD_NOOFSPLCHARS:              util.StringPointerOrEmpty(plan.PasswordNoofsplchars),
+		HANAREFTABLEJSON:                   util.StringPointerOrEmpty(plan.Hanareftablejson),
+		ENABLEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Enableaccountjson),
+		UPDATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Updateaccountjson),
+		USERIMPORTJSON:                     util.StringPointerOrEmpty(plan.Userimportjson),
+		STATUS_THRESHOLD_CONFIG:            util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		SETCUASYSTEM:                       util.StringPointerOrEmpty(plan.Setcuasystem),
+		FIREFIGHTERID_GRANT_ACCESS_JSON:    util.StringPointerOrEmpty(plan.FirefighteridGrantAccessJson),
+		FIREFIGHTERID_REVOKE_ACCESS_JSON:   util.StringPointerOrEmpty(plan.FirefighteridRevokeAccessJson),
+		MODIFYUSERDATAJSON:                 util.StringPointerOrEmpty(plan.Modifyuserdatajson),
+		EXTERNAL_SOD_EVAL_JSON:             util.StringPointerOrEmpty(plan.ExternalSodEvalJson),
+		EXTERNAL_SOD_EVAL_JSON_DETAIL:      util.StringPointerOrEmpty(plan.ExternalSodEvalJsonDetail),
+		LOGS_TABLE_FILTER:                  util.StringPointerOrEmpty(plan.LogsTableFilter),
+		PAM_CONFIG:                         util.StringPointerOrEmpty(plan.PamConfig),
+		SAPTABLE_FILTER_LANG:               util.StringPointerOrEmpty(plan.SaptableFilterLang),
+		ALTERNATE_OUTPUT_PARAMETER_ET_DATA: util.StringPointerOrEmpty(plan.AlternateOutputParameterEtData),
+		AUDIT_LOG_JSON:                     util.StringPointerOrEmpty(plan.AuditLogJson),
+		ECCORS4HANA:                        util.StringPointerOrEmpty(plan.EccOrS4Hana),
+		DATA_IMPORT_FILTER:                 util.StringPointerOrEmpty(plan.DataImportFilter),
+		ConfigJSON:                         util.StringPointerOrEmpty(plan.Configjson),
 	}
 	sapConnRequest := openapi.CreateOrUpdateRequest{
 		SAPConnector: &sapConn,
@@ -579,66 +579,67 @@ func (r *sapConnectionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
-	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
-	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.JcoAshost = types.StringValue(*util.StringPointerOrEmpty(plan.JcoAshost.ValueString()))
-	plan.JcoSysnr = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSysnr.ValueString()))
-	plan.JcoClient = types.StringValue(*util.StringPointerOrEmpty(plan.JcoClient.ValueString()))
-	plan.JcoUser = types.StringValue(*util.StringPointerOrEmpty(plan.JcoUser.ValueString()))
-	plan.JcoLang = types.StringValue(*util.StringPointerOrEmpty(plan.JcoLang.ValueString()))
-	plan.JcoR3Name = types.StringValue(*util.StringPointerOrEmpty(plan.JcoR3Name.ValueString()))
-	plan.JcoMshost = types.StringValue(*util.StringPointerOrEmpty(plan.JcoMshost.ValueString()))
-	plan.JcoMsserv = types.StringValue(*util.StringPointerOrEmpty(plan.JcoMsserv.ValueString()))
-	plan.JcoGroup = types.StringValue(*util.StringPointerOrEmpty(plan.JcoGroup.ValueString()))
-	plan.Snc = types.StringValue(*util.StringPointerOrEmpty(plan.Snc.ValueString()))
-	plan.JcoSncMode = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSncMode.ValueString()))
-	plan.JcoSncPartnername = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSncPartnername.ValueString()))
-	plan.JcoSncMyname = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSncMyname.ValueString()))
-	plan.JcoSncLibrary = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSncLibrary.ValueString()))
-	plan.JcoSncQop = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSncQop.ValueString()))
-	plan.Tables = types.StringValue(*util.StringPointerOrEmpty(plan.Tables.ValueString()))
-	plan.Systemname = types.StringValue(*util.StringPointerOrEmpty(plan.Systemname.ValueString()))
-	plan.Terminatedusergroup = types.StringValue(*util.StringPointerOrEmpty(plan.Terminatedusergroup.ValueString()))
-	plan.TerminatedUserRoleAction = types.StringValue(*util.StringPointerOrEmpty(plan.TerminatedUserRoleAction.ValueString()))
-	plan.Createaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()))
-	plan.ProvJcoAshost = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoAshost.ValueString()))
-	plan.ProvJcoSysnr = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoSysnr.ValueString()))
-	plan.ProvJcoClient = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoClient.ValueString()))
-	plan.ProvJcoUser = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoUser.ValueString()))
-	plan.ProvJcoLang = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoLang.ValueString()))
-	plan.ProvJcoR3Name = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoR3Name.ValueString()))
-	plan.ProvJcoMshost = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoMshost.ValueString()))
-	plan.ProvJcoMsserv = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoMsserv.ValueString()))
-	plan.ProvJcoGroup = types.StringValue(*util.StringPointerOrEmpty(plan.ProvJcoGroup.ValueString()))
-	plan.ProvCuaEnabled = types.StringValue(*util.StringPointerOrEmpty(plan.ProvCuaEnabled.ValueString()))
-	plan.ProvCuaSnc = types.StringValue(*util.StringPointerOrEmpty(plan.ProvCuaSnc.ValueString()))
-	plan.ResetPwdForNewaccount = types.StringValue(*util.StringPointerOrEmpty(plan.ResetPwdForNewaccount.ValueString()))
-	plan.Enforcepasswordchange = types.StringValue(*util.StringPointerOrEmpty(plan.Enforcepasswordchange.ValueString()))
-	plan.PasswordMinLength = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()))
-	plan.PasswordMaxLength = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()))
-	plan.PasswordNoofcapsalpha = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha.ValueString()))
-	plan.PasswordNoofdigits = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoofdigits.ValueString()))
-	plan.PasswordNoofsplchars = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoofsplchars.ValueString()))
-	plan.Hanareftablejson = types.StringValue(*util.StringPointerOrEmpty(plan.Hanareftablejson.ValueString()))
-	plan.Enableaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Enableaccountjson.ValueString()))
-	plan.Updateaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Updateaccountjson.ValueString()))
-	plan.Userimportjson = types.StringValue(*util.StringPointerOrEmpty(plan.Userimportjson.ValueString()))
-	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
-	plan.Setcuasystem = types.StringValue(*util.StringPointerOrEmpty(plan.Setcuasystem.ValueString()))
-	plan.FirefighteridGrantAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.FirefighteridGrantAccessJson.ValueString()))
-	plan.FirefighteridRevokeAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.FirefighteridRevokeAccessJson.ValueString()))
-	plan.Modifyuserdatajson = types.StringValue(*util.StringPointerOrEmpty(plan.Modifyuserdatajson.ValueString()))
-	plan.ExternalSodEvalJson = types.StringValue(*util.StringPointerOrEmpty(plan.ExternalSodEvalJson.ValueString()))
-	plan.ExternalSodEvalJsonDetail = types.StringValue(*util.StringPointerOrEmpty(plan.ExternalSodEvalJsonDetail.ValueString()))
-	plan.LogsTableFilter = types.StringValue(*util.StringPointerOrEmpty(plan.LogsTableFilter.ValueString()))
-	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
-	plan.SaptableFilterLang = types.StringValue(*util.StringPointerOrEmpty(plan.SaptableFilterLang.ValueString()))
-	plan.AlternateOutputParameterEtData = types.StringValue(*util.StringPointerOrEmpty(plan.AlternateOutputParameterEtData.ValueString()))
-	plan.AuditLogJson = types.StringValue(*util.StringPointerOrEmpty(plan.AuditLogJson.ValueString()))
-	plan.EccOrS4Hana = types.StringValue(*util.StringPointerOrEmpty(plan.EccOrS4Hana.ValueString()))
-	plan.DataImportFilter = types.StringValue(*util.StringPointerOrEmpty(plan.DataImportFilter.ValueString()))
-	plan.Configjson = types.StringValue(*util.StringPointerOrEmpty(plan.Configjson.ValueString()))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.JcoAshost = util.SafeStringDatasource(plan.JcoAshost.ValueStringPointer())
+	plan.JcoSysnr = util.SafeStringDatasource(plan.JcoSysnr.ValueStringPointer())
+	plan.JcoClient = util.SafeStringDatasource(plan.JcoClient.ValueStringPointer())
+	plan.JcoUser = util.SafeStringDatasource(plan.JcoUser.ValueStringPointer())
+	plan.JcoLang = util.SafeStringDatasource(plan.JcoLang.ValueStringPointer())
+	plan.JcoR3Name = util.SafeStringDatasource(plan.JcoR3Name.ValueStringPointer())
+	plan.JcoMshost = util.SafeStringDatasource(plan.JcoMshost.ValueStringPointer())
+	plan.JcoMsserv = util.SafeStringDatasource(plan.JcoMsserv.ValueStringPointer())
+	plan.JcoGroup = util.SafeStringDatasource(plan.JcoGroup.ValueStringPointer())
+	plan.Snc = util.SafeStringDatasource(plan.Snc.ValueStringPointer())
+	plan.JcoSncMode = util.SafeStringDatasource(plan.JcoSncMode.ValueStringPointer())
+	plan.JcoSncPartnername = util.SafeStringDatasource(plan.JcoSncPartnername.ValueStringPointer())
+	plan.JcoSncMyname = util.SafeStringDatasource(plan.JcoSncMyname.ValueStringPointer())
+	plan.JcoSncLibrary = util.SafeStringDatasource(plan.JcoSncLibrary.ValueStringPointer())
+	plan.JcoSncQop = util.SafeStringDatasource(plan.JcoSncQop.ValueStringPointer())
+	plan.Tables = util.SafeStringDatasource(plan.Tables.ValueStringPointer())
+	plan.Systemname = util.SafeStringDatasource(plan.Systemname.ValueStringPointer())
+	plan.Terminatedusergroup = util.SafeStringDatasource(plan.Terminatedusergroup.ValueStringPointer())
+	plan.TerminatedUserRoleAction = util.SafeStringDatasource(plan.TerminatedUserRoleAction.ValueStringPointer())
+	plan.Createaccountjson = util.SafeStringDatasource(plan.Createaccountjson.ValueStringPointer())
+	plan.ProvJcoAshost = util.SafeStringDatasource(plan.ProvJcoAshost.ValueStringPointer())
+	plan.ProvJcoSysnr = util.SafeStringDatasource(plan.ProvJcoSysnr.ValueStringPointer())
+	plan.ProvJcoClient = util.SafeStringDatasource(plan.ProvJcoClient.ValueStringPointer())
+	plan.ProvJcoUser = util.SafeStringDatasource(plan.ProvJcoUser.ValueStringPointer())
+	plan.ProvJcoLang = util.SafeStringDatasource(plan.ProvJcoLang.ValueStringPointer())
+	plan.ProvJcoR3Name = util.SafeStringDatasource(plan.ProvJcoR3Name.ValueStringPointer())
+	plan.ProvJcoMshost = util.SafeStringDatasource(plan.ProvJcoMshost.ValueStringPointer())
+	plan.ProvJcoMsserv = util.SafeStringDatasource(plan.ProvJcoMsserv.ValueStringPointer())
+	plan.ProvJcoGroup = util.SafeStringDatasource(plan.ProvJcoGroup.ValueStringPointer())
+	plan.ProvCuaEnabled = util.SafeStringDatasource(plan.ProvCuaEnabled.ValueStringPointer())
+	plan.ProvCuaSnc = util.SafeStringDatasource(plan.ProvCuaSnc.ValueStringPointer())
+	plan.Messageserver = util.SafeStringDatasource(plan.Messageserver.ValueStringPointer())
+	plan.ResetPwdForNewaccount = util.SafeStringDatasource(plan.ResetPwdForNewaccount.ValueStringPointer())
+	plan.Enforcepasswordchange = util.SafeStringDatasource(plan.Enforcepasswordchange.ValueStringPointer())
+	plan.PasswordMinLength = util.SafeStringDatasource(plan.PasswordMinLength.ValueStringPointer())
+	plan.PasswordMaxLength = util.SafeStringDatasource(plan.PasswordMaxLength.ValueStringPointer())
+	plan.PasswordNoofcapsalpha = util.SafeStringDatasource(plan.PasswordNoofcapsalpha.ValueStringPointer())
+	plan.PasswordNoofdigits = util.SafeStringDatasource(plan.PasswordNoofdigits.ValueStringPointer())
+	plan.PasswordNoofsplchars = util.SafeStringDatasource(plan.PasswordNoofsplchars.ValueStringPointer())
+	plan.Hanareftablejson = util.SafeStringDatasource(plan.Hanareftablejson.ValueStringPointer())
+	plan.Enableaccountjson = util.SafeStringDatasource(plan.Enableaccountjson.ValueStringPointer())
+	plan.Updateaccountjson = util.SafeStringDatasource(plan.Updateaccountjson.ValueStringPointer())
+	plan.Userimportjson = util.SafeStringDatasource(plan.Userimportjson.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.Setcuasystem = util.SafeStringDatasource(plan.Setcuasystem.ValueStringPointer())
+	plan.FirefighteridGrantAccessJson = util.SafeStringDatasource(plan.FirefighteridGrantAccessJson.ValueStringPointer())
+	plan.FirefighteridRevokeAccessJson = util.SafeStringDatasource(plan.FirefighteridRevokeAccessJson.ValueStringPointer())
+	plan.Modifyuserdatajson = util.SafeStringDatasource(plan.Modifyuserdatajson.ValueStringPointer())
+	plan.ExternalSodEvalJson = util.SafeStringDatasource(plan.ExternalSodEvalJson.ValueStringPointer())
+	plan.ExternalSodEvalJsonDetail = util.SafeStringDatasource(plan.ExternalSodEvalJsonDetail.ValueStringPointer())
+	plan.LogsTableFilter = util.SafeStringDatasource(plan.LogsTableFilter.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
+	plan.SaptableFilterLang = util.SafeStringDatasource(plan.SaptableFilterLang.ValueStringPointer())
+	plan.AlternateOutputParameterEtData = util.SafeStringDatasource(plan.AlternateOutputParameterEtData.ValueStringPointer())
+	plan.AuditLogJson = util.SafeStringDatasource(plan.AuditLogJson.ValueStringPointer())
+	plan.EccOrS4Hana = util.SafeStringDatasource(plan.EccOrS4Hana.ValueStringPointer())
+	plan.DataImportFilter = util.SafeStringDatasource(plan.DataImportFilter.ValueStringPointer())
+	plan.Configjson = util.SafeStringDatasource(plan.Configjson.ValueStringPointer())	
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -769,74 +770,74 @@ func (r *sapConnectionResource) Update(ctx context.Context, req resource.UpdateR
 			Connectiontype: "SAP",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional field
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		//optional field
-		MESSAGESERVER:                      util.StringPointerOrEmpty(plan.Messageserver.ValueString()),
-		JCO_ASHOST:                         util.StringPointerOrEmpty(plan.JcoAshost.ValueString()),
-		JCO_SYSNR:                          util.StringPointerOrEmpty(plan.JcoSysnr.ValueString()),
-		JCO_CLIENT:                         util.StringPointerOrEmpty(plan.JcoClient.ValueString()),
-		JCO_USER:                           util.StringPointerOrEmpty(plan.JcoUser.ValueString()),
-		PASSWORD:                           util.StringPointerOrEmpty(plan.Password.ValueString()),
-		JCO_LANG:                           util.StringPointerOrEmpty(plan.JcoLang.ValueString()),
-		JCOR3NAME:                          util.StringPointerOrEmpty(plan.JcoR3Name.ValueString()),
-		JCO_MSHOST:                         util.StringPointerOrEmpty(plan.JcoMshost.ValueString()),
-		JCO_MSSERV:                         util.StringPointerOrEmpty(plan.JcoMsserv.ValueString()),
-		JCO_GROUP:                          util.StringPointerOrEmpty(plan.JcoGroup.ValueString()),
-		SNC:                                util.StringPointerOrEmpty(plan.Snc.ValueString()),
-		JCO_SNC_MODE:                       util.StringPointerOrEmpty(plan.JcoSncMode.ValueString()),
-		JCO_SNC_PARTNERNAME:                util.StringPointerOrEmpty(plan.JcoSncPartnername.ValueString()),
-		JCO_SNC_MYNAME:                     util.StringPointerOrEmpty(plan.JcoSncMyname.ValueString()),
-		JCO_SNC_LIBRARY:                    util.StringPointerOrEmpty(plan.JcoSncLibrary.ValueString()),
-		JCO_SNC_QOP:                        util.StringPointerOrEmpty(plan.JcoSncQop.ValueString()),
-		TABLES:                             util.StringPointerOrEmpty(plan.Tables.ValueString()),
-		SYSTEMNAME:                         util.StringPointerOrEmpty(plan.Systemname.ValueString()),
-		TERMINATEDUSERGROUP:                util.StringPointerOrEmpty(plan.Terminatedusergroup.ValueString()),
-		TERMINATED_USER_ROLE_ACTION:        util.StringPointerOrEmpty(plan.TerminatedUserRoleAction.ValueString()),
-		CREATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()),
-		PROV_JCO_ASHOST:                    util.StringPointerOrEmpty(plan.ProvJcoAshost.ValueString()),
-		PROV_JCO_SYSNR:                     util.StringPointerOrEmpty(plan.ProvJcoSysnr.ValueString()),
-		PROV_JCO_CLIENT:                    util.StringPointerOrEmpty(plan.ProvJcoClient.ValueString()),
-		PROV_JCO_USER:                      util.StringPointerOrEmpty(plan.ProvJcoUser.ValueString()),
-		PROV_PASSWORD:                      util.StringPointerOrEmpty(plan.ProvPassword.ValueString()),
-		PROV_JCO_LANG:                      util.StringPointerOrEmpty(plan.ProvJcoLang.ValueString()),
-		PROVJCOR3NAME:                      util.StringPointerOrEmpty(plan.ProvJcoR3Name.ValueString()),
-		PROV_JCO_MSHOST:                    util.StringPointerOrEmpty(plan.ProvJcoMshost.ValueString()),
-		PROV_JCO_MSSERV:                    util.StringPointerOrEmpty(plan.ProvJcoMsserv.ValueString()),
-		PROV_JCO_GROUP:                     util.StringPointerOrEmpty(plan.ProvJcoGroup.ValueString()),
-		PROV_CUA_ENABLED:                   util.StringPointerOrEmpty(plan.ProvCuaEnabled.ValueString()),
-		PROV_CUA_SNC:                       util.StringPointerOrEmpty(plan.ProvCuaSnc.ValueString()),
-		RESET_PWD_FOR_NEWACCOUNT:           util.StringPointerOrEmpty(plan.ResetPwdForNewaccount.ValueString()),
-		ENFORCEPASSWORDCHANGE:              util.StringPointerOrEmpty(plan.Enforcepasswordchange.ValueString()),
-		PASSWORD_MIN_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:             util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha.ValueString()),
-		PASSWORD_NOOFDIGITS:                util.StringPointerOrEmpty(plan.PasswordNoofdigits.ValueString()),
-		PASSWORD_NOOFSPLCHARS:              util.StringPointerOrEmpty(plan.PasswordNoofsplchars.ValueString()),
-		HANAREFTABLEJSON:                   util.StringPointerOrEmpty(plan.Hanareftablejson.ValueString()),
-		ENABLEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Enableaccountjson.ValueString()),
-		UPDATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Updateaccountjson.ValueString()),
-		USERIMPORTJSON:                     util.StringPointerOrEmpty(plan.Userimportjson.ValueString()),
-		STATUS_THRESHOLD_CONFIG:            util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		SETCUASYSTEM:                       util.StringPointerOrEmpty(plan.Setcuasystem.ValueString()),
-		FIREFIGHTERID_GRANT_ACCESS_JSON:    util.StringPointerOrEmpty(plan.FirefighteridGrantAccessJson.ValueString()),
-		FIREFIGHTERID_REVOKE_ACCESS_JSON:   util.StringPointerOrEmpty(plan.FirefighteridRevokeAccessJson.ValueString()),
-		MODIFYUSERDATAJSON:                 util.StringPointerOrEmpty(plan.Modifyuserdatajson.ValueString()),
-		EXTERNAL_SOD_EVAL_JSON:             util.StringPointerOrEmpty(plan.ExternalSodEvalJson.ValueString()),
-		EXTERNAL_SOD_EVAL_JSON_DETAIL:      util.StringPointerOrEmpty(plan.ExternalSodEvalJsonDetail.ValueString()),
-		LOGS_TABLE_FILTER:                  util.StringPointerOrEmpty(plan.LogsTableFilter.ValueString()),
-		PAM_CONFIG:                         util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
-		SAPTABLE_FILTER_LANG:               util.StringPointerOrEmpty(plan.SaptableFilterLang.ValueString()),
-		ALTERNATE_OUTPUT_PARAMETER_ET_DATA: util.StringPointerOrEmpty(plan.AlternateOutputParameterEtData.ValueString()),
-		AUDIT_LOG_JSON:                     util.StringPointerOrEmpty(plan.AuditLogJson.ValueString()),
-		ECCORS4HANA:                        util.StringPointerOrEmpty(plan.EccOrS4Hana.ValueString()),
-		DATA_IMPORT_FILTER:                 util.StringPointerOrEmpty(plan.DataImportFilter.ValueString()),
-		ConfigJSON:                         util.StringPointerOrEmpty(plan.Configjson.ValueString()),
+		MESSAGESERVER:                      util.StringPointerOrEmpty(plan.Messageserver),
+		JCO_ASHOST:                         util.StringPointerOrEmpty(plan.JcoAshost),
+		JCO_SYSNR:                          util.StringPointerOrEmpty(plan.JcoSysnr),
+		JCO_CLIENT:                         util.StringPointerOrEmpty(plan.JcoClient),
+		JCO_USER:                           util.StringPointerOrEmpty(plan.JcoUser),
+		PASSWORD:                           util.StringPointerOrEmpty(plan.Password),
+		JCO_LANG:                           util.StringPointerOrEmpty(plan.JcoLang),
+		JCOR3NAME:                          util.StringPointerOrEmpty(plan.JcoR3Name),
+		JCO_MSHOST:                         util.StringPointerOrEmpty(plan.JcoMshost),
+		JCO_MSSERV:                         util.StringPointerOrEmpty(plan.JcoMsserv),
+		JCO_GROUP:                          util.StringPointerOrEmpty(plan.JcoGroup),
+		SNC:                                util.StringPointerOrEmpty(plan.Snc),
+		JCO_SNC_MODE:                       util.StringPointerOrEmpty(plan.JcoSncMode),
+		JCO_SNC_PARTNERNAME:                util.StringPointerOrEmpty(plan.JcoSncPartnername),
+		JCO_SNC_MYNAME:                     util.StringPointerOrEmpty(plan.JcoSncMyname),
+		JCO_SNC_LIBRARY:                    util.StringPointerOrEmpty(plan.JcoSncLibrary),
+		JCO_SNC_QOP:                        util.StringPointerOrEmpty(plan.JcoSncQop),
+		TABLES:                             util.StringPointerOrEmpty(plan.Tables),
+		SYSTEMNAME:                         util.StringPointerOrEmpty(plan.Systemname),
+		TERMINATEDUSERGROUP:                util.StringPointerOrEmpty(plan.Terminatedusergroup),
+		TERMINATED_USER_ROLE_ACTION:        util.StringPointerOrEmpty(plan.TerminatedUserRoleAction),
+		CREATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Createaccountjson),
+		PROV_JCO_ASHOST:                    util.StringPointerOrEmpty(plan.ProvJcoAshost),
+		PROV_JCO_SYSNR:                     util.StringPointerOrEmpty(plan.ProvJcoSysnr),
+		PROV_JCO_CLIENT:                    util.StringPointerOrEmpty(plan.ProvJcoClient),
+		PROV_JCO_USER:                      util.StringPointerOrEmpty(plan.ProvJcoUser),
+		PROV_PASSWORD:                      util.StringPointerOrEmpty(plan.ProvPassword),
+		PROV_JCO_LANG:                      util.StringPointerOrEmpty(plan.ProvJcoLang),
+		PROVJCOR3NAME:                      util.StringPointerOrEmpty(plan.ProvJcoR3Name),
+		PROV_JCO_MSHOST:                    util.StringPointerOrEmpty(plan.ProvJcoMshost),
+		PROV_JCO_MSSERV:                    util.StringPointerOrEmpty(plan.ProvJcoMsserv),
+		PROV_JCO_GROUP:                     util.StringPointerOrEmpty(plan.ProvJcoGroup),
+		PROV_CUA_ENABLED:                   util.StringPointerOrEmpty(plan.ProvCuaEnabled),
+		PROV_CUA_SNC:                       util.StringPointerOrEmpty(plan.ProvCuaSnc),
+		RESET_PWD_FOR_NEWACCOUNT:           util.StringPointerOrEmpty(plan.ResetPwdForNewaccount),
+		ENFORCEPASSWORDCHANGE:              util.StringPointerOrEmpty(plan.Enforcepasswordchange),
+		PASSWORD_MIN_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMinLength),
+		PASSWORD_MAX_LENGTH:                util.StringPointerOrEmpty(plan.PasswordMaxLength),
+		PASSWORD_NOOFCAPSALPHA:             util.StringPointerOrEmpty(plan.PasswordNoofcapsalpha),
+		PASSWORD_NOOFDIGITS:                util.StringPointerOrEmpty(plan.PasswordNoofdigits),
+		PASSWORD_NOOFSPLCHARS:              util.StringPointerOrEmpty(plan.PasswordNoofsplchars),
+		HANAREFTABLEJSON:                   util.StringPointerOrEmpty(plan.Hanareftablejson),
+		ENABLEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Enableaccountjson),
+		UPDATEACCOUNTJSON:                  util.StringPointerOrEmpty(plan.Updateaccountjson),
+		USERIMPORTJSON:                     util.StringPointerOrEmpty(plan.Userimportjson),
+		STATUS_THRESHOLD_CONFIG:            util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		SETCUASYSTEM:                       util.StringPointerOrEmpty(plan.Setcuasystem),
+		FIREFIGHTERID_GRANT_ACCESS_JSON:    util.StringPointerOrEmpty(plan.FirefighteridGrantAccessJson),
+		FIREFIGHTERID_REVOKE_ACCESS_JSON:   util.StringPointerOrEmpty(plan.FirefighteridRevokeAccessJson),
+		MODIFYUSERDATAJSON:                 util.StringPointerOrEmpty(plan.Modifyuserdatajson),
+		EXTERNAL_SOD_EVAL_JSON:             util.StringPointerOrEmpty(plan.ExternalSodEvalJson),
+		EXTERNAL_SOD_EVAL_JSON_DETAIL:      util.StringPointerOrEmpty(plan.ExternalSodEvalJsonDetail),
+		LOGS_TABLE_FILTER:                  util.StringPointerOrEmpty(plan.LogsTableFilter),
+		PAM_CONFIG:                         util.StringPointerOrEmpty(plan.PamConfig),
+		SAPTABLE_FILTER_LANG:               util.StringPointerOrEmpty(plan.SaptableFilterLang),
+		ALTERNATE_OUTPUT_PARAMETER_ET_DATA: util.StringPointerOrEmpty(plan.AlternateOutputParameterEtData),
+		AUDIT_LOG_JSON:                     util.StringPointerOrEmpty(plan.AuditLogJson),
+		ECCORS4HANA:                        util.StringPointerOrEmpty(plan.EccOrS4Hana),
+		DATA_IMPORT_FILTER:                 util.StringPointerOrEmpty(plan.DataImportFilter),
+		ConfigJSON:                         util.StringPointerOrEmpty(plan.Configjson),
 	}
 	sapConnRequest := openapi.CreateOrUpdateRequest{
 		SAPConnector: &sapConn,

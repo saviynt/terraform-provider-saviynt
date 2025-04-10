@@ -80,6 +80,7 @@ func (d *DBConnectionsDataSource) Metadata(ctx context.Context, req datasource.M
 
 func (d *DBConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Retrieve the details for a given DB connector by its name or key",
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,

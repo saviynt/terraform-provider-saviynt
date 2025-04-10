@@ -87,7 +87,7 @@ func (r *entraidConnectionResource) Metadata(ctx context.Context, req resource.M
 
 func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage EntraID(AzureAD) Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -413,9 +413,9 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 			Connectiontype: "AzureAD",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
@@ -425,50 +425,50 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 		CLIENT_SECRET: plan.ClientSecret.ValueString(),
 		AAD_TENANT_ID: plan.AadTenantId.ValueString(),
 		//optional fields
-		ACCESS_TOKEN:                    util.StringPointerOrEmpty(plan.AccessToken.ValueString()),
-		AZURE_MGMT_ACCESS_TOKEN:         util.StringPointerOrEmpty(plan.AzureMgmtAccessToken.ValueString()),
-		AUTHENTICATION_ENDPOINT:         util.StringPointerOrEmpty(plan.AuthenticationEndpoint.ValueString()),
-		MICROSOFT_GRAPH_ENDPOINT:        util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint.ValueString()),
-		AZURE_MANAGEMENT_ENDPOINT:       util.StringPointerOrEmpty(plan.AzureManagementEndpoint.ValueString()),
-		ImportUserJSON:                  util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
-		CREATEUSERS:                     util.StringPointerOrEmpty(plan.CreateUsers.ValueString()),
-		WINDOWS_CONNECTOR_JSON:          util.StringPointerOrEmpty(plan.WindowsConnectorJson.ValueString()),
-		CREATE_NEW_ENDPOINTS:            util.StringPointerOrEmpty(plan.CreateNewEndpoints.ValueString()),
-		MANAGED_ACCOUNT_TYPE:            util.StringPointerOrEmpty(plan.ManagedAccountType.ValueString()),
-		ACCOUNT_ATTRIBUTES:              util.StringPointerOrEmpty(plan.AccountAttributes.ValueString()),
-		SERVICE_ACCOUNT_ATTRIBUTES:      util.StringPointerOrEmpty(plan.ServiceAccountAttributes.ValueString()),
-		DELTATOKENSJSON:                 util.StringPointerOrEmpty(plan.DeltaTokensJson.ValueString()),
-		ACCOUNT_IMPORT_FIELDS:           util.StringPointerOrEmpty(plan.AccountImportFields.ValueString()),
-		IMPORT_DEPTH:                    util.StringPointerOrEmpty(plan.ImportDepth.ValueString()),
-		ENTITLEMENT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
-		CreateAccountJSON:               util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UpdateAccountJSON:               util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		EnableAccountJSON:               util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		DisableAccountJSON:              util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		AddAccessJSON:                   util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()),
-		RemoveAccessJSON:                util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()),
-		UpdateUserJSON:                  util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		ChangePassJSON:                  util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
-		RemoveAccountJSON:               util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()),
-		ConnectionJSON:                  util.StringPointerOrEmpty(plan.ConnectionJson.ValueString()),
-		CreateGroupJSON:                 util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()),
-		UpdateGroupJSON:                 util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()),
-		AddAccessToEntitlementJSON:      util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson.ValueString()),
-		RemoveAccessFromEntitlementJSON: util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson.ValueString()),
-		DeleteGroupJSON:                 util.StringPointerOrEmpty(plan.DeleteGroupJson.ValueString()),
-		CreateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.CreateServicePrincipalJson.ValueString()),
-		UpdateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson.ValueString()),
-		RemoveServicePrincipalJSON:      util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson.ValueString()),
-		ENTITLEMENT_FILTER_JSON:         util.StringPointerOrEmpty(plan.EntitlementFilterJson.ValueString()),
-		CreateTeamJSON:                  util.StringPointerOrEmpty(plan.CreateTeamJson.ValueString()),
-		CreateChannelJSON:               util.StringPointerOrEmpty(plan.CreateChannelJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG:         util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		ACCOUNTS_FILTER:                 util.StringPointerOrEmpty(plan.AccountsFilter.ValueString()),
-		PAM_CONFIG:                      util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
-		ENDPOINTS_FILTER:                util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
-		ConfigJSON:                      util.StringPointerOrEmpty(plan.ConfigJson.ValueString()),
-		MODIFYUSERDATAJSON:              util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()),
-		ENHANCEDDIRECTORYROLES:          util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles.ValueString()),
+		ACCESS_TOKEN:                    util.StringPointerOrEmpty(plan.AccessToken),
+		AZURE_MGMT_ACCESS_TOKEN:         util.StringPointerOrEmpty(plan.AzureMgmtAccessToken),
+		AUTHENTICATION_ENDPOINT:         util.StringPointerOrEmpty(plan.AuthenticationEndpoint),
+		MICROSOFT_GRAPH_ENDPOINT:        util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint),
+		AZURE_MANAGEMENT_ENDPOINT:       util.StringPointerOrEmpty(plan.AzureManagementEndpoint),
+		ImportUserJSON:                  util.StringPointerOrEmpty(plan.ImportUserJson),
+		CREATEUSERS:                     util.StringPointerOrEmpty(plan.CreateUsers),
+		WINDOWS_CONNECTOR_JSON:          util.StringPointerOrEmpty(plan.WindowsConnectorJson),
+		CREATE_NEW_ENDPOINTS:            util.StringPointerOrEmpty(plan.CreateNewEndpoints),
+		MANAGED_ACCOUNT_TYPE:            util.StringPointerOrEmpty(plan.ManagedAccountType),
+		ACCOUNT_ATTRIBUTES:              util.StringPointerOrEmpty(plan.AccountAttributes),
+		SERVICE_ACCOUNT_ATTRIBUTES:      util.StringPointerOrEmpty(plan.ServiceAccountAttributes),
+		DELTATOKENSJSON:                 util.StringPointerOrEmpty(plan.DeltaTokensJson),
+		ACCOUNT_IMPORT_FIELDS:           util.StringPointerOrEmpty(plan.AccountImportFields),
+		IMPORT_DEPTH:                    util.StringPointerOrEmpty(plan.ImportDepth),
+		ENTITLEMENT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.EntitlementAttribute),
+		CreateAccountJSON:               util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UpdateAccountJSON:               util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		EnableAccountJSON:               util.StringPointerOrEmpty(plan.EnableAccountJson),
+		DisableAccountJSON:              util.StringPointerOrEmpty(plan.DisableAccountJson),
+		AddAccessJSON:                   util.StringPointerOrEmpty(plan.AddAccessJson),
+		RemoveAccessJSON:                util.StringPointerOrEmpty(plan.RemoveAccessJson),
+		UpdateUserJSON:                  util.StringPointerOrEmpty(plan.UpdateUserJson),
+		ChangePassJSON:                  util.StringPointerOrEmpty(plan.ChangePassJson),
+		RemoveAccountJSON:               util.StringPointerOrEmpty(plan.RemoveAccountJson),
+		ConnectionJSON:                  util.StringPointerOrEmpty(plan.ConnectionJson),
+		CreateGroupJSON:                 util.StringPointerOrEmpty(plan.CreateGroupJson),
+		UpdateGroupJSON:                 util.StringPointerOrEmpty(plan.UpdateGroupJson),
+		AddAccessToEntitlementJSON:      util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson),
+		RemoveAccessFromEntitlementJSON: util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson),
+		DeleteGroupJSON:                 util.StringPointerOrEmpty(plan.DeleteGroupJson),
+		CreateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.CreateServicePrincipalJson),
+		UpdateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson),
+		RemoveServicePrincipalJSON:      util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson),
+		ENTITLEMENT_FILTER_JSON:         util.StringPointerOrEmpty(plan.EntitlementFilterJson),
+		CreateTeamJSON:                  util.StringPointerOrEmpty(plan.CreateTeamJson),
+		CreateChannelJSON:               util.StringPointerOrEmpty(plan.CreateChannelJson),
+		STATUS_THRESHOLD_CONFIG:         util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		ACCOUNTS_FILTER:                 util.StringPointerOrEmpty(plan.AccountsFilter),
+		PAM_CONFIG:                      util.StringPointerOrEmpty(plan.PamConfig),
+		ENDPOINTS_FILTER:                util.StringPointerOrEmpty(plan.EndpointsFilter),
+		ConfigJSON:                      util.StringPointerOrEmpty(plan.ConfigJson),
+		MODIFYUSERDATAJSON:              util.StringPointerOrEmpty(plan.ModifyUserdataJson),
+		ENHANCEDDIRECTORYROLES:          util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles),
 	}
 
 	entraidConnRequest := openapi.CreateOrUpdateRequest{
@@ -486,49 +486,49 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
-	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
-	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.AuthenticationEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.AuthenticationEndpoint.ValueString()))
-	plan.MicrosoftGraphEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint.ValueString()))
-	plan.AzureManagementEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.AzureManagementEndpoint.ValueString()))
-	plan.ImportUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()))
-	plan.CreateUsers = types.StringValue(*util.StringPointerOrEmpty(plan.CreateUsers.ValueString()))
-	plan.CreateNewEndpoints = types.StringValue(*util.StringPointerOrEmpty(plan.CreateNewEndpoints.ValueString()))
-	plan.ManagedAccountType = types.StringValue(*util.StringPointerOrEmpty(plan.ManagedAccountType.ValueString()))
-	plan.AccountAttributes = types.StringValue(*util.StringPointerOrEmpty(plan.AccountAttributes.ValueString()))
-	plan.ServiceAccountAttributes = types.StringValue(*util.StringPointerOrEmpty(plan.ServiceAccountAttributes.ValueString()))
-	plan.DeltaTokensJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeltaTokensJson.ValueString()))
-	plan.AccountImportFields = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportFields.ValueString()))
-	plan.ImportDepth = types.StringValue(*util.StringPointerOrEmpty(plan.ImportDepth.ValueString()))
-	plan.EntitlementAttribute = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()))
-	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
-	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
-	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
-	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
-	plan.AddAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()))
-	plan.RemoveAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()))
-	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
-	plan.ChangePassJson = types.StringValue(*util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()))
-	plan.RemoveAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()))
-	plan.CreateGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()))
-	plan.UpdateGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()))
-	plan.AddAccessToEntitlementJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson.ValueString()))
-	plan.RemoveAccessFromEntitlementJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson.ValueString()))
-	plan.DeleteGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeleteGroupJson.ValueString()))
-	plan.CreateServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateServicePrincipalJson.ValueString()))
-	plan.UpdateServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson.ValueString()))
-	plan.RemoveServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson.ValueString()))
-	plan.EntitlementFilterJson = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementFilterJson.ValueString()))
-	plan.CreateTeamJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateTeamJson.ValueString()))
-	plan.CreateChannelJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateChannelJson.ValueString()))
-	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
-	plan.AccountsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsFilter.ValueString()))
-	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
-	plan.EndpointsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()))
-	plan.ConfigJson = types.StringValue(*util.StringPointerOrEmpty(plan.ConfigJson.ValueString()))
-	plan.ModifyUserdataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()))
-	plan.EnhancedDirectoryRoles = types.StringValue(*util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles.ValueString()))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.AuthenticationEndpoint = util.SafeStringDatasource(plan.AuthenticationEndpoint.ValueStringPointer())
+	plan.MicrosoftGraphEndpoint = util.SafeStringDatasource(plan.MicrosoftGraphEndpoint.ValueStringPointer())
+	plan.AzureManagementEndpoint = util.SafeStringDatasource(plan.AzureManagementEndpoint.ValueStringPointer())
+	plan.ImportUserJson = util.SafeStringDatasource(plan.ImportUserJson.ValueStringPointer())
+	plan.CreateUsers = util.SafeStringDatasource(plan.CreateUsers.ValueStringPointer())
+	plan.CreateNewEndpoints = util.SafeStringDatasource(plan.CreateNewEndpoints.ValueStringPointer())
+	plan.ManagedAccountType = util.SafeStringDatasource(plan.ManagedAccountType.ValueStringPointer())
+	plan.AccountAttributes = util.SafeStringDatasource(plan.AccountAttributes.ValueStringPointer())
+	plan.ServiceAccountAttributes = util.SafeStringDatasource(plan.ServiceAccountAttributes.ValueStringPointer())
+	plan.DeltaTokensJson = util.SafeStringDatasource(plan.DeltaTokensJson.ValueStringPointer())
+	plan.AccountImportFields = util.SafeStringDatasource(plan.AccountImportFields.ValueStringPointer())
+	plan.ImportDepth = util.SafeStringDatasource(plan.ImportDepth.ValueStringPointer())
+	plan.EntitlementAttribute = util.SafeStringDatasource(plan.EntitlementAttribute.ValueStringPointer())
+	plan.CreateAccountJson = util.SafeStringDatasource(plan.CreateAccountJson.ValueStringPointer())
+	plan.UpdateAccountJson = util.SafeStringDatasource(plan.UpdateAccountJson.ValueStringPointer())
+	plan.EnableAccountJson = util.SafeStringDatasource(plan.EnableAccountJson.ValueStringPointer())
+	plan.DisableAccountJson = util.SafeStringDatasource(plan.DisableAccountJson.ValueStringPointer())
+	plan.AddAccessJson = util.SafeStringDatasource(plan.AddAccessJson.ValueStringPointer())
+	plan.RemoveAccessJson = util.SafeStringDatasource(plan.RemoveAccessJson.ValueStringPointer())
+	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
+	plan.ChangePassJson = util.SafeStringDatasource(plan.ChangePassJson.ValueStringPointer())
+	plan.RemoveAccountJson = util.SafeStringDatasource(plan.RemoveAccountJson.ValueStringPointer())
+	plan.CreateGroupJson = util.SafeStringDatasource(plan.CreateGroupJson.ValueStringPointer())
+	plan.UpdateGroupJson = util.SafeStringDatasource(plan.UpdateGroupJson.ValueStringPointer())
+	plan.AddAccessToEntitlementJson = util.SafeStringDatasource(plan.AddAccessToEntitlementJson.ValueStringPointer())
+	plan.RemoveAccessFromEntitlementJson = util.SafeStringDatasource(plan.RemoveAccessFromEntitlementJson.ValueStringPointer())
+	plan.DeleteGroupJson = util.SafeStringDatasource(plan.DeleteGroupJson.ValueStringPointer())
+	plan.CreateServicePrincipalJson = util.SafeStringDatasource(plan.CreateServicePrincipalJson.ValueStringPointer())
+	plan.UpdateServicePrincipalJson = util.SafeStringDatasource(plan.UpdateServicePrincipalJson.ValueStringPointer())
+	plan.RemoveServicePrincipalJson = util.SafeStringDatasource(plan.RemoveServicePrincipalJson.ValueStringPointer())
+	plan.EntitlementFilterJson = util.SafeStringDatasource(plan.EntitlementFilterJson.ValueStringPointer())
+	plan.CreateTeamJson = util.SafeStringDatasource(plan.CreateTeamJson.ValueStringPointer())
+	plan.CreateChannelJson = util.SafeStringDatasource(plan.CreateChannelJson.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.AccountsFilter = util.SafeStringDatasource(plan.AccountsFilter.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
+	plan.EndpointsFilter = util.SafeStringDatasource(plan.EndpointsFilter.ValueStringPointer())
+	plan.ConfigJson = util.SafeStringDatasource(plan.ConfigJson.ValueStringPointer())
+	plan.ModifyUserdataJson = util.SafeStringDatasource(plan.ModifyUserdataJson.ValueStringPointer())
+	plan.EnhancedDirectoryRoles = util.SafeStringDatasource(plan.EnhancedDirectoryRoles.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -645,9 +645,9 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 			Connectiontype: "AzureAD",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
@@ -657,50 +657,50 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 		CLIENT_SECRET: plan.ClientSecret.ValueString(),
 		AAD_TENANT_ID: plan.AadTenantId.ValueString(),
 		//optional fields
-		ACCESS_TOKEN:                    util.StringPointerOrEmpty(plan.AccessToken.ValueString()),
-		AZURE_MGMT_ACCESS_TOKEN:         util.StringPointerOrEmpty(plan.AzureMgmtAccessToken.ValueString()),
-		AUTHENTICATION_ENDPOINT:         util.StringPointerOrEmpty(plan.AuthenticationEndpoint.ValueString()),
-		MICROSOFT_GRAPH_ENDPOINT:        util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint.ValueString()),
-		AZURE_MANAGEMENT_ENDPOINT:       util.StringPointerOrEmpty(plan.AzureManagementEndpoint.ValueString()),
-		ImportUserJSON:                  util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
-		CREATEUSERS:                     util.StringPointerOrEmpty(plan.CreateUsers.ValueString()),
-		WINDOWS_CONNECTOR_JSON:          util.StringPointerOrEmpty(plan.WindowsConnectorJson.ValueString()),
-		CREATE_NEW_ENDPOINTS:            util.StringPointerOrEmpty(plan.CreateNewEndpoints.ValueString()),
-		MANAGED_ACCOUNT_TYPE:            util.StringPointerOrEmpty(plan.ManagedAccountType.ValueString()),
-		ACCOUNT_ATTRIBUTES:              util.StringPointerOrEmpty(plan.AccountAttributes.ValueString()),
-		SERVICE_ACCOUNT_ATTRIBUTES:      util.StringPointerOrEmpty(plan.ServiceAccountAttributes.ValueString()),
-		DELTATOKENSJSON:                 util.StringPointerOrEmpty(plan.DeltaTokensJson.ValueString()),
-		ACCOUNT_IMPORT_FIELDS:           util.StringPointerOrEmpty(plan.AccountImportFields.ValueString()),
-		IMPORT_DEPTH:                    util.StringPointerOrEmpty(plan.ImportDepth.ValueString()),
-		ENTITLEMENT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()),
-		CreateAccountJSON:               util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UpdateAccountJSON:               util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		EnableAccountJSON:               util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		DisableAccountJSON:              util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		AddAccessJSON:                   util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()),
-		RemoveAccessJSON:                util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()),
-		UpdateUserJSON:                  util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		ChangePassJSON:                  util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
-		RemoveAccountJSON:               util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()),
-		ConnectionJSON:                  util.StringPointerOrEmpty(plan.ConnectionJson.ValueString()),
-		CreateGroupJSON:                 util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()),
-		UpdateGroupJSON:                 util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()),
-		AddAccessToEntitlementJSON:      util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson.ValueString()),
-		RemoveAccessFromEntitlementJSON: util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson.ValueString()),
-		DeleteGroupJSON:                 util.StringPointerOrEmpty(plan.DeleteGroupJson.ValueString()),
-		CreateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.CreateServicePrincipalJson.ValueString()),
-		UpdateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson.ValueString()),
-		RemoveServicePrincipalJSON:      util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson.ValueString()),
-		ENTITLEMENT_FILTER_JSON:         util.StringPointerOrEmpty(plan.EntitlementFilterJson.ValueString()),
-		CreateTeamJSON:                  util.StringPointerOrEmpty(plan.CreateTeamJson.ValueString()),
-		CreateChannelJSON:               util.StringPointerOrEmpty(plan.CreateChannelJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG:         util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		ACCOUNTS_FILTER:                 util.StringPointerOrEmpty(plan.AccountsFilter.ValueString()),
-		PAM_CONFIG:                      util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
-		ENDPOINTS_FILTER:                util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
-		ConfigJSON:                      util.StringPointerOrEmpty(plan.ConfigJson.ValueString()),
-		MODIFYUSERDATAJSON:              util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()),
-		ENHANCEDDIRECTORYROLES:          util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles.ValueString()),
+		ACCESS_TOKEN:                    util.StringPointerOrEmpty(plan.AccessToken),
+		AZURE_MGMT_ACCESS_TOKEN:         util.StringPointerOrEmpty(plan.AzureMgmtAccessToken),
+		AUTHENTICATION_ENDPOINT:         util.StringPointerOrEmpty(plan.AuthenticationEndpoint),
+		MICROSOFT_GRAPH_ENDPOINT:        util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint),
+		AZURE_MANAGEMENT_ENDPOINT:       util.StringPointerOrEmpty(plan.AzureManagementEndpoint),
+		ImportUserJSON:                  util.StringPointerOrEmpty(plan.ImportUserJson),
+		CREATEUSERS:                     util.StringPointerOrEmpty(plan.CreateUsers),
+		WINDOWS_CONNECTOR_JSON:          util.StringPointerOrEmpty(plan.WindowsConnectorJson),
+		CREATE_NEW_ENDPOINTS:            util.StringPointerOrEmpty(plan.CreateNewEndpoints),
+		MANAGED_ACCOUNT_TYPE:            util.StringPointerOrEmpty(plan.ManagedAccountType),
+		ACCOUNT_ATTRIBUTES:              util.StringPointerOrEmpty(plan.AccountAttributes),
+		SERVICE_ACCOUNT_ATTRIBUTES:      util.StringPointerOrEmpty(plan.ServiceAccountAttributes),
+		DELTATOKENSJSON:                 util.StringPointerOrEmpty(plan.DeltaTokensJson),
+		ACCOUNT_IMPORT_FIELDS:           util.StringPointerOrEmpty(plan.AccountImportFields),
+		IMPORT_DEPTH:                    util.StringPointerOrEmpty(plan.ImportDepth),
+		ENTITLEMENT_ATTRIBUTE:           util.StringPointerOrEmpty(plan.EntitlementAttribute),
+		CreateAccountJSON:               util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UpdateAccountJSON:               util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		EnableAccountJSON:               util.StringPointerOrEmpty(plan.EnableAccountJson),
+		DisableAccountJSON:              util.StringPointerOrEmpty(plan.DisableAccountJson),
+		AddAccessJSON:                   util.StringPointerOrEmpty(plan.AddAccessJson),
+		RemoveAccessJSON:                util.StringPointerOrEmpty(plan.RemoveAccessJson),
+		UpdateUserJSON:                  util.StringPointerOrEmpty(plan.UpdateUserJson),
+		ChangePassJSON:                  util.StringPointerOrEmpty(plan.ChangePassJson),
+		RemoveAccountJSON:               util.StringPointerOrEmpty(plan.RemoveAccountJson),
+		ConnectionJSON:                  util.StringPointerOrEmpty(plan.ConnectionJson),
+		CreateGroupJSON:                 util.StringPointerOrEmpty(plan.CreateGroupJson),
+		UpdateGroupJSON:                 util.StringPointerOrEmpty(plan.UpdateGroupJson),
+		AddAccessToEntitlementJSON:      util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson),
+		RemoveAccessFromEntitlementJSON: util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson),
+		DeleteGroupJSON:                 util.StringPointerOrEmpty(plan.DeleteGroupJson),
+		CreateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.CreateServicePrincipalJson),
+		UpdateServicePrincipalJSON:      util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson),
+		RemoveServicePrincipalJSON:      util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson),
+		ENTITLEMENT_FILTER_JSON:         util.StringPointerOrEmpty(plan.EntitlementFilterJson),
+		CreateTeamJSON:                  util.StringPointerOrEmpty(plan.CreateTeamJson),
+		CreateChannelJSON:               util.StringPointerOrEmpty(plan.CreateChannelJson),
+		STATUS_THRESHOLD_CONFIG:         util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		ACCOUNTS_FILTER:                 util.StringPointerOrEmpty(plan.AccountsFilter),
+		PAM_CONFIG:                      util.StringPointerOrEmpty(plan.PamConfig),
+		ENDPOINTS_FILTER:                util.StringPointerOrEmpty(plan.EndpointsFilter),
+		ConfigJSON:                      util.StringPointerOrEmpty(plan.ConfigJson),
+		MODIFYUSERDATAJSON:              util.StringPointerOrEmpty(plan.ModifyUserdataJson),
+		ENHANCEDDIRECTORYROLES:          util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles),
 	}
 
 	entraidConnRequest := openapi.CreateOrUpdateRequest{
