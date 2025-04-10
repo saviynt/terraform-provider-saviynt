@@ -85,14 +85,17 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -113,101 +116,126 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"import_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for importing users.",
 			},
 			"import_account_ent_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for importing accounts and entitlements.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration for status thresholds.",
 			},
 			"create_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create an account.",
 			},
 			"update_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update an account.",
 			},
 			"enable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to enable an account.",
 			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to disable an account.",
 			},
 			"add_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to add access.",
 			},
 			"remove_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove access.",
 			},
 			"update_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update a user.",
 			},
 			"change_pass_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to change a user’s password.",
 			},
 			"remove_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove an account.",
 			},
 			"ticket_status_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to check ticket status.",
 			},
 			"create_ticket_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create a ticket.",
 			},
 			"endpoints_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Filter criteria for endpoints.",
 			},
 			"passwd_policy_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON defining the password policy.",
 			},
 			"config_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "General configuration JSON for the REST connector.",
 			},
 			"add_ffid_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to add FFID access.",
 			},
 			"remove_ffid_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove FFID access.",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON for modifying user data.",
 			},
 			"send_otp_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to send OTP.",
 			},
 			"validate_otp_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to validate OTP.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "PAM configuration JSON.",
 			},
 			"msg": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Message returned from the operation.",
 			},
 			"error_code": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Error code if the operation fails.",
 			},
@@ -306,6 +334,32 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.ImportUserJson = util.SafeStringDatasource(plan.ImportUserJson.ValueStringPointer())
+	plan.ImportAccountEntJson = util.SafeStringDatasource(plan.ImportAccountEntJson.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.CreateAccountJson = util.SafeStringDatasource(plan.CreateAccountJson.ValueStringPointer())
+	plan.UpdateAccountJson = util.SafeStringDatasource(plan.UpdateAccountJson.ValueStringPointer())
+	plan.EnableAccountJson = util.SafeStringDatasource(plan.EnableAccountJson.ValueStringPointer())
+	plan.DisableAccountJson = util.SafeStringDatasource(plan.DisableAccountJson.ValueStringPointer())
+	plan.AddAccessJson = util.SafeStringDatasource(plan.AddAccessJson.ValueStringPointer())
+	plan.RemoveAccessJson = util.SafeStringDatasource(plan.RemoveAccessJson.ValueStringPointer())
+	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
+	plan.ChangePassJson = util.SafeStringDatasource(plan.ChangePassJson.ValueStringPointer())
+	plan.RemoveAccountJson = util.SafeStringDatasource(plan.RemoveAccountJson.ValueStringPointer())
+	plan.TicketStatusJson = util.SafeStringDatasource(plan.TicketStatusJson.ValueStringPointer())
+	plan.CreateTicketJson = util.SafeStringDatasource(plan.CreateTicketJson.ValueStringPointer())
+	plan.EndpointsFilter = util.SafeStringDatasource(plan.EndpointsFilter.ValueStringPointer())
+	plan.PasswdPolicyJson = util.SafeStringDatasource(plan.PasswdPolicyJson.ValueStringPointer())
+	plan.ConfigJSON = util.SafeStringDatasource(plan.ConfigJSON.ValueStringPointer())
+	plan.AddFFIDAccessJson = util.SafeStringDatasource(plan.AddFFIDAccessJson.ValueStringPointer())
+	plan.RemoveFFIDAccessJson = util.SafeStringDatasource(plan.RemoveFFIDAccessJson.ValueStringPointer())
+	plan.ModifyUserdataJson = util.SafeStringDatasource(plan.ModifyUserdataJson.ValueStringPointer())
+	plan.SendOtpJson = util.SafeStringDatasource(plan.SendOtpJson.ValueStringPointer())
+	plan.ValidateOtpJson = util.SafeStringDatasource(plan.ValidateOtpJson.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
