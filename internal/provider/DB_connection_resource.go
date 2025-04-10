@@ -314,9 +314,9 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 			Connectiontype: "DB",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional field
-			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:     util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate),
 		},
 		//required field
 		URL:        plan.URL.ValueString(),
@@ -324,32 +324,32 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		PASSWORD:   plan.Password.ValueString(),
 		DRIVERNAME: plan.DriverName.ValueString(),
 		//optional field
-		CONNECTIONPROPERTIES:    util.StringPointerOrEmpty(plan.ConnectionProperties.ValueString()),
-		PASSWORD_MIN_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:  util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha.ValueString()),
-		PASSWORD_NOOFDIGITS:     util.StringPointerOrEmpty(plan.PasswordNoOfDigits.ValueString()),
-		PASSWORD_NOOFSPLCHARS:   util.StringPointerOrEmpty(plan.PasswordNoOfSplChars.ValueString()),
-		CREATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		GRANTACCESSJSON:         util.StringPointerOrEmpty(plan.GrantAccessJson.ValueString()),
-		REVOKEACCESSJSON:        util.StringPointerOrEmpty(plan.RevokeAccessJson.ValueString()),
-		CHANGEPASSJSON:          util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
-		DELETEACCOUNTJSON:       util.StringPointerOrEmpty(plan.DeleteAccountJson.ValueString()),
-		ENABLEACCOUNTJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		DISABLEACCOUNTJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		ACCOUNTEXISTSJSON:       util.StringPointerOrEmpty(plan.AccountExistsJson.ValueString()),
-		UPDATEUSERJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		ACCOUNTSIMPORT:          util.StringPointerOrEmpty(plan.AccountsImport.ValueString()),
-		ENTITLEMENTVALUEIMPORT:  util.StringPointerOrEmpty(plan.EntitlementValueImport.ValueString()),
-		ROLEOWNERIMPORT:         util.StringPointerOrEmpty(plan.RoleOwnerImport.ValueString()),
-		ROLESIMPORT:             util.StringPointerOrEmpty(plan.RolesImport.ValueString()),
-		SYSTEMIMPORT:            util.StringPointerOrEmpty(plan.SystemImport.ValueString()),
-		USERIMPORT:              util.StringPointerOrEmpty(plan.UserImport.ValueString()),
-		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()),
-		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()),
+		CONNECTIONPROPERTIES:    util.StringPointerOrEmpty(plan.ConnectionProperties),
+		PASSWORD_MIN_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMinLength),
+		PASSWORD_MAX_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMaxLength),
+		PASSWORD_NOOFCAPSALPHA:  util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha),
+		PASSWORD_NOOFDIGITS:     util.StringPointerOrEmpty(plan.PasswordNoOfDigits),
+		PASSWORD_NOOFSPLCHARS:   util.StringPointerOrEmpty(plan.PasswordNoOfSplChars),
+		CREATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UPDATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		GRANTACCESSJSON:         util.StringPointerOrEmpty(plan.GrantAccessJson),
+		REVOKEACCESSJSON:        util.StringPointerOrEmpty(plan.RevokeAccessJson),
+		CHANGEPASSJSON:          util.StringPointerOrEmpty(plan.ChangePassJson),
+		DELETEACCOUNTJSON:       util.StringPointerOrEmpty(plan.DeleteAccountJson),
+		ENABLEACCOUNTJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson),
+		DISABLEACCOUNTJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson),
+		ACCOUNTEXISTSJSON:       util.StringPointerOrEmpty(plan.AccountExistsJson),
+		UPDATEUSERJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson),
+		ACCOUNTSIMPORT:          util.StringPointerOrEmpty(plan.AccountsImport),
+		ENTITLEMENTVALUEIMPORT:  util.StringPointerOrEmpty(plan.EntitlementValueImport),
+		ROLEOWNERIMPORT:         util.StringPointerOrEmpty(plan.RoleOwnerImport),
+		ROLESIMPORT:             util.StringPointerOrEmpty(plan.RolesImport),
+		SYSTEMIMPORT:            util.StringPointerOrEmpty(plan.SystemImport),
+		USERIMPORT:              util.StringPointerOrEmpty(plan.UserImport),
+		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserDataJson),
+		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize),
+		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson),
 	}
 	if plan.VaultConnection.ValueString() != "" {
 		dbConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
@@ -370,34 +370,34 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
-	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
-	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.ConnectionProperties = types.StringValue(*util.StringPointerOrEmpty(plan.ConnectionProperties.ValueString()))
-	plan.PasswordMinLength = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()))
-	plan.PasswordMaxLength = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()))
-	plan.PasswordNoOfCapsAlpha = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha.ValueString()))
-	plan.PasswordNoOfDigits = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoOfDigits.ValueString()))
-	plan.PasswordNoOfSplChars = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoOfSplChars.ValueString()))
-	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
-	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
-	plan.GrantAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.GrantAccessJson.ValueString()))
-	plan.RevokeAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RevokeAccessJson.ValueString()))
-	plan.DeleteAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeleteAccountJson.ValueString()))
-	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
-	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
-	plan.AccountExistsJson = types.StringValue(*util.StringPointerOrEmpty(plan.AccountExistsJson.ValueString()))
-	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
-	plan.AccountsImport = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsImport.ValueString()))
-	plan.EntitlementValueImport = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementValueImport.ValueString()))
-	plan.RoleOwnerImport = types.StringValue(*util.StringPointerOrEmpty(plan.RoleOwnerImport.ValueString()))
-	plan.RolesImport = types.StringValue(*util.StringPointerOrEmpty(plan.RolesImport.ValueString()))
-	plan.SystemImport = types.StringValue(*util.StringPointerOrEmpty(plan.SystemImport.ValueString()))
-	plan.UserImport = types.StringValue(*util.StringPointerOrEmpty(plan.UserImport.ValueString()))
-	plan.ModifyUserDataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()))
-	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
-	plan.MaxPaginationSize = types.StringValue(*util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()))
-	plan.CliCommandJson = types.StringValue(*util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.ConnectionProperties = util.SafeStringDatasource(plan.ConnectionProperties.ValueStringPointer())
+	plan.PasswordMinLength = util.SafeStringDatasource(plan.PasswordMinLength.ValueStringPointer())
+	plan.PasswordMaxLength = util.SafeStringDatasource(plan.PasswordMaxLength.ValueStringPointer())
+	plan.PasswordNoOfCapsAlpha = util.SafeStringDatasource(plan.PasswordNoOfCapsAlpha.ValueStringPointer())
+	plan.PasswordNoOfDigits = util.SafeStringDatasource(plan.PasswordNoOfDigits.ValueStringPointer())
+	plan.PasswordNoOfSplChars = util.SafeStringDatasource(plan.PasswordNoOfSplChars.ValueStringPointer())
+	plan.CreateAccountJson = util.SafeStringDatasource(plan.CreateAccountJson.ValueStringPointer())
+	plan.UpdateAccountJson = util.SafeStringDatasource(plan.UpdateAccountJson.ValueStringPointer())
+	plan.GrantAccessJson = util.SafeStringDatasource(plan.GrantAccessJson.ValueStringPointer())
+	plan.RevokeAccessJson = util.SafeStringDatasource(plan.RevokeAccessJson.ValueStringPointer())
+	plan.DeleteAccountJson = util.SafeStringDatasource(plan.DeleteAccountJson.ValueStringPointer())
+	plan.EnableAccountJson = util.SafeStringDatasource(plan.EnableAccountJson.ValueStringPointer())
+	plan.DisableAccountJson = util.SafeStringDatasource(plan.DisableAccountJson.ValueStringPointer())
+	plan.AccountExistsJson = util.SafeStringDatasource(plan.AccountExistsJson.ValueStringPointer())
+	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
+	plan.AccountsImport = util.SafeStringDatasource(plan.AccountsImport.ValueStringPointer())
+	plan.EntitlementValueImport = util.SafeStringDatasource(plan.EntitlementValueImport.ValueStringPointer())
+	plan.RoleOwnerImport = util.SafeStringDatasource(plan.RoleOwnerImport.ValueStringPointer())
+	plan.RolesImport = util.SafeStringDatasource(plan.RolesImport.ValueStringPointer())
+	plan.SystemImport = util.SafeStringDatasource(plan.SystemImport.ValueStringPointer())
+	plan.UserImport = util.SafeStringDatasource(plan.UserImport.ValueStringPointer())
+	plan.ModifyUserDataJson = util.SafeStringDatasource(plan.ModifyUserDataJson.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.MaxPaginationSize = util.SafeStringDatasource(plan.MaxPaginationSize.ValueStringPointer())
+	plan.CliCommandJson = util.SafeStringDatasource(plan.CliCommandJson.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -500,12 +500,9 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 			Connectiontype: "DB",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional field
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			Description:     util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate),
 		},
 		//required field
 		URL:        plan.URL.ValueString(),
@@ -513,32 +510,32 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		PASSWORD:   plan.Password.ValueString(),
 		DRIVERNAME: plan.DriverName.ValueString(),
 		//optional field
-		CONNECTIONPROPERTIES:    util.StringPointerOrEmpty(plan.ConnectionProperties.ValueString()),
-		PASSWORD_MIN_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()),
-		PASSWORD_MAX_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()),
-		PASSWORD_NOOFCAPSALPHA:  util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha.ValueString()),
-		PASSWORD_NOOFDIGITS:     util.StringPointerOrEmpty(plan.PasswordNoOfDigits.ValueString()),
-		PASSWORD_NOOFSPLCHARS:   util.StringPointerOrEmpty(plan.PasswordNoOfSplChars.ValueString()),
-		CREATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UPDATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		GRANTACCESSJSON:         util.StringPointerOrEmpty(plan.GrantAccessJson.ValueString()),
-		REVOKEACCESSJSON:        util.StringPointerOrEmpty(plan.RevokeAccessJson.ValueString()),
-		CHANGEPASSJSON:          util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
-		DELETEACCOUNTJSON:       util.StringPointerOrEmpty(plan.DeleteAccountJson.ValueString()),
-		ENABLEACCOUNTJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		DISABLEACCOUNTJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		ACCOUNTEXISTSJSON:       util.StringPointerOrEmpty(plan.AccountExistsJson.ValueString()),
-		UPDATEUSERJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		ACCOUNTSIMPORT:          util.StringPointerOrEmpty(plan.AccountsImport.ValueString()),
-		ENTITLEMENTVALUEIMPORT:  util.StringPointerOrEmpty(plan.EntitlementValueImport.ValueString()),
-		ROLEOWNERIMPORT:         util.StringPointerOrEmpty(plan.RoleOwnerImport.ValueString()),
-		ROLESIMPORT:             util.StringPointerOrEmpty(plan.RolesImport.ValueString()),
-		SYSTEMIMPORT:            util.StringPointerOrEmpty(plan.SystemImport.ValueString()),
-		USERIMPORT:              util.StringPointerOrEmpty(plan.UserImport.ValueString()),
-		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()),
-		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()),
+		CONNECTIONPROPERTIES:    util.StringPointerOrEmpty(plan.ConnectionProperties),
+		PASSWORD_MIN_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMinLength),
+		PASSWORD_MAX_LENGTH:     util.StringPointerOrEmpty(plan.PasswordMaxLength),
+		PASSWORD_NOOFCAPSALPHA:  util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha),
+		PASSWORD_NOOFDIGITS:     util.StringPointerOrEmpty(plan.PasswordNoOfDigits),
+		PASSWORD_NOOFSPLCHARS:   util.StringPointerOrEmpty(plan.PasswordNoOfSplChars),
+		CREATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UPDATEACCOUNTJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		GRANTACCESSJSON:         util.StringPointerOrEmpty(plan.GrantAccessJson),
+		REVOKEACCESSJSON:        util.StringPointerOrEmpty(plan.RevokeAccessJson),
+		CHANGEPASSJSON:          util.StringPointerOrEmpty(plan.ChangePassJson),
+		DELETEACCOUNTJSON:       util.StringPointerOrEmpty(plan.DeleteAccountJson),
+		ENABLEACCOUNTJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson),
+		DISABLEACCOUNTJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson),
+		ACCOUNTEXISTSJSON:       util.StringPointerOrEmpty(plan.AccountExistsJson),
+		UPDATEUSERJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson),
+		ACCOUNTSIMPORT:          util.StringPointerOrEmpty(plan.AccountsImport),
+		ENTITLEMENTVALUEIMPORT:  util.StringPointerOrEmpty(plan.EntitlementValueImport),
+		ROLEOWNERIMPORT:         util.StringPointerOrEmpty(plan.RoleOwnerImport),
+		ROLESIMPORT:             util.StringPointerOrEmpty(plan.RolesImport),
+		SYSTEMIMPORT:            util.StringPointerOrEmpty(plan.SystemImport),
+		USERIMPORT:              util.StringPointerOrEmpty(plan.UserImport),
+		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserDataJson),
+		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize),
+		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson),
 	}
 	if plan.VaultConnection.ValueString() != "" {
 		dbConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())

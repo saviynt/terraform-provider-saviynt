@@ -289,38 +289,38 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 			Connectiontype: "REST",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
+			VaultConnection:    util.StringPointerOrEmpty(plan.VaultConnection),
+			VaultConfiguration: util.StringPointerOrEmpty(plan.VaultConfiguration),
+			Saveinvault:        util.StringPointerOrEmpty(plan.SaveInVault),
 		},
 		//optional fields
 		ConnectionJSON:          connJSON,
-		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
-		ImportAccountEntJSON:    util.StringPointerOrEmpty(plan.ImportAccountEntJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		CreateAccountJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UpdateAccountJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		EnableAccountJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		DisableAccountJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		AddAccessJSON:           util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()),
-		RemoveAccessJSON:        util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()),
-		UpdateUserJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		ChangePassJSON:          util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
-		RemoveAccountJSON:       util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()),
-		TicketStatusJSON:        util.StringPointerOrEmpty(plan.TicketStatusJson.ValueString()),
-		CreateTicketJSON:        util.StringPointerOrEmpty(plan.CreateTicketJson.ValueString()),
-		ENDPOINTS_FILTER:        util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
-		PasswdPolicyJSON:        util.StringPointerOrEmpty(plan.PasswdPolicyJson.ValueString()),
-		ConfigJSON:              util.StringPointerOrEmpty(plan.ConfigJSON.ValueString()),
-		AddFFIDAccessJSON:       util.StringPointerOrEmpty(plan.AddFFIDAccessJson.ValueString()),
-		RemoveFFIDAccessJSON:    util.StringPointerOrEmpty(plan.RemoveFFIDAccessJson.ValueString()),
-		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()),
-		SendOtpJSON:             util.StringPointerOrEmpty(plan.SendOtpJson.ValueString()),
-		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()),
-		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson),
+		ImportAccountEntJSON:    util.StringPointerOrEmpty(plan.ImportAccountEntJson),
+		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		CreateAccountJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UpdateAccountJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		EnableAccountJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson),
+		DisableAccountJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson),
+		AddAccessJSON:           util.StringPointerOrEmpty(plan.AddAccessJson),
+		RemoveAccessJSON:        util.StringPointerOrEmpty(plan.RemoveAccessJson),
+		UpdateUserJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson),
+		ChangePassJSON:          util.StringPointerOrEmpty(plan.ChangePassJson),
+		RemoveAccountJSON:       util.StringPointerOrEmpty(plan.RemoveAccountJson),
+		TicketStatusJSON:        util.StringPointerOrEmpty(plan.TicketStatusJson),
+		CreateTicketJSON:        util.StringPointerOrEmpty(plan.CreateTicketJson),
+		ENDPOINTS_FILTER:        util.StringPointerOrEmpty(plan.EndpointsFilter),
+		PasswdPolicyJSON:        util.StringPointerOrEmpty(plan.PasswdPolicyJson),
+		ConfigJSON:              util.StringPointerOrEmpty(plan.ConfigJSON),
+		AddFFIDAccessJSON:       util.StringPointerOrEmpty(plan.AddFFIDAccessJson),
+		RemoveFFIDAccessJSON:    util.StringPointerOrEmpty(plan.RemoveFFIDAccessJson),
+		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserdataJson),
+		SendOtpJSON:             util.StringPointerOrEmpty(plan.SendOtpJson),
+		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson),
+		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig),
 	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
@@ -337,32 +337,32 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
-	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
-	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.ImportUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()))
-	plan.ImportAccountEntJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportAccountEntJson.ValueString()))
-	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
-	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
-	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
-	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
-	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
-	plan.AddAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()))
-	plan.RemoveAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()))
-	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
-	plan.ChangePassJson = types.StringValue(*util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()))
-	plan.RemoveAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()))
-	plan.TicketStatusJson = types.StringValue(*util.StringPointerOrEmpty(plan.TicketStatusJson.ValueString()))
-	plan.CreateTicketJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateTicketJson.ValueString()))
-	plan.EndpointsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()))
-	plan.PasswdPolicyJson = types.StringValue(*util.StringPointerOrEmpty(plan.PasswdPolicyJson.ValueString()))
-	plan.ConfigJSON = types.StringValue(*util.StringPointerOrEmpty(plan.ConfigJSON.ValueString()))
-	plan.AddFFIDAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddFFIDAccessJson.ValueString()))
-	plan.RemoveFFIDAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveFFIDAccessJson.ValueString()))
-	plan.ModifyUserdataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()))
-	plan.SendOtpJson = types.StringValue(*util.StringPointerOrEmpty(plan.SendOtpJson.ValueString()))
-	plan.ValidateOtpJson = types.StringValue(*util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()))
-	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.ImportUserJson = util.SafeStringDatasource(plan.ImportUserJson.ValueStringPointer())
+	plan.ImportAccountEntJson = util.SafeStringDatasource(plan.ImportAccountEntJson.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.CreateAccountJson = util.SafeStringDatasource(plan.CreateAccountJson.ValueStringPointer())
+	plan.UpdateAccountJson = util.SafeStringDatasource(plan.UpdateAccountJson.ValueStringPointer())
+	plan.EnableAccountJson = util.SafeStringDatasource(plan.EnableAccountJson.ValueStringPointer())
+	plan.DisableAccountJson = util.SafeStringDatasource(plan.DisableAccountJson.ValueStringPointer())
+	plan.AddAccessJson = util.SafeStringDatasource(plan.AddAccessJson.ValueStringPointer())
+	plan.RemoveAccessJson = util.SafeStringDatasource(plan.RemoveAccessJson.ValueStringPointer())
+	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
+	plan.ChangePassJson = util.SafeStringDatasource(plan.ChangePassJson.ValueStringPointer())
+	plan.RemoveAccountJson = util.SafeStringDatasource(plan.RemoveAccountJson.ValueStringPointer())
+	plan.TicketStatusJson = util.SafeStringDatasource(plan.TicketStatusJson.ValueStringPointer())
+	plan.CreateTicketJson = util.SafeStringDatasource(plan.CreateTicketJson.ValueStringPointer())
+	plan.EndpointsFilter = util.SafeStringDatasource(plan.EndpointsFilter.ValueStringPointer())
+	plan.PasswdPolicyJson = util.SafeStringDatasource(plan.PasswdPolicyJson.ValueStringPointer())
+	plan.ConfigJSON = util.SafeStringDatasource(plan.ConfigJSON.ValueStringPointer())
+	plan.AddFFIDAccessJson = util.SafeStringDatasource(plan.AddFFIDAccessJson.ValueStringPointer())
+	plan.RemoveFFIDAccessJson = util.SafeStringDatasource(plan.RemoveFFIDAccessJson.ValueStringPointer())
+	plan.ModifyUserdataJson = util.SafeStringDatasource(plan.ModifyUserdataJson.ValueStringPointer())
+	plan.SendOtpJson = util.SafeStringDatasource(plan.SendOtpJson.ValueStringPointer())
+	plan.ValidateOtpJson = util.SafeStringDatasource(plan.ValidateOtpJson.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -465,39 +465,42 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.HTTPClient = http.DefaultClient
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:     "REST",
-			ConnectionName:     plan.ConnectionName.ValueString(),
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			//required fields
+			Connectiontype: "REST",
+			ConnectionName: plan.ConnectionName.ValueString(),
+			//optional fields
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
+			VaultConnection:    util.StringPointerOrEmpty(plan.VaultConnection),
+			VaultConfiguration: util.StringPointerOrEmpty(plan.VaultConfiguration),
+			Saveinvault:        util.StringPointerOrEmpty(plan.SaveInVault),
 		},
+		//optional fields
 		ConnectionJSON:          connJSON,
-		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
-		ImportAccountEntJSON:    util.StringPointerOrEmpty(plan.ImportAccountEntJson.ValueString()),
-		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		CreateAccountJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()),
-		UpdateAccountJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()),
-		EnableAccountJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()),
-		DisableAccountJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()),
-		AddAccessJSON:           util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()),
-		RemoveAccessJSON:        util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()),
-		UpdateUserJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()),
-		ChangePassJSON:          util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()),
-		RemoveAccountJSON:       util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()),
-		TicketStatusJSON:        util.StringPointerOrEmpty(plan.TicketStatusJson.ValueString()),
-		CreateTicketJSON:        util.StringPointerOrEmpty(plan.CreateTicketJson.ValueString()),
-		ENDPOINTS_FILTER:        util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()),
-		PasswdPolicyJSON:        util.StringPointerOrEmpty(plan.PasswdPolicyJson.ValueString()),
-		ConfigJSON:              util.StringPointerOrEmpty(plan.ConfigJSON.ValueString()),
-		AddFFIDAccessJSON:       util.StringPointerOrEmpty(plan.AddFFIDAccessJson.ValueString()),
-		RemoveFFIDAccessJSON:    util.StringPointerOrEmpty(plan.RemoveFFIDAccessJson.ValueString()),
-		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()),
-		SendOtpJSON:             util.StringPointerOrEmpty(plan.SendOtpJson.ValueString()),
-		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()),
-		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson),
+		ImportAccountEntJSON:    util.StringPointerOrEmpty(plan.ImportAccountEntJson),
+		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		CreateAccountJSON:       util.StringPointerOrEmpty(plan.CreateAccountJson),
+		UpdateAccountJSON:       util.StringPointerOrEmpty(plan.UpdateAccountJson),
+		EnableAccountJSON:       util.StringPointerOrEmpty(plan.EnableAccountJson),
+		DisableAccountJSON:      util.StringPointerOrEmpty(plan.DisableAccountJson),
+		AddAccessJSON:           util.StringPointerOrEmpty(plan.AddAccessJson),
+		RemoveAccessJSON:        util.StringPointerOrEmpty(plan.RemoveAccessJson),
+		UpdateUserJSON:          util.StringPointerOrEmpty(plan.UpdateUserJson),
+		ChangePassJSON:          util.StringPointerOrEmpty(plan.ChangePassJson),
+		RemoveAccountJSON:       util.StringPointerOrEmpty(plan.RemoveAccountJson),
+		TicketStatusJSON:        util.StringPointerOrEmpty(plan.TicketStatusJson),
+		CreateTicketJSON:        util.StringPointerOrEmpty(plan.CreateTicketJson),
+		ENDPOINTS_FILTER:        util.StringPointerOrEmpty(plan.EndpointsFilter),
+		PasswdPolicyJSON:        util.StringPointerOrEmpty(plan.PasswdPolicyJson),
+		ConfigJSON:              util.StringPointerOrEmpty(plan.ConfigJSON),
+		AddFFIDAccessJSON:       util.StringPointerOrEmpty(plan.AddFFIDAccessJson),
+		RemoveFFIDAccessJSON:    util.StringPointerOrEmpty(plan.RemoveFFIDAccessJson),
+		MODIFYUSERDATAJSON:      util.StringPointerOrEmpty(plan.ModifyUserdataJson),
+		SendOtpJSON:             util.StringPointerOrEmpty(plan.SendOtpJson),
+		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson),
+		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig),
 	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
