@@ -29,3 +29,7 @@ data "saviynt_rest_connection_datasource" "rest"{
 data "saviynt_db_connection_datasource" "db" {
   connection_key="4057"
 }
+
+data "saviynt_workday_connection_datasource" "w"{
+    connection_key="276"
+}
