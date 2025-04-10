@@ -14,5 +14,5 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name     = "namefortheconnection"
+  connection_name = "namefortheconnection"
 }
