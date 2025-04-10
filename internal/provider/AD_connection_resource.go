@@ -32,6 +32,7 @@ type BaseConnector struct {
 	Msg                types.String `tfsdk:"msg"`
 	ErrorCode          types.String `tfsdk:"error_code"`
 }
+
 type ADConnectorResourceModel struct {
 	BaseConnector
 	ID                        types.String `tfsdk:"id"`
@@ -94,7 +95,6 @@ type ADConnectorResourceModel struct {
 }
 
 type adConnectionResource struct {
-	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }
