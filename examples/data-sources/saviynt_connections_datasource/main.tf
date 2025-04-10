@@ -13,6 +13,11 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
+resource "saviynt_security_system_resource" "example" {
+  systemname="sample"
+  display_name="sample"
+}
+
 data "saviynt_ad_connection_datasource" "ad"{
     connection_key="123"
 }
