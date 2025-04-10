@@ -76,14 +76,17 @@ func (r *salesforceConnectionResource) Schema(ctx context.Context, req resource.
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -99,69 +102,83 @@ func (r *salesforceConnectionResource) Schema(ctx context.Context, req resource.
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"client_id": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "The OAuth client ID for Salesforce.",
 			},
 			"client_secret": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Sensitive:   true,
 				Description: "The OAuth client secret for Salesforce.",
 			},
 			"refresh_token": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Sensitive:   true,
 				Description: "The OAuth refresh token used to get access tokens from Salesforce.",
 			},
 			"redirect_uri": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "The redirect URI used in OAuth flows. Example: https://@INSTANCE_NAME@.salesforce.com/services/oauth2/success",
 			},
 			"instance_url": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Salesforce instance base URL. Example: https://@INSTANCE_NAME@.salesforce.com",
 			},
 			"object_to_be_imported": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: `Comma-separated list of Salesforce objects to import. Example: "Profile,Role,Group,PermissionSet"`,
 			},
 			"feature_license_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON mapping of feature licenses to permission fields in Salesforce.",
 			},
 			"custom_createaccount_url": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Custom URL used when creating a Salesforce account.",
 			},
 			"createaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template used for account creation in Salesforce.",
 			},
 			"account_filter_query": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Query used to filter Salesforce accounts.",
 			},
 			"account_field_query": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Fields to retrieve for Salesforce accounts. Example: Id, Username, LastName, FirstName, etc.",
 			},
 			"field_mapping_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON mapping of local fields to Salesforce fields with data types.",
 			},
 			"modifyaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template used for modifying Salesforce accounts.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to define active/inactive thresholds and lock statuses.",
 			},
 			"customconfigjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Custom configuration options for Salesforce connector.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Privileged Access Management (PAM) configuration in JSON format.",
 			},
 			"msg": schema.StringAttribute{
@@ -257,6 +274,25 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
+	plan.ClientId = types.StringValue(*util.StringPointerOrEmpty(plan.ClientId.ValueString()))
+	plan.ClientSecret = types.StringValue(*util.StringPointerOrEmpty(plan.ClientSecret.ValueString()))
+	plan.RefreshToken = types.StringValue(*util.StringPointerOrEmpty(plan.RefreshToken.ValueString()))
+	plan.RedirectUri = types.StringValue(*util.StringPointerOrEmpty(plan.RedirectUri.ValueString()))
+	plan.InstanceUrl = types.StringValue(*util.StringPointerOrEmpty(plan.InstanceUrl.ValueString()))
+	plan.ObjectToBeImported = types.StringValue(*util.StringPointerOrEmpty(plan.ObjectToBeImported.ValueString()))
+	plan.FeatureLicenseJson = types.StringValue(*util.StringPointerOrEmpty(plan.FeatureLicenseJson.ValueString()))
+	plan.CustomCreateaccountUrl = types.StringValue(*util.StringPointerOrEmpty(plan.CustomCreateaccountUrl.ValueString()))
+	plan.Createaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()))
+	plan.AccountFilterQuery = types.StringValue(*util.StringPointerOrEmpty(plan.AccountFilterQuery.ValueString()))
+	plan.AccountFieldQuery = types.StringValue(*util.StringPointerOrEmpty(plan.AccountFieldQuery.ValueString()))
+	plan.FieldMappingJson = types.StringValue(*util.StringPointerOrEmpty(plan.FieldMappingJson.ValueString()))
+	plan.Modifyaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Modifyaccountjson.ValueString()))
+	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
+	plan.Customconfigjson = types.StringValue(*util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()))
+	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
