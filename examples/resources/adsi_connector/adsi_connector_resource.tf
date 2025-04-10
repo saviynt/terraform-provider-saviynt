@@ -13,7 +13,7 @@ provider "saviynt" {
 }
 resource "saviynt_adsi_connection_resource" "example" {
   connection_type = "ADSI"
-  connection_name = "shaleen_adsi_1004"
+  connection_name = "shaleen_adsi_1008"
 
       url="LDAP://saviyntdc01.saviyntlabs.org"
 
@@ -26,5 +26,4 @@ resource "saviynt_adsi_connection_resource" "example" {
       vault_connection="Hashicorp"
   vault_configuration ="{\"path\":\"/secrets/data/kv-dev-intgn1/-AD_Credential\",\"keyMapping\":{\"PASSWORD\":\"AD_Credential_PASSWORD~#~None\"}}"
   save_in_vault="false"
-  page_size="1000"
 }

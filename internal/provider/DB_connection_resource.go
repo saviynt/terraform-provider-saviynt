@@ -284,12 +284,12 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 			Connectiontype: "DB",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional field
-			Description:        util.StringPointerOrEmpty(plan.Description),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault),
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		//required field
 		URL:        plan.URL.ValueString(),
