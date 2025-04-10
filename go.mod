@@ -3,7 +3,6 @@ module terraform-provider-Saviynt
 go 1.24.0
 
 require (
-	// connections v0.0.0
 	github.com/hashicorp/terraform-plugin-framework v1.14.1
 	github.com/saviynt/saviynt-api-go-client v0.9.71
 )
@@ -25,7 +24,7 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/oauth2 v0.28.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect

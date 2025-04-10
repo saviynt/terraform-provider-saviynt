@@ -12,7 +12,7 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
-resource "saviynt_db_connection_resource" "example" {
-  connection_type     = "DB"
-  connection_name     = "namefortheconnection"
+resource "saviynt_entraid_connection_resource" "ss" {
+  connection_type     = "AzureAD"
+   connection_name     = "namefortheconnection"
 }

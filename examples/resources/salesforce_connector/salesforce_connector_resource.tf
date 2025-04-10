@@ -12,7 +12,7 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
-resource "saviynt_db_connection_resource" "example" {
-  connection_type     = "DB"
+resource "saviynt_salesforce_connection_resource" "ss" {
+  connection_type     = "SalesForce"
   connection_name     = "namefortheconnection"
 }
