@@ -14,6 +14,5 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "example" {
   connection_type = "REST"
-  connection_name = "namefortheconnection"
-  config_json     = jsonencode({"showLogs":true})
+  connection_name     = "namefortheconnection"
 }
