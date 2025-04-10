@@ -11,8 +11,3 @@ variable "SAVIYNT_PASSWORD" {
   description = "Saviynt API Password"
   sensitive   = true
 }
-variable "PASSWORD" {
-  type        = string
-  description = "Connector Password"
-  sensitive   = true
-}
