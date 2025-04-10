@@ -81,7 +81,7 @@ func (r *adsiConnectionResource) Metadata(ctx context.Context, req resource.Meta
 
 func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage ADSI Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

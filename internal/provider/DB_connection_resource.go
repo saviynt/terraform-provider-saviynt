@@ -70,7 +70,7 @@ func (r *dbConnectionResource) Metadata(ctx context.Context, req resource.Metada
 
 func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage DB Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

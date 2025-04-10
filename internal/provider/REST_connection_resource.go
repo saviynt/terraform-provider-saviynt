@@ -65,7 +65,7 @@ func (r *restConnectionResource) Metadata(ctx context.Context, req resource.Meta
 
 func (r *restConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage REST Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
