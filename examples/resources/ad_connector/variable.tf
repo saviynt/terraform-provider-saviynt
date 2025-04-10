@@ -15,10 +15,12 @@ variable "IP_ADDRESS" {
   type        = string
   description = "Saviynt host server"
 }
+
 variable "LDAP_PORT" {
   type        = string
   description = "Port for the connection"
 }
+
 variable "LDAP_PROTOCOL" {
   type        = string
   description = "Protocol type (e.g., LDAP, HTTP, etc.)"
@@ -26,20 +28,24 @@ variable "LDAP_PROTOCOL" {
 variable "PASSWORD" {
   type        = string
   description = "Connection password"
-  sensitive   = true
+  sensitive = true
 }
+
 variable "BIND_USER" {
   type        = string
   description = "Connection username"
 }
+
 variable "VAULT_CONNECTION" {
   type        = string
   description = "Vault connection"
 }
+
 variable "VAULT_CONFIG" {
   type        = string
   description = "Vault config"
 }
+
 variable "SAVE_IN_VAULT" {
   type        = string
   description = "Save in vault"

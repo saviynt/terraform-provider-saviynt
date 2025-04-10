@@ -13,38 +13,5 @@ provider "saviynt" {
 }
 resource "saviynt_adsi_connection_resource" "example" {
   connection_type = "ADSI"
-  connection_name = "Shaleen_testing_ADSI_terraform_3490"
-
-  status_threshold_config = <<EOF
-	{
-  "statusAndThresholdConfig": {
-    "statusColumn": "customproperty24",
-    "activeStatus": [
-      "512",
-      "544",
-      "66048"
-    ],
-    "deleteLinks": false,
-    "accountThresholdValue": 50000,
-    "correlateInactiveAccounts": true,
-    "inactivateAccountsNotInFile": false,
-    "deleteAccEntForActiveAccounts": false
-	}
-	}
-	EOF
-
-  updategroupjson = jsonencode({
-    "objects" : [
-      {
-        "objectClasses" : [
-          "group"
-        ],
-        "distinguishedName" : "$${role.role_name}",
-        "attributes" : {
-          "description" : "$${role.description}",
-          "proxyAddresses" : "$${role.customproperty20}"
-        }
-      }
-    ]
-  })
+  connection_name     = "namefortheconnection"
 }
