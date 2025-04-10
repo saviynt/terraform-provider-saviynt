@@ -12,7 +12,7 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
-resource "saviynt_rest_connection_resource" "example" {
-  connection_type = "REST"
-  connection_name = "namefortheconnection"
+resource "saviynt_sap_connection_resource" "ss" {
+  connection_type     = "SAP"
+  connection_name     = "namefortheconnection"
 }
