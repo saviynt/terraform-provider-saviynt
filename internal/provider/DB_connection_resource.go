@@ -56,7 +56,6 @@ type DBConnectorResourceModel struct {
 }
 
 type dbConnectionResource struct {
-	// client *openapi.APIClient
 	client *s.Client
 	token  string
 }

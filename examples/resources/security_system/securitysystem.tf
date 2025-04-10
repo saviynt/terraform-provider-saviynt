@@ -12,9 +12,6 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 resource "saviynt_security_system_resource" "example" {
-  systemname   = "read_16"
-  display_name = "read_16"
-  instant_provision="true"
-  recon_application="true"
-  use_open_connector="true"
+  systemname   = "name of the security system"
+  display_name = "display name of the security system"
 }

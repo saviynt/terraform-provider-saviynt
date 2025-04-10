@@ -12,7 +12,7 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
-resource "saviynt_workday_connection_resource" "ss" {
-  connection_type     = "WORKDAY"
-  connection_name     = "namefortheconnection"
+resource "saviynt_entraid_connection_resource" "ss" {
+  connection_type     = "AzureAD"
+   connection_name     = "namefortheconnection"
 }

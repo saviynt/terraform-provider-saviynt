@@ -12,7 +12,7 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
-resource "saviynt_workday_connection_resource" "ss" {
-  connection_type     = "WORKDAY"
+resource "saviynt_salesforce_connection_resource" "ss" {
+  connection_type     = "SalesForce"
   connection_name     = "namefortheconnection"
 }
