@@ -320,7 +320,6 @@ func (r *salesforceConnectionResource) Read(ctx context.Context, req resource.Re
 	state.ErrorCode = util.Int32PtrToTFString(apiResp.SalesforceConnectionResponse.Errorcode)
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
-	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
