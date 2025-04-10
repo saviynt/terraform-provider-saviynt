@@ -110,6 +110,7 @@ func (d *SAPConnectionDataSource) Metadata(ctx context.Context, req datasource.M
 
 func (d *SAPConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Retrieve the details for a given SAP connector by its name or key",
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,

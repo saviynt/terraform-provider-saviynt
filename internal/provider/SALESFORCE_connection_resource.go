@@ -56,7 +56,7 @@ func (r *salesforceConnectionResource) Metadata(ctx context.Context, req resourc
 
 func (r *salesforceConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Connections",
+		Description: "Create and Manage Salesforce Connections",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -234,29 +234,29 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 			Connectiontype: "SalesForce",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
-		CLIENT_ID:                util.StringPointerOrEmpty(plan.ClientId.ValueString()),
-		CLIENT_SECRET:            util.StringPointerOrEmpty(plan.ClientSecret.ValueString()),
-		REFRESH_TOKEN:            util.StringPointerOrEmpty(plan.RefreshToken.ValueString()),
-		REDIRECT_URI:             util.StringPointerOrEmpty(plan.RedirectUri.ValueString()),
-		INSTANCE_URL:             util.StringPointerOrEmpty(plan.InstanceUrl.ValueString()),
-		OBJECT_TO_BE_IMPORTED:    util.StringPointerOrEmpty(plan.ObjectToBeImported.ValueString()),
-		FEATURE_LICENSE_JSON:     util.StringPointerOrEmpty(plan.FeatureLicenseJson.ValueString()),
-		CUSTOM_CREATEACCOUNT_URL: util.StringPointerOrEmpty(plan.CustomCreateaccountUrl.ValueString()),
-		CREATEACCOUNTJSON:        util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()),
-		ACCOUNT_FILTER_QUERY:     util.StringPointerOrEmpty(plan.AccountFilterQuery.ValueString()),
-		ACCOUNT_FIELD_QUERY:      util.StringPointerOrEmpty(plan.AccountFieldQuery.ValueString()),
-		FIELD_MAPPING_JSON:       util.StringPointerOrEmpty(plan.FieldMappingJson.ValueString()),
-		MODIFYACCOUNTJSON:        util.StringPointerOrEmpty(plan.Modifyaccountjson.ValueString()),
-		STATUS_THRESHOLD_CONFIG:  util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()),
-		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		CLIENT_ID:                util.StringPointerOrEmpty(plan.ClientId),
+		CLIENT_SECRET:            util.StringPointerOrEmpty(plan.ClientSecret),
+		REFRESH_TOKEN:            util.StringPointerOrEmpty(plan.RefreshToken),
+		REDIRECT_URI:             util.StringPointerOrEmpty(plan.RedirectUri),
+		INSTANCE_URL:             util.StringPointerOrEmpty(plan.InstanceUrl),
+		OBJECT_TO_BE_IMPORTED:    util.StringPointerOrEmpty(plan.ObjectToBeImported),
+		FEATURE_LICENSE_JSON:     util.StringPointerOrEmpty(plan.FeatureLicenseJson),
+		CUSTOM_CREATEACCOUNT_URL: util.StringPointerOrEmpty(plan.CustomCreateaccountUrl),
+		CREATEACCOUNTJSON:        util.StringPointerOrEmpty(plan.Createaccountjson),
+		ACCOUNT_FILTER_QUERY:     util.StringPointerOrEmpty(plan.AccountFilterQuery),
+		ACCOUNT_FIELD_QUERY:      util.StringPointerOrEmpty(plan.AccountFieldQuery),
+		FIELD_MAPPING_JSON:       util.StringPointerOrEmpty(plan.FieldMappingJson),
+		MODIFYACCOUNTJSON:        util.StringPointerOrEmpty(plan.Modifyaccountjson),
+		STATUS_THRESHOLD_CONFIG:  util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson),
+		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig),
 	}
 
 	salesforceConnRequest := openapi.CreateOrUpdateRequest{
@@ -274,25 +274,25 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
-	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
-	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.ClientId = types.StringValue(*util.StringPointerOrEmpty(plan.ClientId.ValueString()))
-	plan.ClientSecret = types.StringValue(*util.StringPointerOrEmpty(plan.ClientSecret.ValueString()))
-	plan.RefreshToken = types.StringValue(*util.StringPointerOrEmpty(plan.RefreshToken.ValueString()))
-	plan.RedirectUri = types.StringValue(*util.StringPointerOrEmpty(plan.RedirectUri.ValueString()))
-	plan.InstanceUrl = types.StringValue(*util.StringPointerOrEmpty(plan.InstanceUrl.ValueString()))
-	plan.ObjectToBeImported = types.StringValue(*util.StringPointerOrEmpty(plan.ObjectToBeImported.ValueString()))
-	plan.FeatureLicenseJson = types.StringValue(*util.StringPointerOrEmpty(plan.FeatureLicenseJson.ValueString()))
-	plan.CustomCreateaccountUrl = types.StringValue(*util.StringPointerOrEmpty(plan.CustomCreateaccountUrl.ValueString()))
-	plan.Createaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()))
-	plan.AccountFilterQuery = types.StringValue(*util.StringPointerOrEmpty(plan.AccountFilterQuery.ValueString()))
-	plan.AccountFieldQuery = types.StringValue(*util.StringPointerOrEmpty(plan.AccountFieldQuery.ValueString()))
-	plan.FieldMappingJson = types.StringValue(*util.StringPointerOrEmpty(plan.FieldMappingJson.ValueString()))
-	plan.Modifyaccountjson = types.StringValue(*util.StringPointerOrEmpty(plan.Modifyaccountjson.ValueString()))
-	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
-	plan.Customconfigjson = types.StringValue(*util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()))
-	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.ClientId = util.SafeStringDatasource(plan.ClientId.ValueStringPointer())
+	// plan.ClientSecret = util.SafeStringDatasource(plan.ClientSecret.ValueStringPointer())
+	// plan.RefreshToken = util.SafeStringDatasource(plan.RefreshToken.ValueStringPointer())
+	plan.RedirectUri = util.SafeStringDatasource(plan.RedirectUri.ValueStringPointer())
+	plan.InstanceUrl = util.SafeStringDatasource(plan.InstanceUrl.ValueStringPointer())
+	plan.ObjectToBeImported = util.SafeStringDatasource(plan.ObjectToBeImported.ValueStringPointer())
+	plan.FeatureLicenseJson = util.SafeStringDatasource(plan.FeatureLicenseJson.ValueStringPointer())
+	plan.CustomCreateaccountUrl = util.SafeStringDatasource(plan.CustomCreateaccountUrl.ValueStringPointer())
+	plan.Createaccountjson = util.SafeStringDatasource(plan.Createaccountjson.ValueStringPointer())
+	plan.AccountFilterQuery = util.SafeStringDatasource(plan.AccountFilterQuery.ValueStringPointer())
+	plan.AccountFieldQuery = util.SafeStringDatasource(plan.AccountFieldQuery.ValueStringPointer())
+	plan.FieldMappingJson = util.SafeStringDatasource(plan.FieldMappingJson.ValueStringPointer())
+	plan.Modifyaccountjson = util.SafeStringDatasource(plan.Modifyaccountjson.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.Customconfigjson = util.SafeStringDatasource(plan.Customconfigjson.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -381,29 +381,29 @@ func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.
 			Connectiontype: "SalesForce",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate),
 			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
 			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
 			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
-		CLIENT_ID:                util.StringPointerOrEmpty(plan.ClientId.ValueString()),
-		CLIENT_SECRET:            util.StringPointerOrEmpty(plan.ClientSecret.ValueString()),
-		REFRESH_TOKEN:            util.StringPointerOrEmpty(plan.RefreshToken.ValueString()),
-		REDIRECT_URI:             util.StringPointerOrEmpty(plan.RedirectUri.ValueString()),
-		INSTANCE_URL:             util.StringPointerOrEmpty(plan.InstanceUrl.ValueString()),
-		OBJECT_TO_BE_IMPORTED:    util.StringPointerOrEmpty(plan.ObjectToBeImported.ValueString()),
-		FEATURE_LICENSE_JSON:     util.StringPointerOrEmpty(plan.FeatureLicenseJson.ValueString()),
-		CUSTOM_CREATEACCOUNT_URL: util.StringPointerOrEmpty(plan.CustomCreateaccountUrl.ValueString()),
-		CREATEACCOUNTJSON:        util.StringPointerOrEmpty(plan.Createaccountjson.ValueString()),
-		ACCOUNT_FILTER_QUERY:     util.StringPointerOrEmpty(plan.AccountFilterQuery.ValueString()),
-		ACCOUNT_FIELD_QUERY:      util.StringPointerOrEmpty(plan.AccountFieldQuery.ValueString()),
-		FIELD_MAPPING_JSON:       util.StringPointerOrEmpty(plan.FieldMappingJson.ValueString()),
-		MODIFYACCOUNTJSON:        util.StringPointerOrEmpty(plan.Modifyaccountjson.ValueString()),
-		STATUS_THRESHOLD_CONFIG:  util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
-		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()),
-		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
+		CLIENT_ID:                util.StringPointerOrEmpty(plan.ClientId),
+		CLIENT_SECRET:            util.StringPointerOrEmpty(plan.ClientSecret),
+		REFRESH_TOKEN:            util.StringPointerOrEmpty(plan.RefreshToken),
+		REDIRECT_URI:             util.StringPointerOrEmpty(plan.RedirectUri),
+		INSTANCE_URL:             util.StringPointerOrEmpty(plan.InstanceUrl),
+		OBJECT_TO_BE_IMPORTED:    util.StringPointerOrEmpty(plan.ObjectToBeImported),
+		FEATURE_LICENSE_JSON:     util.StringPointerOrEmpty(plan.FeatureLicenseJson),
+		CUSTOM_CREATEACCOUNT_URL: util.StringPointerOrEmpty(plan.CustomCreateaccountUrl),
+		CREATEACCOUNTJSON:        util.StringPointerOrEmpty(plan.Createaccountjson),
+		ACCOUNT_FILTER_QUERY:     util.StringPointerOrEmpty(plan.AccountFilterQuery),
+		ACCOUNT_FIELD_QUERY:      util.StringPointerOrEmpty(plan.AccountFieldQuery),
+		FIELD_MAPPING_JSON:       util.StringPointerOrEmpty(plan.FieldMappingJson),
+		MODIFYACCOUNTJSON:        util.StringPointerOrEmpty(plan.Modifyaccountjson),
+		STATUS_THRESHOLD_CONFIG:  util.StringPointerOrEmpty(plan.StatusThresholdConfig),
+		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson),
+		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig),
 	}
 	salesforceConnRequest := openapi.CreateOrUpdateRequest{
 		SalesforceConnector: &salesforceConn,

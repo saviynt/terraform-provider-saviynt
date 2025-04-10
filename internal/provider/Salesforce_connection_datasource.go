@@ -66,6 +66,7 @@ func (d *SalesforceConnectionDataSource) Metadata(ctx context.Context, req datas
 
 func (d *SalesforceConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Retrieve the details for a given Salesforce connector by its name or key",
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,
