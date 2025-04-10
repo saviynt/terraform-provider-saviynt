@@ -3,12 +3,12 @@
 page_title: "saviynt_adsi_connection_resource Resource - saviynt"
 subcategory: ""
 description: |-
-  Create and Manage Connections
+  Create and Manage ADSI Connections
 ---
 
 # saviynt_adsi_connection_resource (Resource)
 
-Create and Manage Connections
+Create and Manage ADSI Connections
 
 
 
@@ -60,7 +60,6 @@ Create and Manage Connections
 - `removegroupjson` (String) Configuration to Delete a Group
 - `removeserviceaccountjson` (String) Specify the actions to be performed while deleting a service account.
 - `resetandchangepasswrdjson` (String) Configuration to Reset and Change Password.
-- `result` (String) The result of the API call.
 - `save_in_vault` (String) Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: "false"
 - `searchfilter` (String) Account Search Filter to specify the starting point of the directory from where the accounts needs to be imported. You can have multiple BaseDNs here separated by ###.
 - `status_threshold_config` (String) Account status and threshold related config
@@ -75,4 +74,5 @@ Create and Manage Connections
 
 ### Read-Only
 
+- `connection_key` (Number) Unique identifier of the connection returned by the API. Example: 1909
 - `id` (String) Resource ID.

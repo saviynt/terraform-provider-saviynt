@@ -102,14 +102,28 @@ output "systems" {
 
 ###  Resource
 
-- `saviynt_security_system_resource`: Manages lifecycle (create, update, read) of security systems. Supports workflows, connectors, password policies and more.
-- `saviynt_endpoints_resource`: For managing endpoints definitions used by security systems.
-- `saviynt_connection_resouce`: For managing endpoints like AD, REST, etc. tied to security systems.
+- [saviynt_security_system_resource](docs/resources/security_system_resource.md): Manages lifecycle (create, update, read) of security systems. Supports workflows, connectors, password policies and more.
+- [saviynt_endpoints_resource](docs/resources/endpoint_resource.md): For managing endpoints definitions used by security systems.
+- [saviynt_ad_connection_resource](docs/resources/ad_connection_resource.md): For managing AD connections.
+- [saviynt_rest_connection_resource](docs/resources/rest_connection_resource.md): For managing REST connections.
+- [saviynt_adsi_connection_resource](docs/resources/adsi_connection_resource.md): For managing ADSI connections.
+- [saviynt_db_connection_resource](docs/resources/db_connection_resource.md): For managing DB connections.
+- [saviynt_entraid_connection_resource](docs/resources/entraid_connection_resource.md): For managing EntraID(AzureAD) connections.
+- [saviynt_sap_connection_resource](docs/resources/sap_connection_resource.md): For managing SAP connections.
+- [saviynt_salesforce_connection_resource](docs/resources/salesforce_connection_resource.md): For managing Salesforce connections.
+- [saviynt_workday_connection_resource](docs/resources/workday_connection_resource.md): For managing Workday connections.
 
 ###  Data Source
 
-- `saviynt_security_systems_datasource`: Retrieves a list of configured security systems filtered by systemname, connection_type, etc.
-
+- [saviynt_security_systems_datasource](docs/data-sources/security_systems_datasource.md): Retrieves a list of configured security systems filtered by systemname, connection_type, etc.
+- [saviynt_endpoint_datasource](docs/data-sources/endpoints_datasource.md): Retrieves a list of endpoints.
+- [saviynt_connections_datasource](docs/data-sources/connections_datasource.md): Retrieves a list of connections
+- [saviynt_ad_connection_datasource](docs/data-sources/ad_connection_datasource.md): Retrieves an AD connection
+- [saviynt_rest_connection_datasource](docs/data-sources/rest_connection_datasource.md): Retrieves a REST connection
+- [saviynt_entraid_connection_datasource](docs/data-sources/entraid_connection_datasource.md): Retrieves a EntraID(AzureAD) connection
+- [saviynt_sap_connection_datasource](docs/data-sources/sap_connection_datasource.md): Retrieves a SAP connection
+- [saviynt_salesforce_connection_datasource](docs/data-sources/salesforce_connection_datasource.md): Retrieves a Salesforce connection
+- [saviynt_workday_connection_datasource](docs/data-sources/workday_connection_datasource.md): Retrieves a Workday connection
 ---
 
 ##  Development and Contribution

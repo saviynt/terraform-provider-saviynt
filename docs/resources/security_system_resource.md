@@ -45,7 +45,6 @@ Create and manage Security Systems in Saviynt
 - `provisioning_tries` (String) Specify the number of tries to be used for performing provisioning / de-provisioning to the third-party application. You can specify provisioningTries between 1 to 20 based on your requirement.
 - `recon_application` (String) Specify true to import data from the endpoint associated to the security system.
 - `remove_service_account_workflow` (String) Workflow for removing a service account.
-- `result` (String) The result of the API call.
 - `service_desk_connection` (String) Specify the Service Desk Connection used for integration with a ticketing system, which can be a disconnected system too.
 - `use_open_connector` (String) Specify true to enable the connectivity with any system over the open-source connectors such as REST.
 
