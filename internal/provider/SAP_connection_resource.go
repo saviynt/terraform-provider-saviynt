@@ -120,14 +120,17 @@ func (r *sapConnectionResource) Schema(ctx context.Context, req resource.SchemaR
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -576,6 +579,9 @@ func (r *sapConnectionResource) Create(ctx context.Context, req resource.CreateR
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
 	plan.JcoAshost = types.StringValue(*util.StringPointerOrEmpty(plan.JcoAshost.ValueString()))
 	plan.JcoSysnr = types.StringValue(*util.StringPointerOrEmpty(plan.JcoSysnr.ValueString()))
 	plan.JcoClient = types.StringValue(*util.StringPointerOrEmpty(plan.JcoClient.ValueString()))
