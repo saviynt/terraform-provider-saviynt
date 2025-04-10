@@ -100,14 +100,17 @@ func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -122,33 +125,39 @@ func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.Sch
 				Optional:    true,
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
-
 			"users_last_import_time": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Property for USERS_LAST_IMPORT_TIME.",
 			},
 			"accounts_last_import_time": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Property for ACCOUNTS_LAST_IMPORT_TIME.",
 			},
 			"access_last_import_time": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Property for ACCESS_LAST_IMPORT_TIME.",
 			},
 			"base_url": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Base URL of the Workday tenant instance.",
 			},
 			"api_version": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Version of the SOAP API used for the connection.",
 			},
 			"tenant_name": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "The name of your tenant.",
 			},
 			"report_owner": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Account name of the report owner used to build default RaaS URLs.",
 			},
 			"use_oauth": schema.StringAttribute{
@@ -157,28 +166,34 @@ func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"include_reference_descriptors": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Include descriptor attribute in response if set to TRUE.",
 			},
 			"use_enhanced_orgrole": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Set TRUE to utilize enhanced Organizational Role setup.",
 			},
 			"use_x509auth_for_soap": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Set TRUE to use certificate-based authentication for SOAP.",
 			},
 			"x509_key": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Sensitive:   true,
 				Description: "Private key for x509-based SOAP authentication.",
 			},
 			"x509_cert": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Sensitive:   true,
 				Description: "Certificate for x509-based SOAP authentication.",
 			},
 			"username": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Username for SOAP authentication.",
 			},
 			"password": schema.StringAttribute{
@@ -188,6 +203,7 @@ func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"client_id": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "OAuth client ID.",
 			},
 			"client_secret": schema.StringAttribute{
@@ -202,89 +218,111 @@ func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"page_size": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Number of objects to return per page during import.",
 			},
 			"user_import_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Request payload for importing users.",
 			},
 			"user_import_mapping": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Mapping configuration for user import.",
 			},
 			"account_import_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Request payload for importing accounts.",
 			},
 			"account_import_mapping": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Mapping configuration for account import.",
 			},
 			"access_import_list": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Comma-separated list of access types to import.",
 			},
 			"raas_mapping_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Overrides default report mapping for RaaS.",
 			},
 			"access_import_mapping": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Additional access attribute mapping for Workday access objects.",
 			},
 			"orgrole_import_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Custom SOAP body for organization role import.",
 			},
 			"status_key_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Mapping of user status.",
 			},
 			"userattributejson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specifies which job-related attributes are stored as user attributes.",
 			},
 			"custom_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Custom configuration for Workday connector.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Privileged Access Management configuration.",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Payload for modifying user data.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Config for reading and importing status of account and entitlement.",
 			},
 			"create_account_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Payload for creating an account.",
 			},
 			"update_account_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Payload for updating an account.",
 			},
 			"update_user_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Payload for updating a user.",
 			},
 			"assign_orgrole_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Payload for assigning org role.",
 			},
 			"remove_orgrole_payload": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Payload for removing org role.",
 			},
 			"msg": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Message returned from the operation.",
 			},
 			"error_code": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Error code if the operation fails.",
 			},
@@ -393,6 +431,43 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
+	plan.UsersLastImportTime = types.StringValue(*util.StringPointerOrEmpty(plan.UsersLastImportTime.ValueString()))
+	plan.AccountsLastImportTime = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsLastImportTime.ValueString()))
+	plan.AccessLastImportTime = types.StringValue(*util.StringPointerOrEmpty(plan.AccessLastImportTime.ValueString()))
+	plan.BaseURL = types.StringValue(*util.StringPointerOrEmpty(plan.BaseURL.ValueString()))
+	plan.APIVersion = types.StringValue(*util.StringPointerOrEmpty(plan.APIVersion.ValueString()))
+	plan.TenantName = types.StringValue(*util.StringPointerOrEmpty(plan.TenantName.ValueString()))
+	plan.ReportOwner = types.StringValue(*util.StringPointerOrEmpty(plan.ReportOwner.ValueString()))
+	plan.IncludeReferenceDesc = types.StringValue(*util.StringPointerOrEmpty(plan.IncludeReferenceDesc.ValueString()))
+	plan.UseEnhancedOrgRole = types.StringValue(*util.StringPointerOrEmpty(plan.UseEnhancedOrgRole.ValueString()))
+	plan.UseX509AuthForSOAP = types.StringValue(*util.StringPointerOrEmpty(plan.UseX509AuthForSOAP.ValueString()))
+	plan.X509Key = types.StringValue(*util.StringPointerOrEmpty(plan.X509Key.ValueString()))
+	plan.X509Cert = types.StringValue(*util.StringPointerOrEmpty(plan.X509Cert.ValueString()))
+	plan.Username = types.StringValue(*util.StringPointerOrEmpty(plan.Username.ValueString()))
+	plan.ClientID = types.StringValue(*util.StringPointerOrEmpty(plan.ClientID.ValueString()))
+	plan.PageSize = types.StringValue(*util.StringPointerOrEmpty(plan.PageSize.ValueString()))
+	plan.UserImportPayload = types.StringValue(*util.StringPointerOrEmpty(plan.UserImportPayload.ValueString()))
+	plan.UserImportMapping = types.StringValue(*util.StringPointerOrEmpty(plan.UserImportMapping.ValueString()))
+	plan.AccountImportPayload = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportPayload.ValueString()))
+	plan.AccountImportMapping = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportMapping.ValueString()))
+	plan.AccessImportList = types.StringValue(*util.StringPointerOrEmpty(plan.AccessImportList.ValueString()))
+	plan.RAASMappingJSON = types.StringValue(*util.StringPointerOrEmpty(plan.RAASMappingJSON.ValueString()))
+	plan.AccessImportMapping = types.StringValue(*util.StringPointerOrEmpty(plan.AccessImportMapping.ValueString()))
+	plan.OrgRoleImportPayload = types.StringValue(*util.StringPointerOrEmpty(plan.OrgRoleImportPayload.ValueString()))
+	plan.StatusKeyJSON = types.StringValue(*util.StringPointerOrEmpty(plan.StatusKeyJSON.ValueString()))
+	plan.UserAttributeJSON = types.StringValue(*util.StringPointerOrEmpty(plan.UserAttributeJSON.ValueString()))
+	plan.CustomConfig = types.StringValue(*util.StringPointerOrEmpty(plan.CustomConfig.ValueString()))
+	plan.PAMConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PAMConfig.ValueString()))
+	plan.ModifyUserDataJSON = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserDataJSON.ValueString()))
+	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
+	plan.CreateAccountPayload = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountPayload.ValueString()))
+	plan.UpdateAccountPayload = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountPayload.ValueString()))
+	plan.UpdateUserPayload = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserPayload.ValueString()))
+	plan.AssignOrgRolePayload = types.StringValue(*util.StringPointerOrEmpty(plan.AssignOrgRolePayload.ValueString()))
+	plan.RemoveOrgRolePayload = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveOrgRolePayload.ValueString()))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -559,7 +634,7 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	reqParams := openapi.GetConnectionDetailsRequest{}
-	
+
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
 	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
