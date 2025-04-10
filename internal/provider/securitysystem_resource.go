@@ -46,7 +46,8 @@ type securitySystemResourceModel struct {
 	ProvisioningConnection             types.String   `tfsdk:"provisioning_connection"`
 	ServiceDeskConnection              types.String   `tfsdk:"service_desk_connection"`
 	ExternalRiskConnectionJson         types.String   `tfsdk:"external_risk_connection_json"`
-	InherentSODReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
+	// InherentSODReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
+	InherentSODReportFields			types.List      `tfsdk:"inherent_sod_report_fields"`
 
 	Msg       types.String `tfsdk:"msg"`
 	ErrorCode types.String `tfsdk:"error_code"`
@@ -83,82 +84,92 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"hostname": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Security system for which you want to create an endpoint.",
 			},
 			"port": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the endpoint.",
 			},
 			"access_add_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Specify the workflow to be used for approvals for an access request, which can be for an account, entitlements, role, and so on.",
 			},
 			"access_remove_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Specify the workflow to be used when access has to be revoked, which can be for an account, entitlement, or any other de-provisioning task.",
 			},
 			"add_service_account_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Workflow for adding a service account.",
 			},
 			"remove_service_account_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Workflow for removing a service account.",
 			},
 			"proposed_account_owners_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Query to filter the access and display of the endpoint to specific users. If you do not define a query, the endpoint is displayed for all users",
 			},
 			"firefighterid_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Firefighter ID Workflow.",
 			},
 			"firefighterid_request_access_workflow": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Firefighter ID Request Access Workflow.",
 			},
 			"connection_parameters": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Query to filter the access and display of the endpoint to specific users. If you do not define a query, the endpoint is displayed for all users",
 			},
 			"automated_provisioning": schema.StringAttribute{
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Description: "Specify true to enable automated provisioning.",
 			},
 			"provisioning_tries": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the number of tries to be used for performing provisioning / de-provisioning to the third-party application. You can specify provisioningTries between 1 to 20 based on your requirement.",
 			},
 			"connectionname": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Select the connection name for performing reconciliation of identity objects from third-party application.",
 			},
 			"provisioning_connection": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "You can use a separate connection to an endpoint where you are performing provisioning or deprovisioning. Based on your requirement, you can specify a separate connection where you want to perform provisioning and de-provisioning.",
 			},
 			"service_desk_connection": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the Service Desk Connection used for integration with a ticketing system, which can be a disconnected system too.",
 			},
 			"provisioning_comments": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify relevant comments for performing provisioning.",
 			},
 			"policy_rule": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Use this setting to assign the password policy for the security system.",
 			},
 			"policy_rule_service_account": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Use this setting to assign the password policy which will be used to set the service account passwords for the security system.",
 			},
 			"use_open_connector": schema.StringAttribute{
@@ -178,9 +189,11 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"external_risk_connection_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Contains JSON configuration for external risk connections and is applicable only for a few connections like SAP.",
 			},
 			"inherent_sod_report_fields": schema.ListAttribute{
+				Computed:    true,
 				ElementType: types.StringType,
 				Optional:    true,
 				Description: "You can use this option used to filter out columns in SOD.",
@@ -311,14 +324,30 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 		plan.InstantProvision = types.StringValue("false")
 	}
 
+	if plan.AutomatedProvisioning.IsNull() || plan.AutomatedProvisioning.IsUnknown() || plan.AutomatedProvisioning.ValueString() == "" {
+		plan.AutomatedProvisioning = types.StringValue("false")
+	}
+
+	// plan.AccessAddWorkflow = util.SafeStringDatasource(plan.AccessAddWorkflow.ValueStringPointer())
+	plan.Hostname = util.SafeStringDatasource(plan.Hostname.ValueStringPointer())
+	plan.Port = util.SafeStringDatasource(plan.Port.ValueStringPointer())
+	plan.ProvisioningTries = util.SafeStringDatasource(plan.ProvisioningTries.ValueStringPointer())
+	plan.Connectionparameters = util.SafeStringDatasource(plan.Connectionparameters.ValueStringPointer())
 	plan.AccessAddWorkflow = util.SafeStringDatasource(plan.AccessAddWorkflow.ValueStringPointer())
+	plan.Provisioningcomments = util.SafeStringDatasource(plan.Provisioningcomments.ValueStringPointer())
 	plan.AccessRemoveWorkflow = util.SafeStringDatasource(plan.AccessRemoveWorkflow.ValueStringPointer())
 	plan.AddServiceAccountWorkflow = util.SafeStringDatasource(plan.AddServiceAccountWorkflow.ValueStringPointer())
 	plan.RemoveServiceAccountWorkflow = util.SafeStringDatasource(plan.RemoveServiceAccountWorkflow.ValueStringPointer())
 	plan.ProposedAccountOwnersWorkflow = util.SafeStringDatasource(plan.ProposedAccountOwnersWorkflow.ValueStringPointer())
 	plan.FirefighterIDWorkflow = util.SafeStringDatasource(plan.FirefighterIDWorkflow.ValueStringPointer())
 	plan.FirefighterIDRequestAccessWorkflow = util.SafeStringDatasource(plan.FirefighterIDRequestAccessWorkflow.ValueStringPointer())
-
+	plan.Connectionname = util.SafeStringDatasource(plan.Connectionname.ValueStringPointer())
+	plan.ProvisioningConnection = util.SafeStringDatasource(plan.ProvisioningConnection.ValueStringPointer())
+	plan.ServiceDeskConnection = util.SafeStringDatasource(plan.ServiceDeskConnection.ValueStringPointer())
+	plan.PolicyRule = util.SafeStringDatasource(plan.PolicyRule.ValueStringPointer())
+	plan.PolicyRuleServiceAccount = util.SafeStringDatasource(plan.PolicyRuleServiceAccount.ValueStringPointer())
+	plan.ExternalRiskConnectionJson = util.SafeStringDatasource(plan.ExternalRiskConnectionJson.ValueStringPointer())
+	plan.InherentSODReportFields = util.NormalizeTFListString(plan.InherentSODReportFields)
 
 	msgValue := util.SafeDeref(apiResp.Msg)
 	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
@@ -403,10 +432,8 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 	state.ServiceDeskConnection = util.SafeStringDatasource(foundItem.ServiceDeskConnection)
 	state.ExternalRiskConnectionJson = util.SafeStringDatasource(foundItem.ExternalRiskConnectionJson)
 
-	// Handle list attributes
-	state.InherentSODReportFields = util.ConvertStringsToTypesString(foundItem.InherentSODReportFields)
+	state.InherentSODReportFields = util.ConvertStringsToTFListString(foundItem.InherentSODReportFields)
 
-	// Optional: Save response as debug info
 	msgValue := util.SafeDeref(apiResp.Msg)
 	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
 
@@ -511,10 +538,13 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 	if !plan.ExternalRiskConnectionJson.IsNull() && plan.ExternalRiskConnectionJson.ValueString() != "" {
 		updateReq.SetExternalRiskConnectionJson(plan.ExternalRiskConnectionJson.ValueString())
 	}
-	if len(plan.InherentSODReportFields) > 0 {
-		inherentFields := util.ConvertTypesStringToStrings(plan.InherentSODReportFields)
-		updateReq.SetInherentSODReportFields(inherentFields)
-	}
+	if !plan.InherentSODReportFields.IsNull() && !plan.InherentSODReportFields.IsUnknown() {
+		elements := plan.InherentSODReportFields.Elements()
+		if len(elements) > 0 {
+			inherentFields := util.ConvertTFStringsToGoStrings(plan.InherentSODReportFields)
+			updateReq.SetInherentSODReportFields(inherentFields)
+		}
+	}	
 	// Execute the update API call.
 	apiResp, httpResp, err := apiClient.SecuritySystemsAPI.
 		UpdateSecuritySystem(ctx).
@@ -582,7 +612,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 	plan.ExternalRiskConnectionJson = util.SafeStringDatasource(foundItem.ExternalRiskConnectionJson)
 
 	// Handle list attributes
-	plan.InherentSODReportFields = util.ConvertStringsToTypesString(foundItem.InherentSODReportFields)
+	plan.InherentSODReportFields = util.ConvertStringsToTFListString(foundItem.InherentSODReportFields)
 
 	// Optional: Save response as debug info
 	msgValue := util.SafeDeref(apiResp.Msg)

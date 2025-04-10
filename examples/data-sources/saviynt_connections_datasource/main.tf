@@ -27,8 +27,6 @@ provider "saviynt" {
 # }
 
 resource "saviynt_security_system_resource" "example" {
-  systemname="pokemon8"
-  display_name="pokemon8"
-  # access_add_workflow="Manager Approval"
-  # recon_application="false"
+  systemname="pokemon10"
+  display_name="pokemon10"
 }
