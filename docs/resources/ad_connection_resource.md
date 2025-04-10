@@ -3,12 +3,12 @@
 page_title: "saviynt_ad_connection_resource Resource - saviynt"
 subcategory: ""
 description: |-
-  Create and Manage Connections
+  Create and Manage AD Connections
 ---
 
 # saviynt_ad_connection_resource (Resource)
 
-Create and Manage Connections
+Create and Manage AD Connections
 
 ## Example Usage
 
@@ -79,7 +79,6 @@ resource "saviynt_ad_connection_resource" "example" {
 - `read_operational_attributes` (String) Flag for reading operational attributes. Example: "FALSE"
 - `remove_account_action` (String) Action on account removal. Example: '{"removeAction":"DELETE"}'
 - `reset_and_change_passwrd_json` (String) JSON for reset/change password actions. Example: '{"RESET":{"pwdLastSet":"0","title":"password reset"},"CHANGE":{"pwdLastSet":"-1","title":"password changed"}}'
-- `result` (String) The result of the API call.
 - `reuse_account_json` (String) JSON to reuse an account. Example: '{"ATTRIBUTESTOCHECK":{"userAccountControl":"514",...}}'
 - `reuse_inactive_account` (String) Reuse inactive account flag. Example: "TRUE"
 - `save_connection` (String) Flag to permanently save connection. Example: "N"
@@ -103,4 +102,5 @@ resource "saviynt_ad_connection_resource" "example" {
 
 ### Read-Only
 
-- `id` (String) Resource ID.
+- `connection_key` (Number) Unique identifier of the connection returned by the API. Example: 1909
+- `id` (String, Sensitive) Resource ID.

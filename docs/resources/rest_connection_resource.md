@@ -3,12 +3,12 @@
 page_title: "saviynt_rest_connection_resource Resource - saviynt"
 subcategory: ""
 description: |-
-  Create and Manage Connections
+  Create and Manage REST Connections
 ---
 
 # saviynt_rest_connection_resource (Resource)
 
-Create and Manage Connections
+Create and Manage REST Connections
 
 ## Example Usage
 
@@ -69,9 +69,11 @@ resource "saviynt_rest_connection_resource" "example" {
 - `email_template` (String) Email template for notifications. Example: "New Account Task Creation"
 - `enable_account_json` (String) JSON configuration to enable an account.
 - `endpoints_filter` (String) Filter criteria for endpoints.
+- `error_code` (String) Error code if the operation fails.
 - `import_account_ent_json` (String) JSON for importing accounts and entitlements.
 - `import_user_json` (String) JSON for importing users.
 - `modify_user_data_json` (String) JSON for modifying user data.
+- `msg` (String) Message returned from the operation.
 - `pam_config` (String) PAM configuration JSON.
 - `passwd_policy_json` (String) JSON defining the password policy.
 - `remove_access_json` (String) JSON to remove access.
@@ -89,7 +91,5 @@ resource "saviynt_rest_connection_resource" "example" {
 
 ### Read-Only
 
-- `error_code` (String) Error code if the operation fails.
+- `connection_key` (Number) Unique identifier of the connection returned by the API. Example: 1909
 - `id` (String) Resource ID.
-- `msg` (String) Message returned from the operation.
-- `result` (String) Result of the operation.
