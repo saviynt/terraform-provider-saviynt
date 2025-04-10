@@ -127,12 +127,12 @@ func SafeStringConnector(s string) *string {
 }
 
 func StringPointerOrEmpty(tfStr types.String) *string {
-    if tfStr.IsNull() || tfStr.IsUnknown() || tfStr.ValueString() == "" {
-        // Value is null, unknown, or empty — treat it as not set
-        return nil
-    }
-    val := tfStr.ValueString()
-    return &val
+	if tfStr.IsNull() || tfStr.IsUnknown() || tfStr.ValueString() == "" {
+		// Value is null, unknown, or empty — treat it as not set
+		return nil
+	}
+	val := tfStr.ValueString()
+	return &val
 }
 
 func ConvertTypesStringToStrings(input []string) []types.String {
