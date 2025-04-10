@@ -36,6 +36,14 @@ func SafeStringDatasource(s *string) types.String {
 	return types.StringValue(*s)
 }
 
+// SafeDeref safely dereferences a *string, returning an empty string if nil.
+func SafeDeref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
 // safeList converts a []string to a Terraform types.List.
 func SafeList(items []string) (types.List, diag.Diagnostics) {
 	if len(items) == 0 {
@@ -70,14 +78,6 @@ func ToTypesStringSlice(items []string) []types.String {
 		result = append(result, types.StringValue(s))
 	}
 	return result
-}
-
-// SafeDeref safely dereferences a *string, returning an empty string if nil.
-func SafeDeref(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
 }
 
 // ConvertStringsToTypesString converts a slice of Go strings to a slice of types.String.

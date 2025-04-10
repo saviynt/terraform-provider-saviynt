@@ -13,15 +13,22 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 
-data "saviynt_ad_connection_datasource" "ad"{
-    # connection_key=""
-    connection_name="dellwireles349012"
-}
+# data "saviynt_ad_connection_datasource" "ad"{
+#     # connection_key=""
+#     connection_name="dellwireles349012"
+# }
 
-data "saviynt_adsi_connection_datasource" "adsi"{
-    connection_key="4061"
-}
+# data "saviynt_adsi_connection_datasource" "adsi"{
+#     connection_key="4061"
+# }
 
-data "saviynt_rest_connection_datasource" "rest"{
-    connection_key="4060"
+# data "saviynt_rest_connection_datasource" "rest"{
+#     connection_key="4060"
+# }
+
+resource "saviynt_security_system_resource" "example" {
+  systemname="pokemon8"
+  display_name="pokemon8"
+  # access_add_workflow="Manager Approval"
+  # recon_application="false"
 }
