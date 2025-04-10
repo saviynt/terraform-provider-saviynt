@@ -152,6 +152,7 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		ADSINewTestConnectionResource,
 		WorkdayNewTestConnectionResource,
 		ENTRAIDNewTestConnectionResource,
+		SALESFORCENewTestConnectionResource,
 		SAPNewTestConnectionResource,
 		NewEndpointResource,
 	}
