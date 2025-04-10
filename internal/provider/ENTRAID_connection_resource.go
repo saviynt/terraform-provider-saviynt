@@ -107,14 +107,17 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -130,11 +133,11 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"client_id": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Client ID for authentication.",
 			},
 			"client_secret": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Client Secret for authentication.",
 			},
 			"access_token": schema.StringAttribute{
@@ -142,7 +145,7 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 				Description: "Access token used for API calls.",
 			},
 			"aad_tenant_id": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Azure Active Directory tenant ID.",
 			},
 			"azure_mgmt_access_token": schema.StringAttribute{
@@ -151,22 +154,27 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"authentication_endpoint": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Authentication endpoint URL.",
 			},
 			"microsoft_graph_endpoint": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Microsoft Graph API endpoint.",
 			},
 			"azure_management_endpoint": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Azure management endpoint URL.",
 			},
 			"import_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration for importing users.",
 			},
 			"create_users": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Flag or configuration for creating users.",
 			},
 			"windows_connector_json": schema.StringAttribute{
@@ -175,70 +183,87 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"create_new_endpoints": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to create new endpoints.",
 			},
 			"managed_account_type": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Type of managed accounts.",
 			},
 			"account_attributes": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attributes for account configuration.",
 			},
 			"service_account_attributes": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attributes for service account configuration.",
 			},
 			"delta_tokens_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Delta tokens JSON data.",
 			},
 			"account_import_fields": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Fields to import for accounts.",
 			},
 			"import_depth": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Depth level for import.",
 			},
 			"entitlement_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attribute used for entitlement.",
 			},
 			"create_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to create an account.",
 			},
 			"update_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to update an account.",
 			},
 			"enable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to enable an account.",
 			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to disable an account.",
 			},
 			"add_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to add access.",
 			},
 			"remove_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to remove access.",
 			},
 			"update_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to update user.",
 			},
 			"change_pass_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to change password.",
 			},
 			"remove_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to remove account.",
 			},
 			"connection_json": schema.StringAttribute{
@@ -247,74 +272,92 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"create_group_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create group.",
 			},
 			"update_group_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update group.",
 			},
 			"add_access_to_entitlement_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to add access to entitlement.",
 			},
 			"remove_access_from_entitlement_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove access from entitlement.",
 			},
 			"delete_group_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to delete group.",
 			},
 			"create_service_principal_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create service principal.",
 			},
 			"update_service_principal_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update service principal.",
 			},
 			"remove_service_principal_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove service principal.",
 			},
 			"entitlement_filter_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Filter JSON for entitlements.",
 			},
 			"create_team_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create team.",
 			},
 			"create_channel_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create channel.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration for status thresholds.",
 			},
 			"accounts_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Filter for accounts.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "PAM configuration.",
 			},
 			"endpoints_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Endpoints filter configuration.",
 			},
 			"config_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Main config JSON.",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to modify user data.",
 			},
 			"enhanced_directory_roles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration for enhanced directory roles.",
 			},
 			"msg": schema.StringAttribute{
@@ -353,17 +396,13 @@ func (r *entraidConnectionResource) Configure(ctx context.Context, req resource.
 func (r *entraidConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan ENTRAIDConnectorResourceModel
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -447,6 +486,49 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
+	plan.AuthenticationEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.AuthenticationEndpoint.ValueString()))
+	plan.MicrosoftGraphEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint.ValueString()))
+	plan.AzureManagementEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.AzureManagementEndpoint.ValueString()))
+	plan.ImportUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()))
+	plan.CreateUsers = types.StringValue(*util.StringPointerOrEmpty(plan.CreateUsers.ValueString()))
+	plan.CreateNewEndpoints = types.StringValue(*util.StringPointerOrEmpty(plan.CreateNewEndpoints.ValueString()))
+	plan.ManagedAccountType = types.StringValue(*util.StringPointerOrEmpty(plan.ManagedAccountType.ValueString()))
+	plan.AccountAttributes = types.StringValue(*util.StringPointerOrEmpty(plan.AccountAttributes.ValueString()))
+	plan.ServiceAccountAttributes = types.StringValue(*util.StringPointerOrEmpty(plan.ServiceAccountAttributes.ValueString()))
+	plan.DeltaTokensJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeltaTokensJson.ValueString()))
+	plan.AccountImportFields = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportFields.ValueString()))
+	plan.ImportDepth = types.StringValue(*util.StringPointerOrEmpty(plan.ImportDepth.ValueString()))
+	plan.EntitlementAttribute = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()))
+	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
+	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
+	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
+	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
+	plan.AddAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()))
+	plan.RemoveAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()))
+	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
+	plan.ChangePassJson = types.StringValue(*util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()))
+	plan.RemoveAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()))
+	plan.CreateGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()))
+	plan.UpdateGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()))
+	plan.AddAccessToEntitlementJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson.ValueString()))
+	plan.RemoveAccessFromEntitlementJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson.ValueString()))
+	plan.DeleteGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeleteGroupJson.ValueString()))
+	plan.CreateServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateServicePrincipalJson.ValueString()))
+	plan.UpdateServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson.ValueString()))
+	plan.RemoveServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson.ValueString()))
+	plan.EntitlementFilterJson = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementFilterJson.ValueString()))
+	plan.CreateTeamJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateTeamJson.ValueString()))
+	plan.CreateChannelJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateChannelJson.ValueString()))
+	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
+	plan.AccountsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsFilter.ValueString()))
+	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
+	plan.EndpointsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()))
+	plan.ConfigJson = types.StringValue(*util.StringPointerOrEmpty(plan.ConfigJson.ValueString()))
+	plan.ModifyUserdataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()))
+	plan.EnhancedDirectoryRoles = types.StringValue(*util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles.ValueString()))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -454,23 +536,105 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 }
 
 func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// If the API does not support a separate read operation, you can pass through the state.
+	var state ENTRAIDConnectorResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Configure API client
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(state.ConnectionName.ValueString())
+	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	state.ConnectionKey = types.Int64Value(int64(*apiResp.EntraIDConnectionResponse.Connectionkey))
+	state.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.EntraIDConnectionResponse.Connectionkey))
+	state.ConnectionName = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionname)
+	state.ConnectionKey = util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionkey)
+	state.Description = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Description)
+	state.DefaultSavRoles = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Defaultsavroles)
+	state.ConnectionType = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectiontype)
+	state.EmailTemplate = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Emailtemplate)
+	state.UpdateUserJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.UpdateUserJSON)
+	state.MicrosoftGraphEndpoint = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.MICROSOFT_GRAPH_ENDPOINT)
+	state.EndpointsFilter = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	state.ImportUserJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ImportUserJSON)
+	state.EnableAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.EnableAccountJSON)
+	state.ClientId = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CLIENT_ID)
+	state.DeleteGroupJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.DeleteGroupJSON)
+	state.ConfigJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ConfigJSON)
+	state.AddAccessJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AddAccessJSON)
+	state.CreateChannelJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateChannelJSON)
+	state.UpdateAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.UpdateAccountJSON)
+	state.RemoveServicePrincipalJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.RemoveServicePrincipalJSON)
+	state.ImportDepth = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.IMPORT_DEPTH)
+	state.CreateAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateAccountJSON)
+	state.PamConfig = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.PAM_CONFIG)
+	state.UpdateServicePrincipalJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.UpdateServicePrincipalJSON)
+	state.AzureManagementEndpoint = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AZURE_MANAGEMENT_ENDPOINT)
+	state.EntitlementAttribute = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
+	state.AccountsFilter = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNTS_FILTER)
+	state.DeltaTokensJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.DELTATOKENSJSON)
+	state.CreateTeamJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateTeamJSON)
+	state.EnhancedDirectoryRoles = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENHANCEDDIRECTORYROLES)
+	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	state.AccountImportFields = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNT_IMPORT_FIELDS)
+	state.RemoveAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccountJSON)
+	state.ChangePassJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ChangePassJSON)
+	state.EntitlementFilterJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_FILTER_JSON)
+	state.ServiceAccountAttributes = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.SERVICE_ACCOUNT_ATTRIBUTES)
+	state.AddAccessToEntitlementJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AddAccessToEntitlementJSON)
+	state.AuthenticationEndpoint = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AUTHENTICATION_ENDPOINT)
+	state.CreateServicePrincipalJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateServicePrincipalJSON)
+	state.ModifyUserdataJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	state.RemoveAccessJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccessJSON)
+	state.CreateUsers = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CREATEUSERS)
+	state.RemoveAccessFromEntitlementJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccessFromEntitlementJSON)
+	state.DisableAccountJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.DisableAccountJSON)
+	state.CreateNewEndpoints = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CREATE_NEW_ENDPOINTS)
+	state.ManagedAccountType = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.MANAGED_ACCOUNT_TYPE)
+	state.AccountAttributes = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTES)
+	state.AadTenantId = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.AAD_TENANT_ID)
+	state.UpdateGroupJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.UpdateGroupJSON)
+	state.CreateGroupJson = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.CreateGroupJSON)
+	apiMessage := util.SafeDeref(apiResp.EntraIDConnectionResponse.Msg)
+	if apiMessage == "success" {
+		state.Msg = types.StringValue("Connection Successful")
+	} else {
+		state.Msg = types.StringValue(apiMessage)
+	}
+	state.ErrorCode = util.Int32PtrToTFString(apiResp.EntraIDConnectionResponse.Errorcode)
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 func (r *entraidConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ENTRAIDConnectorResourceModel
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -548,14 +712,76 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(entraidConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
-		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
-		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("Problem with the update function")
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
-	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in update block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ConnectionKey = types.Int64Value(int64(*getResp.EntraIDConnectionResponse.Connectionkey))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.EntraIDConnectionResponse.Connectionkey))
+	plan.ConnectionName = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionname)
+	plan.ConnectionKey = util.SafeInt64(getResp.EntraIDConnectionResponse.Connectionkey)
+	plan.Description = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Description)
+	plan.DefaultSavRoles = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Defaultsavroles)
+	plan.ConnectionType = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectiontype)
+	plan.EmailTemplate = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Emailtemplate)
+	plan.UpdateUserJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.UpdateUserJSON)
+	plan.MicrosoftGraphEndpoint = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.MICROSOFT_GRAPH_ENDPOINT)
+	plan.EndpointsFilter = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENDPOINTS_FILTER)
+	plan.ImportUserJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ImportUserJSON)
+	plan.EnableAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.EnableAccountJSON)
+	plan.ClientId = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CLIENT_ID)
+	plan.DeleteGroupJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.DeleteGroupJSON)
+	plan.ConfigJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ConfigJSON)
+	plan.AddAccessJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AddAccessJSON)
+	plan.CreateChannelJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateChannelJSON)
+	plan.UpdateAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.UpdateAccountJSON)
+	plan.RemoveServicePrincipalJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.RemoveServicePrincipalJSON)
+	plan.ImportDepth = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.IMPORT_DEPTH)
+	plan.CreateAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateAccountJSON)
+	plan.PamConfig = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.PAM_CONFIG)
+	plan.UpdateServicePrincipalJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.UpdateServicePrincipalJSON)
+	plan.AzureManagementEndpoint = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AZURE_MANAGEMENT_ENDPOINT)
+	plan.EntitlementAttribute = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_ATTRIBUTE)
+	plan.AccountsFilter = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNTS_FILTER)
+	plan.DeltaTokensJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.DELTATOKENSJSON)
+	plan.CreateTeamJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateTeamJSON)
+	plan.EnhancedDirectoryRoles = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENHANCEDDIRECTORYROLES)
+	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	plan.AccountImportFields = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNT_IMPORT_FIELDS)
+	plan.RemoveAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccountJSON)
+	plan.ChangePassJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ChangePassJSON)
+	plan.EntitlementFilterJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ENTITLEMENT_FILTER_JSON)
+	plan.ServiceAccountAttributes = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.SERVICE_ACCOUNT_ATTRIBUTES)
+	plan.AddAccessToEntitlementJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AddAccessToEntitlementJSON)
+	plan.AuthenticationEndpoint = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AUTHENTICATION_ENDPOINT)
+	plan.CreateServicePrincipalJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateServicePrincipalJSON)
+	plan.ModifyUserdataJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
+	plan.RemoveAccessJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccessJSON)
+	plan.CreateUsers = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CREATEUSERS)
+	plan.RemoveAccessFromEntitlementJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.RemoveAccessFromEntitlementJSON)
+	plan.DisableAccountJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.DisableAccountJSON)
+	plan.CreateNewEndpoints = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CREATE_NEW_ENDPOINTS)
+	plan.ManagedAccountType = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.MANAGED_ACCOUNT_TYPE)
+	plan.AccountAttributes = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.ACCOUNT_ATTRIBUTES)
+	plan.AadTenantId = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.AAD_TENANT_ID)
+	plan.UpdateGroupJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.UpdateGroupJSON)
+	plan.CreateGroupJson = util.SafeStringDatasource(getResp.EntraIDConnectionResponse.Connectionattributes.CreateGroupJSON)
+	apiMessage := util.SafeDeref(getResp.EntraIDConnectionResponse.Msg)
+	if apiMessage == "success" {
+		plan.Msg = types.StringValue("Connection Successful")
+	} else {
+		plan.Msg = types.StringValue(apiMessage)
+	}
+	plan.ErrorCode = util.Int32PtrToTFString(getResp.EntraIDConnectionResponse.Errorcode)
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }

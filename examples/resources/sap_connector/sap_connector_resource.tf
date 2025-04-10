@@ -11,7 +11,8 @@ provider "saviynt" {
   username   = var.SAVIYNT_USERNAME
   password   = var.SAVIYNT_PASSWORD
 }
-resource "saviynt_security_system_resource" "example" {
-  systemname   = "name of the security system"
-  display_name = "display name of the security system"
+
+resource "saviynt_sap_connection_resource" "ss" {
+  connection_type     = "SAP"
+  connection_name     = "namefortheconnection"
 }

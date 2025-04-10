@@ -138,6 +138,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewConnectionsDataSource,
 		NewADConnectionsDataSource,
 		NewRESTConnectionsDataSource,
+		NewADSIConnectionsDataSource,
 	}
 }
 
@@ -152,6 +153,7 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		WorkdayNewTestConnectionResource,
 		ENTRAIDNewTestConnectionResource,
 		SALESFORCENewTestConnectionResource,
+		SAPNewTestConnectionResource,
 		NewEndpointResource,
 	}
 }

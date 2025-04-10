@@ -21,4 +21,5 @@ resource "saviynt_ad_connection_resource" "ss" {
   vault_connection    = var.VAULT_CONNECTION
   vault_configuration = var.VAULT_CONFIG
   save_in_vault       = var.SAVE_IN_VAULT
+  ldap_or_ad="AD"
 }
