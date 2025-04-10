@@ -200,17 +200,13 @@ func (r *salesforceConnectionResource) Configure(ctx context.Context, req resour
 func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan SALESFORCEConnectorResourceModel
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -268,23 +264,78 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 }
 
 func (r *salesforceConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// If the API does not support a separate read operation, you can pass through the state.
+	var state SALESFORCEConnectorResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Configure API client
+	cfg := openapi.NewConfiguration()
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
+	cfg.Scheme = "https"
+	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	cfg.HTTPClient = http.DefaultClient
+
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(state.ConnectionName.ValueString())
+	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	state.ConnectionKey = types.Int64Value(int64(*apiResp.SalesforceConnectionResponse.Connectionkey))
+	state.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.SalesforceConnectionResponse.Connectionkey))
+	state.ConnectionName = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionname)
+	state.Description = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Description)
+	state.DefaultSavRoles = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Defaultsavroles)
+	state.ConnectionType = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectiontype)
+	state.Msg = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Msg)
+	state.EmailTemplate = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Emailtemplate)
+	state.ObjectToBeImported = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.OBJECT_TO_BE_IMPORTED)
+	state.FeatureLicenseJson = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.FEATURE_LICENSE_JSON)
+	state.Createaccountjson = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	state.RedirectUri = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.REDIRECT_URI)
+	state.Modifyaccountjson = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.MODIFYACCOUNTJSON)
+	state.ClientId = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.CLIENT_ID)
+	state.PamConfig = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.PAM_CONFIG)
+	state.Customconfigjson = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.CUSTOMCONFIGJSON)
+	state.FieldMappingJson = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.FIELD_MAPPING_JSON)
+	state.StatusThresholdConfig = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	state.AccountFieldQuery = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.ACCOUNT_FIELD_QUERY)
+	state.CustomCreateaccountUrl = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.CUSTOM_CREATEACCOUNT_URL)
+	state.AccountFilterQuery = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.ACCOUNT_FILTER_QUERY)
+	state.InstanceUrl = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.INSTANCE_URL)
+	apiMessage := util.SafeDeref(apiResp.SalesforceConnectionResponse.Msg)
+	if apiMessage == "success" {
+		state.Msg = types.StringValue("Connection Successful")
+	} else {
+		state.Msg = types.StringValue(apiMessage)
+	}
+	state.ErrorCode = util.Int32PtrToTFString(apiResp.SalesforceConnectionResponse.Errorcode)
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan SALESFORCEConnectorResourceModel
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
@@ -319,24 +370,56 @@ func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.
 		CUSTOMCONFIGJSON:         util.StringPointerOrEmpty(plan.Customconfigjson.ValueString()),
 		PAM_CONFIG:               util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 	}
-
 	salesforceConnRequest := openapi.CreateOrUpdateRequest{
 		SalesforceConnector: &salesforceConn,
 	}
 
 	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(salesforceConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
 		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
-	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
-	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	reqParams := openapi.GetConnectionDetailsRequest{}
+
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in update block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	plan.ConnectionKey = types.Int64Value(int64(*getResp.SalesforceConnectionResponse.Connectionkey))
+	plan.ID = types.StringValue(fmt.Sprintf("%d", *getResp.SalesforceConnectionResponse.Connectionkey))
+	plan.ConnectionName = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionname)
+	plan.Description = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Description)
+	plan.DefaultSavRoles = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Defaultsavroles)
+	plan.ConnectionType = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectiontype)
+	plan.Msg = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Msg)
+	plan.EmailTemplate = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Emailtemplate)
+	plan.ObjectToBeImported = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.OBJECT_TO_BE_IMPORTED)
+	plan.FeatureLicenseJson = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.FEATURE_LICENSE_JSON)
+	plan.Createaccountjson = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.CREATEACCOUNTJSON)
+	plan.RedirectUri = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.REDIRECT_URI)
+	plan.Modifyaccountjson = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.MODIFYACCOUNTJSON)
+	plan.ClientId = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.CLIENT_ID)
+	plan.PamConfig = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.PAM_CONFIG)
+	plan.Customconfigjson = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.CUSTOMCONFIGJSON)
+	plan.FieldMappingJson = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.FIELD_MAPPING_JSON)
+	plan.StatusThresholdConfig = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG)
+	plan.AccountFieldQuery = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.ACCOUNT_FIELD_QUERY)
+	plan.CustomCreateaccountUrl = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.CUSTOM_CREATEACCOUNT_URL)
+	plan.AccountFilterQuery = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.ACCOUNT_FILTER_QUERY)
+	plan.InstanceUrl = util.SafeStringDatasource(getResp.SalesforceConnectionResponse.Connectionattributes.INSTANCE_URL)
+	apiMessage := util.SafeDeref(getResp.SalesforceConnectionResponse.Msg)
+	if apiMessage == "success" {
+		plan.Msg = types.StringValue("Connection Successful")
+	} else {
+		plan.Msg = types.StringValue(apiMessage)
+	}
+	plan.ErrorCode = util.Int32PtrToTFString(getResp.SalesforceConnectionResponse.Errorcode)
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
