@@ -101,14 +101,17 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -139,40 +142,48 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Required:    true,
 				Description: "ADSI remote agent Connection URL",
 			},
-			"provisioning_url": schema.StringAttribute{
-				Optional:    true,
-				Description: "ADSI remote agent Provisioning URL",
-			},
 			"forestlist": schema.StringAttribute{
 				Required:    true,
 				Description: "Forest List (Comma Separated) which we need to manage",
 			},
+			"provisioning_url": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "ADSI remote agent Provisioning URL",
+			},
 			"default_user_role": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV Role to be assigned to all the new users that gets imported via User Import",
 			},
 			"updateuserjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the attribute Value which will be used to Update existing User",
 			},
 			"endpoints_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Provide the configuration to create Child Endpoints and import associated accounts and entitlements",
 			},
 			"searchfilter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Account Search Filter to specify the starting point of the directory from where the accounts needs to be imported. You can have multiple BaseDNs here separated by ###.",
 			},
 			"objectfilter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Object Filter is used to filter the objects that will be returned.This filter will be same for all domains.",
 			},
 			"account_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Map EIC and AD attributes for account import (AD attributes must be in lower case)",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Account status and threshold related config",
 			},
 			"entitlement_attribute": schema.StringAttribute{
@@ -182,110 +193,137 @@ func (r *adsiConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"user_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Map EIC and AD attributes for user import (AD attributes must be in lower case)",
 			},
 			"group_search_base_dn": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Group Search Filter to specify the starting point of the directory from where the groups needs to be imported. You can have multiple BaseDNs here separated by ###.",
 			},
 			"checkforunique": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Evaluate the uniqueness of an attribute",
 			},
 			"statuskeyjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration to specify Users status",
 			},
 			"group_import_mapping": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Map AD group attribute to EIC entitlement attribute for import",
 			},
 			"import_nested_membership": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify if you want the connector to import all indirect or nested membership of an account or a group during access import",
 			},
 			"page_size": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Page size defines the number of objects to be returned from each AD operation.",
 			},
 			"accountnamerule": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Rule to generate account name.",
 			},
 			"createaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the attributes values which will be used to Create the New Account.",
 			},
 			"updateaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the attributes values which will be used to Update existing Account.",
 			},
 			"enableaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the actions and attribute updates to be performed for enabling an account.",
 			},
 			"disableaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the actions and attributes updates to be performed for disabling an account.",
 			},
 			"removeaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the actions to be performed for deleting an account.",
 			},
 			"addaccessjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to ADD Access (cross domain/forest group membership) to an account.",
 			},
 			"removeaccessjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to REMOVE Access (cross domain/forest group membership) to an account.",
 			},
 			"resetandchangepasswrdjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to Reset and Change Password.",
 			},
 			"creategroupjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to Create a Group",
 			},
 			"updategroupjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to Update a Group",
 			},
 			"removegroupjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to Delete a Group",
 			},
 			"addaccessentitlementjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to Add nested group hierarchy",
 			},
 			"customconfigjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Custom configuration JSON",
 			},
 			"removeaccessentitlementjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to Remove nested group hierarchy",
 			},
 			"createserviceaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the Field Value which will be used to Create the New Service Account.",
 			},
 			"updateserviceaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the Field Value which will be used to update the existing Service Account.",
 			},
 			"removeserviceaccountjson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the actions to be performed while deleting a service account.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify Bootstrap Config.",
 			},
 			"modifyuserdatajson": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify this parameter to transform the data during user import.",
 			},
 			"msg": schema.StringAttribute{
@@ -345,12 +383,9 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 			Connectiontype: "ADSI",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional values
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 		},
 		//required values
 		URL:            plan.URL.ValueString(),
@@ -396,6 +431,11 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
 	}
+	if plan.VaultConnection.ValueString() != "" {
+		adsiConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+		adsiConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+		adsiConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+	}
 	adsiConnRequest := openapi.CreateOrUpdateRequest{
 		ADSIConnector: &adsiConn,
 	}
@@ -410,6 +450,45 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
+	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
+	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
+	plan.ProvisioningUrl = util.SafeStringDatasource(plan.ProvisioningUrl.ValueStringPointer())
+	plan.DefaultUserRole = util.SafeStringDatasource(plan.DefaultUserRole.ValueStringPointer())
+	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
+	plan.EndpointsFilter = util.SafeStringDatasource(plan.EndpointsFilter.ValueStringPointer())
+	plan.SearchFilter = util.SafeStringDatasource(plan.SearchFilter.ValueStringPointer())
+	plan.ObjectFilter = util.SafeStringDatasource(plan.ObjectFilter.ValueStringPointer())
+	plan.AccountAttribute = util.SafeStringDatasource(plan.AccountAttribute.ValueStringPointer())
+	plan.StatusThresholdConfig = util.SafeStringDatasource(plan.StatusThresholdConfig.ValueStringPointer())
+	plan.EntitlementAttribute = util.SafeStringDatasource(plan.EntitlementAttribute.ValueStringPointer())
+	plan.UserAttribute = util.SafeStringDatasource(plan.UserAttribute.ValueStringPointer())
+	plan.GroupSearchBaseDN = util.SafeStringDatasource(plan.GroupSearchBaseDN.ValueStringPointer())
+	plan.CheckForUnique = util.SafeStringDatasource(plan.CheckForUnique.ValueStringPointer())
+	plan.StatusKeyJson = util.SafeStringDatasource(plan.StatusKeyJson.ValueStringPointer())
+	plan.GroupImportMapping = util.SafeStringDatasource(plan.GroupImportMapping.ValueStringPointer())
+	plan.ImportNestedMembership = util.SafeStringDatasource(plan.ImportNestedMembership.ValueStringPointer())
+	plan.PageSize = util.SafeStringDatasource(plan.PageSize.ValueStringPointer())
+	plan.AccountNameRule = util.SafeStringDatasource(plan.AccountNameRule.ValueStringPointer())
+	plan.CreateAccountJson = util.SafeStringDatasource(plan.CreateAccountJson.ValueStringPointer())
+	plan.UpdateAccountJson = util.SafeStringDatasource(plan.UpdateAccountJson.ValueStringPointer())
+	plan.EnableAccountJson = util.SafeStringDatasource(plan.EnableAccountJson.ValueStringPointer())
+	plan.DisableAccountJson = util.SafeStringDatasource(plan.DisableAccountJson.ValueStringPointer())
+	plan.RemoveAccountJson = util.SafeStringDatasource(plan.RemoveAccountJson.ValueStringPointer())
+	plan.AddAccessJson = util.SafeStringDatasource(plan.AddAccessJson.ValueStringPointer())
+	plan.RemoveAccessJson = util.SafeStringDatasource(plan.RemoveAccessJson.ValueStringPointer())
+	plan.ResetAndChangePasswrdJson = util.SafeStringDatasource(plan.ResetAndChangePasswrdJson.ValueStringPointer())
+	plan.CreateGroupJson = util.SafeStringDatasource(plan.CreateGroupJson.ValueStringPointer())
+	plan.UpdateGroupJson = util.SafeStringDatasource(plan.UpdateGroupJson.ValueStringPointer())
+	plan.RemoveGroupJson = util.SafeStringDatasource(plan.RemoveGroupJson.ValueStringPointer())
+	plan.AddAccessEntitlementJson = util.SafeStringDatasource(plan.AddAccessEntitlementJson.ValueStringPointer())
+	plan.CustomConfigJson = util.SafeStringDatasource(plan.CustomConfigJson.ValueStringPointer())
+	plan.RemoveAccessEntitlementJson = util.SafeStringDatasource(plan.RemoveAccessEntitlementJson.ValueStringPointer())
+	plan.CreateServiceAccountJson = util.SafeStringDatasource(plan.CreateServiceAccountJson.ValueStringPointer())
+	plan.UpdateServiceAccountJson = util.SafeStringDatasource(plan.UpdateServiceAccountJson.ValueStringPointer())
+	plan.RemoveServiceAccountJson = util.SafeStringDatasource(plan.RemoveServiceAccountJson.ValueStringPointer())
+	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
+	plan.ModifyUserDataJson = util.SafeStringDatasource(plan.ModifyUserDataJson.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -575,6 +654,16 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 		REMOVESERVICEACCOUNTJSON:    util.StringPointerOrEmpty(plan.RemoveServiceAccountJson.ValueString()),
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 		MODIFYUSERDATAJSON:          util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()),
+	}
+	if plan.VaultConnection.ValueString() != "" {
+		adsiConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+		adsiConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+		adsiConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+	} else {
+		emptyStr := ""
+		adsiConn.BaseConnector.VaultConnection = &emptyStr
+		adsiConn.BaseConnector.VaultConfiguration = &emptyStr
+		adsiConn.BaseConnector.Saveinvault = &emptyStr
 	}
 	adsiConnRequest := openapi.CreateOrUpdateRequest{
 		ADSIConnector: &adsiConn,
