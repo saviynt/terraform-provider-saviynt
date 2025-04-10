@@ -143,6 +143,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewWorkdayConnectionsDataSource,
 		NewSalesforceConnectionsDataSource,
 		NewEntraIDConnectionsDataSource,
+		NewSAPConnectionsDataSource,
 	}
 }
 
