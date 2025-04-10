@@ -90,14 +90,17 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -130,42 +133,52 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 			"connection_properties": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Properties that need to be added when connecting to the database",
 			},
 			"password_min_length": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the minimum length for the random password",
 			},
 			"password_max_length": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the maximum length for the random password",
 			},
 			"password_no_of_caps_alpha": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the number of uppercase alphabets required for the random password",
 			},
 			"password_no_of_digits": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the number of digits required for the random password",
 			},
 			"password_no_of_spl_chars": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the number of special characters required for the random password",
 			},
 			"create_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to create a new account (e.g., randomPassword, task, user, accountName, role, endpoint, etc.)",
 			},
 			"update_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to update an existing account",
 			},
 			"grant_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to provide access",
 			},
 			"revoke_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to revoke access",
 			},
 			"change_pass_json": schema.StringAttribute{
@@ -174,69 +187,86 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 			"delete_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to delete an account",
 			},
 			"enable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to enable an account",
 			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to disable an account",
 			},
 			"account_exists_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the query used to check whether an account exists",
 			},
 			"update_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify the queries/stored procedures used to update user information",
 			},
 			"accounts_import": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Accounts Import XML file content",
 			},
 			"entitlement_value_import": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Entitlement Value Import XML file content",
 			},
 			"role_owner_import": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Role Owner Import XML file content",
 			},
 			"roles_import": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Roles Import XML file content",
 			},
 			"system_import": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "System Import XML file content",
 			},
 			"user_import": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "User Import XML file content",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Property for MODIFYUSERDATAJSON",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration for status and threshold (e.g., statusColumn, activeStatus, accountThresholdValue, etc.)",
 			},
 			"max_pagination_size": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Defines the maximum number of records to be processed per page",
 			},
 			"cli_command_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to specify commands executable on the target server",
 			},
 			"msg": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Message returned from the operation.",
 			},
 			"error_code": schema.StringAttribute{
+				Optional:    true,
 				Computed:    true,
 				Description: "Error code if the operation fails.",
 			},
@@ -284,12 +314,9 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 			Connectiontype: "DB",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional field
-			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
-			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
-			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
-			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
+			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
 		},
 		//required field
 		URL:        plan.URL.ValueString(),
@@ -324,6 +351,11 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()),
 		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()),
 	}
+	if plan.VaultConnection.ValueString() != "" {
+		dbConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+		dbConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+		dbConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+	}
 	dbConnRequest := openapi.CreateOrUpdateRequest{
 		DBConnector: &dbConn,
 	}
@@ -338,6 +370,34 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
+	plan.ConnectionProperties = types.StringValue(*util.StringPointerOrEmpty(plan.ConnectionProperties.ValueString()))
+	plan.PasswordMinLength = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordMinLength.ValueString()))
+	plan.PasswordMaxLength = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordMaxLength.ValueString()))
+	plan.PasswordNoOfCapsAlpha = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoOfCapsAlpha.ValueString()))
+	plan.PasswordNoOfDigits = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoOfDigits.ValueString()))
+	plan.PasswordNoOfSplChars = types.StringValue(*util.StringPointerOrEmpty(plan.PasswordNoOfSplChars.ValueString()))
+	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
+	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
+	plan.GrantAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.GrantAccessJson.ValueString()))
+	plan.RevokeAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RevokeAccessJson.ValueString()))
+	plan.DeleteAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeleteAccountJson.ValueString()))
+	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
+	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
+	plan.AccountExistsJson = types.StringValue(*util.StringPointerOrEmpty(plan.AccountExistsJson.ValueString()))
+	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
+	plan.AccountsImport = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsImport.ValueString()))
+	plan.EntitlementValueImport = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementValueImport.ValueString()))
+	plan.RoleOwnerImport = types.StringValue(*util.StringPointerOrEmpty(plan.RoleOwnerImport.ValueString()))
+	plan.RolesImport = types.StringValue(*util.StringPointerOrEmpty(plan.RolesImport.ValueString()))
+	plan.SystemImport = types.StringValue(*util.StringPointerOrEmpty(plan.SystemImport.ValueString()))
+	plan.UserImport = types.StringValue(*util.StringPointerOrEmpty(plan.UserImport.ValueString()))
+	plan.ModifyUserDataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserDataJson.ValueString()))
+	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
+	plan.MaxPaginationSize = types.StringValue(*util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()))
+	plan.CliCommandJson = types.StringValue(*util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -479,6 +539,16 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		STATUS_THRESHOLD_CONFIG: util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()),
 		MAX_PAGINATION_SIZE:     util.StringPointerOrEmpty(plan.MaxPaginationSize.ValueString()),
 		CLI_COMMAND_JSON:        util.StringPointerOrEmpty(plan.CliCommandJson.ValueString()),
+	}
+	if plan.VaultConnection.ValueString() != "" {
+		dbConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
+		dbConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
+		dbConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
+	} else {
+		emptyStr := ""
+		dbConn.BaseConnector.VaultConnection = &emptyStr
+		dbConn.BaseConnector.VaultConfiguration = &emptyStr
+		dbConn.BaseConnector.Saveinvault = &emptyStr
 	}
 	dbConnRequest := openapi.CreateOrUpdateRequest{
 		DBConnector: &dbConn,

@@ -100,17 +100,14 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"vault_connection": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Specifies the type of vault connection being used (e.g., 'Hashicorp'). Example: \"Hashicorp\"",
 			},
 			"vault_configuration": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "JSON string specifying vault configuration. Example: '{\"path\":\"/secrets/data/kv-dev-intgn1/-AD_Credential\",\"keyMapping\":{\"PASSWORD\":\"AD_PASSWORD~#~None\"}}'",
 			},
 			"save_in_vault": schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"connection_json": schema.StringAttribute{
@@ -292,9 +289,12 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 			Connectiontype: "REST",
 			ConnectionName: plan.ConnectionName.ValueString(),
 			//optional fields
-			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		//optional fields
 		ConnectionJSON:          connJSON,
@@ -322,13 +322,6 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()),
 		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
 	}
-	if !plan.VaultConnection.IsNull() && !plan.VaultConnection.IsUnknown() {
-		if plan.VaultConnection.ValueString() != "" {
-			restConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
-			restConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
-			restConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
-		}
-	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
 	}
@@ -347,29 +340,29 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
 	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
 	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
-	plan.ImportUserJson = types.StringValue(plan.ImportUserJson.ValueString())
-	plan.ImportAccountEntJson = types.StringValue(plan.ImportAccountEntJson.ValueString())
-	plan.StatusThresholdConfig = types.StringValue(plan.StatusThresholdConfig.ValueString())
-	plan.CreateAccountJson = types.StringValue(plan.CreateAccountJson.ValueString())
-	plan.UpdateAccountJson = types.StringValue(plan.UpdateAccountJson.ValueString())
-	plan.EnableAccountJson = types.StringValue(plan.EnableAccountJson.ValueString())
-	plan.DisableAccountJson = types.StringValue(plan.DisableAccountJson.ValueString())
-	plan.AddAccessJson = types.StringValue(plan.AddAccessJson.ValueString())
-	plan.RemoveAccessJson = types.StringValue(plan.RemoveAccessJson.ValueString())
-	plan.UpdateUserJson = types.StringValue(plan.UpdateUserJson.ValueString())
-	plan.ChangePassJson = types.StringValue(plan.ChangePassJson.ValueString())
-	plan.RemoveAccountJson = types.StringValue(plan.RemoveAccountJson.ValueString())
-	plan.TicketStatusJson = types.StringValue(plan.TicketStatusJson.ValueString())
-	plan.CreateTicketJson = types.StringValue(plan.CreateTicketJson.ValueString())
-	plan.EndpointsFilter = types.StringValue(plan.EndpointsFilter.ValueString())
-	plan.PasswdPolicyJson = types.StringValue(plan.PasswdPolicyJson.ValueString())
-	plan.ConfigJSON = types.StringValue(plan.ConfigJSON.ValueString())
-	plan.AddFFIDAccessJson = types.StringValue(plan.AddFFIDAccessJson.ValueString())
-	plan.RemoveFFIDAccessJson = types.StringValue(plan.RemoveFFIDAccessJson.ValueString())
-	plan.ModifyUserdataJson = types.StringValue(plan.ModifyUserdataJson.ValueString())
-	plan.SendOtpJson = types.StringValue(plan.SendOtpJson.ValueString())
-	plan.ValidateOtpJson = types.StringValue(plan.ValidateOtpJson.ValueString())
-	plan.PamConfig = types.StringValue(plan.PamConfig.ValueString())
+	plan.ImportUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()))
+	plan.ImportAccountEntJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportAccountEntJson.ValueString()))
+	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
+	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
+	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
+	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
+	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
+	plan.AddAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()))
+	plan.RemoveAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()))
+	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
+	plan.ChangePassJson = types.StringValue(*util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()))
+	plan.RemoveAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()))
+	plan.TicketStatusJson = types.StringValue(*util.StringPointerOrEmpty(plan.TicketStatusJson.ValueString()))
+	plan.CreateTicketJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateTicketJson.ValueString()))
+	plan.EndpointsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()))
+	plan.PasswdPolicyJson = types.StringValue(*util.StringPointerOrEmpty(plan.PasswdPolicyJson.ValueString()))
+	plan.ConfigJSON = types.StringValue(*util.StringPointerOrEmpty(plan.ConfigJSON.ValueString()))
+	plan.AddFFIDAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddFFIDAccessJson.ValueString()))
+	plan.RemoveFFIDAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveFFIDAccessJson.ValueString()))
+	plan.ModifyUserdataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()))
+	plan.SendOtpJson = types.StringValue(*util.StringPointerOrEmpty(plan.SendOtpJson.ValueString()))
+	plan.ValidateOtpJson = types.StringValue(*util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()))
+	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -472,11 +465,14 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.HTTPClient = http.DefaultClient
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
-			Connectiontype:  "REST",
-			ConnectionName:  plan.ConnectionName.ValueString(),
-			Description:     util.StringPointerOrEmpty(plan.Description.ValueString()),
-			Defaultsavroles: util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
-			EmailTemplate:   util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			Connectiontype:     "REST",
+			ConnectionName:     plan.ConnectionName.ValueString(),
+			Description:        util.StringPointerOrEmpty(plan.Description.ValueString()),
+			Defaultsavroles:    util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()),
+			EmailTemplate:      util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()),
+			VaultConnection:    util.SafeStringConnector(plan.VaultConnection.ValueString()),
+			VaultConfiguration: util.SafeStringConnector(plan.VaultConfiguration.ValueString()),
+			Saveinvault:        util.SafeStringConnector(plan.SaveInVault.ValueString()),
 		},
 		ConnectionJSON:          connJSON,
 		ImportUserJSON:          util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()),
@@ -502,18 +498,6 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 		SendOtpJSON:             util.StringPointerOrEmpty(plan.SendOtpJson.ValueString()),
 		ValidateOtpJSON:         util.StringPointerOrEmpty(plan.ValidateOtpJson.ValueString()),
 		PAM_CONFIG:              util.StringPointerOrEmpty(plan.PamConfig.ValueString()),
-	}
-	if !plan.VaultConnection.IsNull() && !plan.VaultConnection.IsUnknown() {
-		if plan.VaultConnection.ValueString() != "" {
-			restConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
-			restConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
-			restConn.BaseConnector.Saveinvault = util.SafeStringConnector(plan.SaveInVault.ValueString())
-		} else {
-			emptyStr := ""
-			restConn.BaseConnector.VaultConnection = &emptyStr
-			restConn.BaseConnector.VaultConfiguration = &emptyStr
-			restConn.BaseConnector.Saveinvault = &emptyStr
-		}
 	}
 	restConnRequest := openapi.CreateOrUpdateRequest{
 		RESTConnector: &restConn,
