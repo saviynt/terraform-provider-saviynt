@@ -534,7 +534,6 @@ func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadR
 	state.ErrorCode = util.Int32PtrToTFString(apiResp.EntraIDConnectionResponse.Errorcode)
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
-	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -543,8 +542,7 @@ func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadR
 func (r *entraidConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ENTRAIDConnectorResourceModel
 	// Extract plan from request
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -698,6 +696,8 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 		plan.Msg = types.StringValue(apiMessage)
 	}
 	plan.ErrorCode = util.Int32PtrToTFString(getResp.EntraIDConnectionResponse.Errorcode)
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 func (r *entraidConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)

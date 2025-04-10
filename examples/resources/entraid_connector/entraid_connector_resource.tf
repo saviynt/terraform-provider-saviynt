@@ -14,5 +14,5 @@ provider "saviynt" {
 
 resource "saviynt_entraid_connection_resource" "ss" {
   connection_type     = "AzureAD"
-   connection_name     = "namefortheconnection"
+  connection_name     = "namefortheconnection"
 }
