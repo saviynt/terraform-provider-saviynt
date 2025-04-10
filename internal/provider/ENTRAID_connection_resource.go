@@ -107,14 +107,17 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the connection. Example: \"ORG_AD\"",
 			},
 			"defaultsavroles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Default SAV roles for managing the connection. Example: \"ROLE_ORG\"",
 			},
 			"email_template": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Email template for notifications. Example: \"New Account Task Creation\"",
 			},
 			"vault_connection": schema.StringAttribute{
@@ -130,11 +133,11 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 				Description: "Flag indicating whether the encrypted attribute should be saved in the configured vault. Example: \"false\"",
 			},
 			"client_id": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Client ID for authentication.",
 			},
 			"client_secret": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Client Secret for authentication.",
 			},
 			"access_token": schema.StringAttribute{
@@ -142,7 +145,7 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 				Description: "Access token used for API calls.",
 			},
 			"aad_tenant_id": schema.StringAttribute{
-				Optional:    true,
+				Required:    true,
 				Description: "Azure Active Directory tenant ID.",
 			},
 			"azure_mgmt_access_token": schema.StringAttribute{
@@ -151,22 +154,27 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"authentication_endpoint": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Authentication endpoint URL.",
 			},
 			"microsoft_graph_endpoint": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Microsoft Graph API endpoint.",
 			},
 			"azure_management_endpoint": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Azure management endpoint URL.",
 			},
 			"import_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON configuration for importing users.",
 			},
 			"create_users": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Flag or configuration for creating users.",
 			},
 			"windows_connector_json": schema.StringAttribute{
@@ -175,70 +183,87 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"create_new_endpoints": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration to create new endpoints.",
 			},
 			"managed_account_type": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Type of managed accounts.",
 			},
 			"account_attributes": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attributes for account configuration.",
 			},
 			"service_account_attributes": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attributes for service account configuration.",
 			},
 			"delta_tokens_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Delta tokens JSON data.",
 			},
 			"account_import_fields": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Fields to import for accounts.",
 			},
 			"import_depth": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Depth level for import.",
 			},
 			"entitlement_attribute": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Attribute used for entitlement.",
 			},
 			"create_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to create an account.",
 			},
 			"update_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to update an account.",
 			},
 			"enable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to enable an account.",
 			},
 			"disable_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to disable an account.",
 			},
 			"add_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to add access.",
 			},
 			"remove_access_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to remove access.",
 			},
 			"update_user_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to update user.",
 			},
 			"change_pass_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to change password.",
 			},
 			"remove_account_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON template to remove account.",
 			},
 			"connection_json": schema.StringAttribute{
@@ -247,74 +272,92 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"create_group_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create group.",
 			},
 			"update_group_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update group.",
 			},
 			"add_access_to_entitlement_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to add access to entitlement.",
 			},
 			"remove_access_from_entitlement_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove access from entitlement.",
 			},
 			"delete_group_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to delete group.",
 			},
 			"create_service_principal_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create service principal.",
 			},
 			"update_service_principal_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to update service principal.",
 			},
 			"remove_service_principal_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to remove service principal.",
 			},
 			"entitlement_filter_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Filter JSON for entitlements.",
 			},
 			"create_team_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create team.",
 			},
 			"create_channel_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to create channel.",
 			},
 			"status_threshold_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration for status thresholds.",
 			},
 			"accounts_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Filter for accounts.",
 			},
 			"pam_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "PAM configuration.",
 			},
 			"endpoints_filter": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Endpoints filter configuration.",
 			},
 			"config_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Main config JSON.",
 			},
 			"modify_user_data_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "JSON to modify user data.",
 			},
 			"enhanced_directory_roles": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Configuration for enhanced directory roles.",
 			},
 			"msg": schema.StringAttribute{
@@ -443,6 +486,49 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
+	plan.Description = types.StringValue(*util.StringPointerOrEmpty(plan.Description.ValueString()))
+	plan.DefaultSavRoles = types.StringValue(*util.StringPointerOrEmpty(plan.DefaultSavRoles.ValueString()))
+	plan.EmailTemplate = types.StringValue(*util.StringPointerOrEmpty(plan.EmailTemplate.ValueString()))
+	plan.AuthenticationEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.AuthenticationEndpoint.ValueString()))
+	plan.MicrosoftGraphEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.MicrosoftGraphEndpoint.ValueString()))
+	plan.AzureManagementEndpoint = types.StringValue(*util.StringPointerOrEmpty(plan.AzureManagementEndpoint.ValueString()))
+	plan.ImportUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.ImportUserJson.ValueString()))
+	plan.CreateUsers = types.StringValue(*util.StringPointerOrEmpty(plan.CreateUsers.ValueString()))
+	plan.CreateNewEndpoints = types.StringValue(*util.StringPointerOrEmpty(plan.CreateNewEndpoints.ValueString()))
+	plan.ManagedAccountType = types.StringValue(*util.StringPointerOrEmpty(plan.ManagedAccountType.ValueString()))
+	plan.AccountAttributes = types.StringValue(*util.StringPointerOrEmpty(plan.AccountAttributes.ValueString()))
+	plan.ServiceAccountAttributes = types.StringValue(*util.StringPointerOrEmpty(plan.ServiceAccountAttributes.ValueString()))
+	plan.DeltaTokensJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeltaTokensJson.ValueString()))
+	plan.AccountImportFields = types.StringValue(*util.StringPointerOrEmpty(plan.AccountImportFields.ValueString()))
+	plan.ImportDepth = types.StringValue(*util.StringPointerOrEmpty(plan.ImportDepth.ValueString()))
+	plan.EntitlementAttribute = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementAttribute.ValueString()))
+	plan.CreateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateAccountJson.ValueString()))
+	plan.UpdateAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateAccountJson.ValueString()))
+	plan.EnableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.EnableAccountJson.ValueString()))
+	plan.DisableAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.DisableAccountJson.ValueString()))
+	plan.AddAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessJson.ValueString()))
+	plan.RemoveAccessJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessJson.ValueString()))
+	plan.UpdateUserJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateUserJson.ValueString()))
+	plan.ChangePassJson = types.StringValue(*util.StringPointerOrEmpty(plan.ChangePassJson.ValueString()))
+	plan.RemoveAccountJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccountJson.ValueString()))
+	plan.CreateGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateGroupJson.ValueString()))
+	plan.UpdateGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateGroupJson.ValueString()))
+	plan.AddAccessToEntitlementJson = types.StringValue(*util.StringPointerOrEmpty(plan.AddAccessToEntitlementJson.ValueString()))
+	plan.RemoveAccessFromEntitlementJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveAccessFromEntitlementJson.ValueString()))
+	plan.DeleteGroupJson = types.StringValue(*util.StringPointerOrEmpty(plan.DeleteGroupJson.ValueString()))
+	plan.CreateServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateServicePrincipalJson.ValueString()))
+	plan.UpdateServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.UpdateServicePrincipalJson.ValueString()))
+	plan.RemoveServicePrincipalJson = types.StringValue(*util.StringPointerOrEmpty(plan.RemoveServicePrincipalJson.ValueString()))
+	plan.EntitlementFilterJson = types.StringValue(*util.StringPointerOrEmpty(plan.EntitlementFilterJson.ValueString()))
+	plan.CreateTeamJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateTeamJson.ValueString()))
+	plan.CreateChannelJson = types.StringValue(*util.StringPointerOrEmpty(plan.CreateChannelJson.ValueString()))
+	plan.StatusThresholdConfig = types.StringValue(*util.StringPointerOrEmpty(plan.StatusThresholdConfig.ValueString()))
+	plan.AccountsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.AccountsFilter.ValueString()))
+	plan.PamConfig = types.StringValue(*util.StringPointerOrEmpty(plan.PamConfig.ValueString()))
+	plan.EndpointsFilter = types.StringValue(*util.StringPointerOrEmpty(plan.EndpointsFilter.ValueString()))
+	plan.ConfigJson = types.StringValue(*util.StringPointerOrEmpty(plan.ConfigJson.ValueString()))
+	plan.ModifyUserdataJson = types.StringValue(*util.StringPointerOrEmpty(plan.ModifyUserdataJson.ValueString()))
+	plan.EnhancedDirectoryRoles = types.StringValue(*util.StringPointerOrEmpty(plan.EnhancedDirectoryRoles.ValueString()))
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
