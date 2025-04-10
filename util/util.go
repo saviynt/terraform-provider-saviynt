@@ -36,6 +36,14 @@ func SafeStringDatasource(s *string) types.String {
 	return types.StringValue(*s)
 }
 
+// SafeDeref safely dereferences a *string, returning an empty string if nil.
+func SafeDeref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
 // safeList converts a []string to a Terraform types.List.
 func SafeList(items []string) (types.List, diag.Diagnostics) {
 	if len(items) == 0 {
@@ -50,19 +58,6 @@ func SafeList(items []string) (types.List, diag.Diagnostics) {
 	return types.ListValue(types.StringType, values)
 }
 
-// ConvertTypesStringToStrings converts a slice of types.String to a slice of Go strings.
-func ConvertTypesStringToStrings(input []types.String) []string {
-	var result []string
-	for _, s := range input {
-		if !s.IsNull() && !s.IsUnknown() {
-			result = append(result, s.ValueString())
-		} else {
-			result = append(result, "")
-		}
-	}
-	return result
-}
-
 // ToTypesStringSlice converts a slice of Go strings to a slice of types.String.
 func ToTypesStringSlice(items []string) []types.String {
 	var result []types.String
@@ -72,12 +67,17 @@ func ToTypesStringSlice(items []string) []types.String {
 	return result
 }
 
-// SafeDeref safely dereferences a *string, returning an empty string if nil.
-func SafeDeref(s *string) string {
-	if s == nil {
-		return ""
+func ConvertStringsToTFListString(items []string) types.List {
+	var elements []attr.Value
+	for _, item := range items {
+		elements = append(elements, types.StringValue(item))
 	}
-	return *s
+
+	if len(elements) == 0 {
+		return types.ListNull(types.StringType)
+	}
+
+	return types.ListValueMust(types.StringType, elements)
 }
 
 // ConvertStringsToTypesString converts a slice of Go strings to a slice of types.String.
@@ -85,6 +85,9 @@ func ConvertStringsToTypesString(items []string) []types.String {
 	var result []types.String
 	for _, item := range items {
 		result = append(result, types.StringValue(item))
+	}
+	if len(result) == 0 {
+		return nil
 	}
 	return result
 }
@@ -116,18 +119,6 @@ func StringPtr(v string) *string {
 	return &v
 }
 
-//	func SafeStringConnector(s string) *string {
-//		if s == "" {
-//			return nil
-//		}
-//		escaped := EscapeTerraformInterpolation(s)
-//		return &escaped
-//	}
-//
-//	func EscapeTerraformInterpolation(input string) string {
-//		re := regexp.MustCompile(`\$\{([^}]+)\}`)
-//		return re.ReplaceAllString(input, "$${$1}")
-//	}
 func SafeStringConnector(s string) *string {
 	if s == "" {
 		return nil
@@ -142,6 +133,61 @@ func StringPointerOrEmpty(tfStr types.String) *string {
 	}
 	val := tfStr.ValueString()
 	return &val
+}
+
+func ConvertTypesStringToStrings(input []string) []types.String {
+	var result []types.String
+	for _, v := range input {
+		if v != "" {
+			result = append(result, types.StringValue(v))
+		}
+	}
+	if len(result) == 0 {
+		return nil
+	}
+	return result
+}
+
+func SanitizeTypesStringList(input []types.String) []types.String {
+	var result []types.String
+	for _, v := range input {
+		if !v.IsNull() && !v.IsUnknown() && v.ValueString() != "" {
+			result = append(result, v)
+		}
+	}
+	if len(result) == 0 {
+		return nil // or you can return []types.String{} if you prefer an empty list
+	}
+	return result
+}
+
+func ConvertTFStringsToGoStrings(input types.List) []string {
+	if input.IsNull() || input.IsUnknown() {
+		return nil
+	}
+
+	var result []string
+
+	for _, val := range input.Elements() {
+		strVal, ok := val.(types.String)
+		if !ok || strVal.IsNull() || strVal.IsUnknown() {
+			continue
+		}
+		result = append(result, strVal.ValueString())
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+func NormalizeTFListString(list types.List) types.List {
+	if list.IsNull() || list.IsUnknown() || len(list.Elements()) == 0 {
+		return types.ListNull(types.StringType)
+	}
+	return list
 }
 
 func SafeInt32(ptr *int32) types.Int32 {
