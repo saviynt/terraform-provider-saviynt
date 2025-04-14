@@ -30,7 +30,7 @@ func SafeBoolDatasource(b *bool) types.Bool {
 }
 
 func SafeStringDatasource(s *string) types.String {
-	if s == nil || *s == "" {
+	if s == nil {
 		return types.StringNull()
 	}
 	return types.StringValue(*s)
@@ -127,7 +127,7 @@ func SafeStringConnector(s string) *string {
 }
 
 func StringPointerOrEmpty(tfStr types.String) *string {
-	if tfStr.IsNull() || tfStr.IsUnknown() || tfStr.ValueString() == "" {
+	if tfStr.IsNull() || tfStr.IsUnknown() || tfStr.ValueString() == "null" {
 		// Value is null, unknown, or empty — treat it as not set
 		return nil
 	}
