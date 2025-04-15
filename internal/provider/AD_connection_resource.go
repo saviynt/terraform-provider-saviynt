@@ -550,7 +550,6 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson),
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig),
 	}
-	log.Print("[DEBUG] AD Connector: ", adConn.PASSWORD)
 	if plan.VaultConnection.ValueString() != "" {
 		adConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
 		adConn.BaseConnector.VaultConfiguration = util.SafeStringConnector(plan.VaultConfiguration.ValueString())
@@ -733,7 +732,6 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	}
 	state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
 	stateDiagnostics := resp.State.Set(ctx, &state)
-	resp.Diagnostics.Append(stateDiagnostics...)
 	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
 		return

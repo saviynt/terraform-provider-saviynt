@@ -278,8 +278,6 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
 	plan.EmailTemplate = util.SafeStringDatasource(plan.EmailTemplate.ValueStringPointer())
 	plan.ClientId = util.SafeStringDatasource(plan.ClientId.ValueStringPointer())
-	// plan.ClientSecret = util.SafeStringDatasource(plan.ClientSecret.ValueStringPointer())
-	// plan.RefreshToken = util.SafeStringDatasource(plan.RefreshToken.ValueStringPointer())
 	plan.RedirectUri = util.SafeStringDatasource(plan.RedirectUri.ValueStringPointer())
 	plan.InstanceUrl = util.SafeStringDatasource(plan.InstanceUrl.ValueStringPointer())
 	plan.ObjectToBeImported = util.SafeStringDatasource(plan.ObjectToBeImported.ValueStringPointer())

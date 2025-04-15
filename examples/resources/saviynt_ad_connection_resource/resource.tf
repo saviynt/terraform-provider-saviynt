@@ -1,6 +1,6 @@
 resource "saviynt_ad_connection_resource" "example" {
   connection_type     = "AD"
-  connection_name     = "CONNECTION_NAME"
+  connection_name     = "namefortheconnection"
   url                 = format("%s://%s:%d", var.LDAP_PROTOCOL, var.IP_ADDRESS, var.LDAP_PORT)
   password            = var.PASSWORD
   username            = var.BIND_USER
