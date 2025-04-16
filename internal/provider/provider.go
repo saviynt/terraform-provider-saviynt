@@ -145,6 +145,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewEntraIDConnectionsDataSource,
 		NewSAPConnectionsDataSource,
 		NewUnixConnectionsDataSource,
+		NewGithubRestConnectionsDataSource,
 	}
 }
 
