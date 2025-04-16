@@ -326,7 +326,7 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	
+
 	cfg.HTTPClient = http.DefaultClient
 	unixConn := openapi.UNIXConnector{
 		BaseConnector: openapi.BaseConnector{
