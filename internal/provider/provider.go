@@ -161,5 +161,6 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		SAPNewTestConnectionResource,
 		GITHUBRESTNewTestConnectionResource,
 		NewEndpointResource,
+		NewDynamicAttributeResource,
 	}
 }
