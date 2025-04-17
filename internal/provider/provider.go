@@ -145,6 +145,7 @@ func (p *saviyntProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewEntraIDConnectionsDataSource,
 		NewSAPConnectionsDataSource,
 		NewUnixConnectionsDataSource,
+		NewGithubRestConnectionsDataSource,
 	}
 }
 
@@ -160,6 +161,9 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		ENTRAIDNewTestConnectionResource,
 		SALESFORCENewTestConnectionResource,
 		SAPNewTestConnectionResource,
+		UNIXNewTestConnectionResource,
+		GITHUBRESTNewTestConnectionResource,
 		NewEndpointResource,
+		NewDynamicAttributeResource,
 	}
 }
