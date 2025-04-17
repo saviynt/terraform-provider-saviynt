@@ -11,7 +11,7 @@ import (
 	"strings"
 	"terraform-provider-Saviynt/util"
 
-	openapi "connection"
+	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 
 	s "github.com/saviynt/saviynt-api-go-client"
 

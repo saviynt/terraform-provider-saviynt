@@ -265,7 +265,7 @@ func (d *WorkdayConnectionDataSource) Read(ctx context.Context, req datasource.R
 
 	if apiResp.WorkdayConnectionResponse.Connectionattributes != nil {
 		state.ConnectionAttributes = &WorkdayConnectionAttributes{
-			UseOauth:                     util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Connectionattributes.USE_OAUTH),
+			UseOauth:                    util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Connectionattributes.USE_OAUTH),
 			UserImportMapping:           util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Connectionattributes.USER_IMPORT_MAPPING),
 			AccountsLastImportTime:      util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Connectionattributes.ACCOUNTS_LAST_IMPORT_TIME),
 			StatusKeyJson:               util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Connectionattributes.STATUS_KEY_JSON),
@@ -311,16 +311,15 @@ func (d *WorkdayConnectionDataSource) Read(ctx context.Context, req datasource.R
 			state.ConnectionAttributes.ConnectionTimeoutConfig = &ConnectionTimeoutConfig{
 				RetryWait:               util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
-				// RetryFailureStatusCode: util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryFailureStatusCode: SafeInt64FromStringPointer(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryWaitMaxValue:      util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
-				RetryCount:             util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
-				ReadTimeout:            util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
-				ConnectionTimeout:      util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				// RetryFailureStatusCode: SafeInt64FromStringPointer(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryWaitMaxValue: util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
+				RetryCount:        util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
+				ReadTimeout:       util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
+				ConnectionTimeout: util.SafeInt64(apiResp.WorkdayConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
 			}
 		}
 	}
-	
 
 	if apiResp.WorkdayConnectionResponse.Connectionattributes == nil {
 		state.ConnectionAttributes = nil
