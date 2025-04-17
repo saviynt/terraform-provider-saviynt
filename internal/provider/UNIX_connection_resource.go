@@ -297,12 +297,17 @@ func (r *unixConnectionResource) Configure(ctx context.Context, req resource.Con
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
+		resp.Diagnostics.AddError(
+			"Provider Data Not Found",
+			"Provider data is not set. Please configure the provider.",
+		)
 		return
 	}
 
 	// Cast provider data to your provider type.
 	prov, ok := req.ProviderData.(*saviyntProvider)
 	if !ok {
+		log.Println("ProviderData is not of type *saviyntProvider, returning early.")
 		resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *saviyntProvider")
 		return
 	}
@@ -317,6 +322,7 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
+		log.Println("Diagnostics contain errors, returning early.")
 		return
 	}
 
@@ -435,6 +441,7 @@ func (r *unixConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
+		log.Println("Diagnostics contain errors, returning early.")
 		return
 	}
 
@@ -500,6 +507,7 @@ func (r *unixConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
+		log.Println("Diagnostics contain errors, returning early.")
 		return
 	}
 }
@@ -509,6 +517,7 @@ func (r *unixConnectionResource) Update(ctx context.Context, req resource.Update
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
+		log.Println("Diagnostics contain errors, returning early.")
 		return
 	}
 
