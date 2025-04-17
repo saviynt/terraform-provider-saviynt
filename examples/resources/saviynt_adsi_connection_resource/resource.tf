@@ -1,6 +1,6 @@
 resource "saviynt_adsi_connection_resource" "example" {
     connection_type = "ADSI"
-    connection_name = "Shaleen_testing_ADSI_terraform_3490"
+    connection_name = "namefortheconnection"
     url="ldap://example-ldap.local:389"
     status_threshold_config = jsonencode({
     statusAndThresholdConfig = {
@@ -72,9 +72,8 @@ resource "saviynt_adsi_connection_resource" "example" {
             "user"
           ],
         }
-      }
-    )
-    removeaccessjson=jsonencode()
+    })
+    removeaccessjson=jsonencode(
     {
       "objects": [
         {
@@ -85,154 +84,149 @@ resource "saviynt_adsi_connection_resource" "example" {
           "removeGroup": "$${entitlement_values}"
         }
       ],
-      "requestConfiguration": {
-        "grpMemExistenceChk": {
-          "enable": true
+    })
+    enableaccountjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
         }
-      }
-    }
-    EOF
-    enableaccountjson=<<EOF
-    {"objects":[{"objectClasses":["user"],"distinguishedName":"$${account.accountID}","deleteAllGroups":false,"attributes":{"userAccountControl":512}}]}
-    EOF
-    disableaccountjson=<<EOF
-    {"objects":[{"objectClasses":["user"],"distinguishedName":"$${account.accountID}","deleteAllGroups":false,"attributes":{"userAccountControl":514}}]}
-    EOF
-    removeaccountjson=<<EOF
-    {"objects": [{"distinguishedName": "$${account.accountID}","removeAction": "DELETE","deleteChildObjects": false}]}
-    EOF
-    resetandchangepasswrdjson=<<EOF
-    { "objects":[ { "objectClasses":[ "user" ], "password":"$${password}", "distinguishedName":"", "attributes":{ "pwdLastSet":"$${pwdLastSet}" } } ]}
-    EOF
+      ],
+    })
+    disableaccountjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
+        }
+      ],
+    })
+    removeaccountjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
+        }
+      ],
+    })
+    resetandchangepasswrdjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
+        }
+      ],
+    })
     creategroupjson=jsonencode(
-        {
+    {
       "objects": [
         {
           "objectClasses": [
             "group"
           ],
-          "baseDn": "$${role.customproperty24}",
-          "attributes": {
-            "cn": "$${role.displayname}",
-            "name": "$${role.displayname}",
-            "description": "$${role.description}",
-            "displayName": "$${role.displayname}",
-            "groupType": "$${role?.customproperty21 == 'Security' && role?.customproperty22 == 'Global'?'-2147483646' : role?.customproperty21=='Security'&&role?.customproperty22=='Universal'?'-2147483640' : role?.customproperty21== 'Security'&&role?.customproperty22=='Domain Local' ? '-2147483644':role?.customproperty21=='Distribution'&&role?.customproperty22=='Global' ? '2':role?.customproperty21== 'Distribution'&&role?.customproperty22=='Universal'?'8':role?.customproperty21=='Distribution'&& role?.customproperty22=='Domain Local'?'4':''}"
-          }
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
         }
-      ]
+      ],
     })
-    updategroupjson=jsonencode({
+    updategroupjson=jsonencode(
+    {
       "objects": [
         {
           "objectClasses": [
             "group"
           ],
-          "distinguishedName": "$${role.role_name}",
-          "attributes": {
-            "description": "$${role.description}",
-            "proxyAddresses": "$${role.customproperty20}"
-          }
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
         }
-      ]
+      ],
     })
-    removegroupjson=<<EOF
-    {
-      "objects": [
-        {
-          "distinguishedName": "$${role.role_name}",
-          "removeAction": "DELETE",
-          "deleteChildObjects": false
-        }
-      ]
-    }
-    EOF
-    addaccessentitlementjson=<<EOF
-    {
-      "objects":[
-          {
-            "objectClasses":[
-                "group"
-            ],
-            "distinguishedName":"$${ent1Value.entitlement_value?.replace('\\', '\\\\')?.replace('/', '\\/')}",
-            "addGroup":"$${ent2Value.entitlement_value?.replace('\\', '\\\\')?.replace('/', '\\/')}"
-          }
-      ],
-      "requestConfiguration":{
-          "grpMemExistenceChk":{
-            "enable":true
-          }
-      }
-    }
-    EOF
-    removeaccessentitlementjson=<<EOF
-    {
-      "objects":[
-          {
-            "objectClasses":[
-                "group"
-            ],
-            "distinguishedName":"$${ent1Value.entitlement_value?.replace('\\', '\\\\')?.replace('/', '\\/')}",
-            "removeGroup":"$${ent2Value.entitlement_value?.replace('\\', '\\\\')?.replace('/', '\\/')}"
-          }
-      ],
-      "requestConfiguration":{
-          "grpMemExistenceChk":{
-            "enable":true
-          }
-      }
-    }
-    EOF
-    createserviceaccountjson=<<EOF
+    removegroupjson=jsonencode(
     {
       "objects": [
         {
           "objectClasses": [
-            "user",
-            "top",
-            "Person",
-            "OrganizationalPerson"
+            "group"
           ],
-          "baseDn": "$${baseDN}",
-          "password": "$${password}",
-          "attributes": {
-            "sAMAccountName": "$${task.accountName}",
-            "cn": "$${task.accountName}",
-            "displayname": "testDP",
-            "userAccountControl": 512
-          }
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
         }
-      ]
-    }
-    EOF
-    updateserviceaccountjson=<<EOF
+      ],
+    })
+    addaccessentitlementjson=jsonencode(
     {
       "objects": [
         {
           "objectClasses": [
-            "user",
-            "top",
-            "Person",
-            "OrganizationalPerson"
+            "group"
           ],
-          "distinguishedName": "$${account.accountID?.replace('\\', '\\\\')?.replace('/', '\\/')}",
-          "attributes": {
-            "pwdLastSet": 0,
-            "displayName": "testDPUpdated"
-          }
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
         }
-      ]
-    }
-    EOF
-    removeserviceaccountjson=<<EOF
+      ],
+    })
+    removeaccessentitlementjson=jsonencode(
     {
       "objects": [
         {
-          "distinguishedName": "$${account.accountID?.replace('\\', '\\\\')?.replace('/', '\\/')}",
-          "removeAction": "DELETE",
-          "deleteChildObjects": false
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
         }
-      ]
-    }
-    EOF
+      ],
+    })
+    createserviceaccountjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
+        }
+      ],
+    })
+    updateserviceaccountjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
+        }
+      ],
+    })
+    removeserviceaccountjson=jsonencode(
+    {
+      "objects": [
+        {
+          "objectClasses": [
+            "group"
+          ],
+          "distinguishedName": "$${accountID}",
+          "removeGroup": "$${entitlement_values}"
+        }
+      ],
+    })
 }
