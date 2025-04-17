@@ -3,12 +3,9 @@ module terraform-provider-Saviynt
 go 1.24.0
 
 require (
-	connections v0.0.0
 	github.com/hashicorp/terraform-plugin-framework v1.14.1
-	github.com/saviynt/saviynt-api-go-client v0.9.71
+	github.com/saviynt/saviynt-api-go-client v0.9.82
 )
-
-replace connections => /Users/shaleen.shukla/test_connections/connections
 
 require (
 	github.com/fatih/color v1.16.0 // indirect
