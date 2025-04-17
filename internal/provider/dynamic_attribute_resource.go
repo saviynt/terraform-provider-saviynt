@@ -422,25 +422,25 @@ func (r *DynamicAttributeResource) Update(ctx context.Context, req resource.Upda
 	// 	plan.Dynamicattribute.Attributename.ValueString(),
 	// )
 
-	dynamicAttr:=openapi.UpdateDynamicAttributeRequestDynamicattributesInner{
-		Attributename: plan.Dynamicattribute.Attributename.ValueString(),
-		Requesttype:   util.StringPointerOrEmpty(plan.Dynamicattribute.Requesttype),
+	dynamicAttr := openapi.UpdateDynamicAttributeRequestDynamicattributesInner{
+		Attributename:  plan.Dynamicattribute.Attributename.ValueString(),
+		Requesttype:    util.StringPointerOrEmpty(plan.Dynamicattribute.Requesttype),
 		Accountscolumn: util.StringPointerOrEmpty(plan.Dynamicattribute.Accountscolumn),
-		Attributetype: util.StringPointerOrEmpty(plan.Dynamicattribute.Attributetype),
+		Attributetype:  util.StringPointerOrEmpty(plan.Dynamicattribute.Attributetype),
 		Attributegroup: util.StringPointerOrEmpty(plan.Dynamicattribute.Attributegroup),
-		Orderindex: util.StringPointerOrEmpty(plan.Dynamicattribute.Orderindex),
+		Orderindex:     util.StringPointerOrEmpty(plan.Dynamicattribute.Orderindex),
 		Attributelable: util.StringPointerOrEmpty(plan.Dynamicattribute.Attributelable),
-		Hideoncreate: util.StringPointerOrEmpty(plan.Dynamicattribute.Hideoncreate),
-		Actionstring: util.StringPointerOrEmpty(plan.Dynamicattribute.Actionstring),
-		Editable: util.StringPointerOrEmpty(plan.Dynamicattribute.Editable),
-		Hideonupdate: util.StringPointerOrEmpty(plan.Dynamicattribute.Hideonupdate),
+		Hideoncreate:   util.StringPointerOrEmpty(plan.Dynamicattribute.Hideoncreate),
+		Actionstring:   util.StringPointerOrEmpty(plan.Dynamicattribute.Actionstring),
+		Editable:       util.StringPointerOrEmpty(plan.Dynamicattribute.Editable),
+		Hideonupdate:   util.StringPointerOrEmpty(plan.Dynamicattribute.Hideonupdate),
 		Actiontoperformwhenparentattributechanges: util.StringPointerOrEmpty(plan.Dynamicattribute.Actiontoperformwhenparentattributechanges),
-		Defaultvalue: util.StringPointerOrEmpty(plan.Dynamicattribute.Defaultvalue),
-		Required: util.StringPointerOrEmpty(plan.Dynamicattribute.Required),
-		Regex: util.StringPointerOrEmpty(plan.Dynamicattribute.Regex),
-		Attributevalue: util.StringPointerOrEmpty(plan.Dynamicattribute.Attributevalue),
-		Showonchild: util.StringPointerOrEmpty(plan.Dynamicattribute.Showonchild),
-		Parentattribute: util.StringPointerOrEmpty(plan.Dynamicattribute.Parentattribute),
+		Defaultvalue:     util.StringPointerOrEmpty(plan.Dynamicattribute.Defaultvalue),
+		Required:         util.StringPointerOrEmpty(plan.Dynamicattribute.Required),
+		Regex:            util.StringPointerOrEmpty(plan.Dynamicattribute.Regex),
+		Attributevalue:   util.StringPointerOrEmpty(plan.Dynamicattribute.Attributevalue),
+		Showonchild:      util.StringPointerOrEmpty(plan.Dynamicattribute.Showonchild),
+		Parentattribute:  util.StringPointerOrEmpty(plan.Dynamicattribute.Parentattribute),
 		Descriptionascsv: util.StringPointerOrEmpty(plan.Dynamicattribute.Descriptionascsv),
 	}
 
@@ -561,10 +561,10 @@ func (r *DynamicAttributeResource) Delete(ctx context.Context, req resource.Dele
 
 	apiClient := openapi.NewAPIClient(cfg)
 
-	deleteReq:=openapi.DeleteDynamicAttributeRequest{
-		Securitysystem: state.Securitysystem.ValueString(),
-		Endpoint: state.Endpoint.ValueString(),
-		Updateuser: state.Updateuser.ValueString(),
+	deleteReq := openapi.DeleteDynamicAttributeRequest{
+		Securitysystem:    state.Securitysystem.ValueString(),
+		Endpoint:          state.Endpoint.ValueString(),
+		Updateuser:        state.Updateuser.ValueString(),
 		Dynamicattributes: []string{state.Dynamicattribute.Attributename.ValueString()},
 	}
 

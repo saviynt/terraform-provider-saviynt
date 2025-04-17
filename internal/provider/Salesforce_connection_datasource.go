@@ -254,7 +254,6 @@ func (d *SalesforceConnectionDataSource) Read(ctx context.Context, req datasourc
 	state.CreatedOn = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Createdon)
 	state.CreatedBy = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Createdby)
 	state.UpdatedBy = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Updatedby)
-	state.Msg = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Msg)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Emailtemplate)
 
 	if apiResp.SalesforceConnectionResponse.Connectionattributes != nil {
@@ -279,17 +278,17 @@ func (d *SalesforceConnectionDataSource) Read(ctx context.Context, req datasourc
 			AccountFilterQuery:       util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.ACCOUNT_FILTER_QUERY),
 			InstanceUrl:              util.SafeStringDatasource(apiResp.SalesforceConnectionResponse.Connectionattributes.INSTANCE_URL),
 		}
-		
+
 		if apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig != nil {
 			state.ConnectionAttributes.ConnectionTimeoutConfig = &ConnectionTimeoutConfig{
 				RetryWait:               util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
-				RetryFailureStatusCode: util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
 				// RetryFailureStatusCode: SafeInt64FromStringPointer(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryWaitMaxValue:      util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
-				RetryCount:             util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
-				ReadTimeout:            util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
-				ConnectionTimeout:      util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
+				RetryWaitMaxValue: util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
+				RetryCount:        util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
+				ReadTimeout:       util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
+				ConnectionTimeout: util.SafeInt64(apiResp.SalesforceConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
 			}
 		}
 	}

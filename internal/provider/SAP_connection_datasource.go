@@ -304,7 +304,6 @@ func (d *SAPConnectionDataSource) Read(ctx context.Context, req datasource.ReadR
 	state.CreatedOn = util.SafeStringDatasource(apiResp.SAPConnectionResponse.Createdon)
 	state.CreatedBy = util.SafeStringDatasource(apiResp.SAPConnectionResponse.Createdby)
 	state.UpdatedBy = util.SafeStringDatasource(apiResp.SAPConnectionResponse.Updatedby)
-	state.Msg = util.SafeStringDatasource(apiResp.SAPConnectionResponse.Msg)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.SAPConnectionResponse.Emailtemplate)
 
 	if apiResp.SAPConnectionResponse.Connectionattributes != nil {

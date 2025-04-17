@@ -278,7 +278,6 @@ func (d *EntraIDConnectionDataSource) Read(ctx context.Context, req datasource.R
 	state.CreatedOn = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Createdon)
 	state.CreatedBy = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Createdby)
 	state.UpdatedBy = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Updatedby)
-	state.Msg = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Msg)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Emailtemplate)
 
 	if apiResp.EntraIDConnectionResponse.Connectionattributes != nil {
@@ -338,11 +337,11 @@ func (d *EntraIDConnectionDataSource) Read(ctx context.Context, req datasource.R
 			state.ConnectionAttributes.ConnectionTimeoutConfig = &ConnectionTimeoutConfig{
 				RetryWait:               util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
-				RetryFailureStatusCode: util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryWaitMaxValue:      util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
-				RetryCount:             util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
-				ReadTimeout:            util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
-				ConnectionTimeout:      util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryWaitMaxValue:       util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
+				RetryCount:              util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
+				ReadTimeout:             util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
+				ConnectionTimeout:       util.SafeInt64(apiResp.EntraIDConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
 			}
 		}
 	}

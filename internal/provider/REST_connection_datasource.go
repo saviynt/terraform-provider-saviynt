@@ -163,7 +163,7 @@ func (d *RESTConnectionsDataSource) Schema(ctx context.Context, req datasource.S
 							"retry_count":                 schema.Int64Attribute{Computed: true},
 							"read_timeout":                schema.Int64Attribute{Computed: true},
 							"connection_timeout":          schema.Int64Attribute{Computed: true},
-							"retry_failure_status_code": schema.Float64Attribute{Computed: true},
+							"retry_failure_status_code":   schema.Float64Attribute{Computed: true},
 						},
 					},
 				},
@@ -240,7 +240,6 @@ func (d *RESTConnectionsDataSource) Read(ctx context.Context, req datasource.Rea
 	state.CreatedOn = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Createdon)
 	state.CreatedBy = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Createdby)
 	state.UpdatedBy = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Updatedby)
-	state.Msg = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Msg)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.RESTConnectionResponse.Emailtemplate)
 
 	if apiResp.RESTConnectionResponse.Connectionattributes != nil {
@@ -279,7 +278,7 @@ func (d *RESTConnectionsDataSource) Read(ctx context.Context, req datasource.Rea
 				RetryCount:              util.SafeInt64(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
 				ReadTimeout:             util.SafeInt64(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
 				ConnectionTimeout:       util.SafeInt64(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
-				RetryFailureStatusCode: util.SafeInt64(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
 				// RetryFailureStatusCode: SafeInt64FromStringPointer(apiResp.RESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
 			},
 		}
