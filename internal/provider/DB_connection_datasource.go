@@ -290,7 +290,6 @@ func (d *DBConnectionsDataSource) Read(ctx context.Context, req datasource.ReadR
 				RetryWait:               util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
 				RetryFailureStatusCode:  util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				// RetryFailureStatusCode: SafeInt64FromStringPointer(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
 				RetryWaitMaxValue: util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
 				RetryCount:        util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
 				ReadTimeout:       util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
