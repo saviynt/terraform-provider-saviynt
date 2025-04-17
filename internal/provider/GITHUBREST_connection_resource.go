@@ -137,12 +137,17 @@ func (r *githubRestConnectionResource) Configure(ctx context.Context, req resour
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
+		resp.Diagnostics.AddError(
+			"Provider Data Not Found",
+			"Provider data is not set. Please configure the provider.",
+		)
 		return
 	}
 
 	// Cast provider data to your provider type.
 	prov, ok := req.ProviderData.(*saviyntProvider)
 	if !ok {
+		log.Print("[ERROR] ProviderData is not of type *saviyntProvider")
 		resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *saviyntProvider")
 		return
 	}
@@ -157,6 +162,7 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
+		log.Printf("[ERROR] Failed to get plan from request. Error: %v", resp.Diagnostics)
 		return
 	}
 
@@ -222,6 +228,7 @@ func (r *githubRestConnectionResource) Read(ctx context.Context, req resource.Re
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
+		log.Printf("[ERROR] Failed to get state from request. Error: %v", resp.Diagnostics)
 		return
 	}
 
@@ -263,6 +270,7 @@ func (r *githubRestConnectionResource) Read(ctx context.Context, req resource.Re
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
+		log.Printf("[ERROR] Failed to set state. Error: %v", resp.Diagnostics)
 		return
 	}
 }
@@ -272,6 +280,7 @@ func (r *githubRestConnectionResource) Update(ctx context.Context, req resource.
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
+		log.Printf("[ERROR] Failed to get plan from request. Error: %v", resp.Diagnostics)
 		return
 	}
 
