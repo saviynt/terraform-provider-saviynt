@@ -32,39 +32,39 @@ type DBConnectionDataSourceModel struct {
 }
 
 type DBConnectionAttributes struct {
-	PasswordMinLength        types.String `tfsdk:"password_min_length"`
-	ChangePassJSON           types.String `tfsdk:"changepass_json"`
-	AccountExistsJSON        types.String `tfsdk:"accountexists_json"`
-	RolesImport              types.String `tfsdk:"roles_import"`
-	RoleOwnerImport          types.String `tfsdk:"roleowner_import"`
-	CreateAccountJSON        types.String `tfsdk:"createaccount_json"`
-	UserImport               types.String `tfsdk:"user_import"`
-	DisableAccountJSON       types.String `tfsdk:"disableaccount_json"`
-	EntitlementValueImport   types.String `tfsdk:"entitlementvalue_import"`
-	ConnectionType           types.String `tfsdk:"connection_type"`
-	UpdateUserJSON           types.String `tfsdk:"updateuser_json"`
-	PasswordNoOfSplChars     types.String `tfsdk:"password_noofsplchars"`
-	RevokeAccessJSON         types.String `tfsdk:"revokeaccess_json"`
-	URL                      types.String `tfsdk:"url"`
-	SystemImport             types.String `tfsdk:"system_import"`
-	DriverName               types.String `tfsdk:"drivername"`
-	DeleteAccountJSON        types.String `tfsdk:"deleteaccount_json"`
-	StatusThresholdConfig    types.String `tfsdk:"status_threshold_config"`
-	Username                 types.String `tfsdk:"username"`
-	IsTimeoutSupported       types.Bool   `tfsdk:"is_timeout_supported"`
-	PasswordNoOfCapsAlpha    types.String `tfsdk:"password_noofcapsalpha"`
-	PasswordNoOfDigits       types.String `tfsdk:"password_noofdigits"`
-	ConnectionProperties     types.String `tfsdk:"connectionproperties"`
-	ModifyUserDataJSON       types.String `tfsdk:"modifyuserdata_json"`
-	IsTimeoutConfigValidated types.Bool   `tfsdk:"is_timeout_config_validated"`
-	AccountsImport           types.String `tfsdk:"accounts_import"`
-	Password                 types.String `tfsdk:"password"`
-	EnableAccountJSON        types.String `tfsdk:"enableaccount_json"`
-	PasswordMaxLength        types.String `tfsdk:"password_max_length"`
-	MaxPaginationSize        types.String `tfsdk:"max_pagination_size"`
-	UpdateAccountJSON        types.String `tfsdk:"updateaccount_json"`
-	GrantAccessJSON          types.String `tfsdk:"grantaccess_json"`
-	CliCommandJSON           types.String `tfsdk:"cli_command_json"`
+	PasswordMinLength        types.String             `tfsdk:"password_min_length"`
+	ChangePassJSON           types.String             `tfsdk:"changepass_json"`
+	AccountExistsJSON        types.String             `tfsdk:"accountexists_json"`
+	RolesImport              types.String             `tfsdk:"roles_import"`
+	RoleOwnerImport          types.String             `tfsdk:"roleowner_import"`
+	CreateAccountJSON        types.String             `tfsdk:"createaccount_json"`
+	UserImport               types.String             `tfsdk:"user_import"`
+	DisableAccountJSON       types.String             `tfsdk:"disableaccount_json"`
+	EntitlementValueImport   types.String             `tfsdk:"entitlementvalue_import"`
+	ConnectionType           types.String             `tfsdk:"connection_type"`
+	UpdateUserJSON           types.String             `tfsdk:"updateuser_json"`
+	PasswordNoOfSplChars     types.String             `tfsdk:"password_noofsplchars"`
+	RevokeAccessJSON         types.String             `tfsdk:"revokeaccess_json"`
+	URL                      types.String             `tfsdk:"url"`
+	SystemImport             types.String             `tfsdk:"system_import"`
+	DriverName               types.String             `tfsdk:"drivername"`
+	DeleteAccountJSON        types.String             `tfsdk:"deleteaccount_json"`
+	StatusThresholdConfig    types.String             `tfsdk:"status_threshold_config"`
+	Username                 types.String             `tfsdk:"username"`
+	IsTimeoutSupported       types.Bool               `tfsdk:"is_timeout_supported"`
+	PasswordNoOfCapsAlpha    types.String             `tfsdk:"password_noofcapsalpha"`
+	PasswordNoOfDigits       types.String             `tfsdk:"password_noofdigits"`
+	ConnectionProperties     types.String             `tfsdk:"connectionproperties"`
+	ModifyUserDataJSON       types.String             `tfsdk:"modifyuserdata_json"`
+	IsTimeoutConfigValidated types.Bool               `tfsdk:"is_timeout_config_validated"`
+	AccountsImport           types.String             `tfsdk:"accounts_import"`
+	Password                 types.String             `tfsdk:"password"`
+	EnableAccountJSON        types.String             `tfsdk:"enableaccount_json"`
+	PasswordMaxLength        types.String             `tfsdk:"password_max_length"`
+	MaxPaginationSize        types.String             `tfsdk:"max_pagination_size"`
+	UpdateAccountJSON        types.String             `tfsdk:"updateaccount_json"`
+	GrantAccessJSON          types.String             `tfsdk:"grantaccess_json"`
+	CliCommandJSON           types.String             `tfsdk:"cli_command_json"`
 	ConnectionTimeoutConfig  *ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
 }
 
@@ -125,56 +125,55 @@ func (d *DBConnectionsDataSource) Schema(ctx context.Context, req datasource.Sch
 			"connection_attributes": schema.SingleNestedAttribute{
 				Computed: true,
 				Attributes: map[string]schema.Attribute{
-					"password_min_length":          schema.StringAttribute{Computed: true},
-					"changepass_json":              schema.StringAttribute{Computed: true},
-					"accountexists_json":           schema.StringAttribute{Computed: true},
-					"roles_import":                 schema.StringAttribute{Computed: true},
-					"roleowner_import":             schema.StringAttribute{Computed: true},
-					"createaccount_json":           schema.StringAttribute{Computed: true},
-					"user_import":                  schema.StringAttribute{Computed: true},
-					"disableaccount_json":          schema.StringAttribute{Computed: true},
-					"entitlementvalue_import":      schema.StringAttribute{Computed: true},
-					"connection_type":              schema.StringAttribute{Computed: true},
-					"updateuser_json":              schema.StringAttribute{Computed: true},
-					"password_noofsplchars":        schema.StringAttribute{Computed: true},
-					"revokeaccess_json":            schema.StringAttribute{Computed: true},
-					"url":                          schema.StringAttribute{Computed: true},
-					"system_import":                schema.StringAttribute{Computed: true},
-					"drivername":                   schema.StringAttribute{Computed: true},
-					"deleteaccount_json":           schema.StringAttribute{Computed: true},
-					"status_threshold_config":      schema.StringAttribute{Computed: true},
-					"username":                     schema.StringAttribute{Computed: true},
-					"is_timeout_supported":         schema.BoolAttribute{Computed: true},
-					"password_noofcapsalpha":       schema.StringAttribute{Computed: true},
-					"password_noofdigits":          schema.StringAttribute{Computed: true},
-					"connectionproperties":         schema.StringAttribute{Computed: true},
-					"modifyuserdata_json":          schema.StringAttribute{Computed: true},
-					"is_timeout_config_validated":  schema.BoolAttribute{Computed: true},
-					"accounts_import":              schema.StringAttribute{Computed: true},
-					"password":                     schema.StringAttribute{Computed: true},
-					"enableaccount_json":           schema.StringAttribute{Computed: true},
-					"password_max_length":          schema.StringAttribute{Computed: true},
-					"max_pagination_size":          schema.StringAttribute{Computed: true},
-					"updateaccount_json":           schema.StringAttribute{Computed: true},
-					"grantaccess_json":             schema.StringAttribute{Computed: true},
-					"cli_command_json":             schema.StringAttribute{Computed: true},
+					"password_min_length":         schema.StringAttribute{Computed: true},
+					"changepass_json":             schema.StringAttribute{Computed: true},
+					"accountexists_json":          schema.StringAttribute{Computed: true},
+					"roles_import":                schema.StringAttribute{Computed: true},
+					"roleowner_import":            schema.StringAttribute{Computed: true},
+					"createaccount_json":          schema.StringAttribute{Computed: true},
+					"user_import":                 schema.StringAttribute{Computed: true},
+					"disableaccount_json":         schema.StringAttribute{Computed: true},
+					"entitlementvalue_import":     schema.StringAttribute{Computed: true},
+					"connection_type":             schema.StringAttribute{Computed: true},
+					"updateuser_json":             schema.StringAttribute{Computed: true},
+					"password_noofsplchars":       schema.StringAttribute{Computed: true},
+					"revokeaccess_json":           schema.StringAttribute{Computed: true},
+					"url":                         schema.StringAttribute{Computed: true},
+					"system_import":               schema.StringAttribute{Computed: true},
+					"drivername":                  schema.StringAttribute{Computed: true},
+					"deleteaccount_json":          schema.StringAttribute{Computed: true},
+					"status_threshold_config":     schema.StringAttribute{Computed: true},
+					"username":                    schema.StringAttribute{Computed: true},
+					"is_timeout_supported":        schema.BoolAttribute{Computed: true},
+					"password_noofcapsalpha":      schema.StringAttribute{Computed: true},
+					"password_noofdigits":         schema.StringAttribute{Computed: true},
+					"connectionproperties":        schema.StringAttribute{Computed: true},
+					"modifyuserdata_json":         schema.StringAttribute{Computed: true},
+					"is_timeout_config_validated": schema.BoolAttribute{Computed: true},
+					"accounts_import":             schema.StringAttribute{Computed: true},
+					"password":                    schema.StringAttribute{Computed: true},
+					"enableaccount_json":          schema.StringAttribute{Computed: true},
+					"password_max_length":         schema.StringAttribute{Computed: true},
+					"max_pagination_size":         schema.StringAttribute{Computed: true},
+					"updateaccount_json":          schema.StringAttribute{Computed: true},
+					"grantaccess_json":            schema.StringAttribute{Computed: true},
+					"cli_command_json":            schema.StringAttribute{Computed: true},
 
 					// Nested connection_timeout_config object
 					"connection_timeout_config": schema.SingleNestedAttribute{
 						Computed: true,
 						Attributes: map[string]schema.Attribute{
-							"retry_wait":                 schema.Int64Attribute{Computed: true},
+							"retry_wait":                  schema.Int64Attribute{Computed: true},
 							"token_refresh_max_try_count": schema.Int64Attribute{Computed: true},
-							"retry_failure_status_code":  schema.Int64Attribute{Computed: true},
-							"retry_wait_max_value":       schema.Int64Attribute{Computed: true},
-							"retry_count":                schema.Int64Attribute{Computed: true},
-							"read_timeout":               schema.Int64Attribute{Computed: true},
-							"connection_timeout":         schema.Int64Attribute{Computed: true},
+							"retry_failure_status_code":   schema.Int64Attribute{Computed: true},
+							"retry_wait_max_value":        schema.Int64Attribute{Computed: true},
+							"retry_count":                 schema.Int64Attribute{Computed: true},
+							"read_timeout":                schema.Int64Attribute{Computed: true},
+							"connection_timeout":          schema.Int64Attribute{Computed: true},
 						},
 					},
 				},
 			},
-
 		},
 	}
 }
@@ -252,54 +251,54 @@ func (d *DBConnectionsDataSource) Read(ctx context.Context, req datasource.ReadR
 
 	if apiResp.DBConnectionResponse.Connectionattributes != nil {
 		state.ConnectionAttributes = &DBConnectionAttributes{
-			PasswordMinLength:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_MIN_LENGTH),
-			ChangePassJSON:            util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CHANGEPASSJSON),
-			AccountExistsJSON:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ACCOUNTEXISTSJSON),
-			RolesImport:               util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ROLESIMPORT),
-			RoleOwnerImport:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ROLEOWNERIMPORT),
-			CreateAccountJSON:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CREATEACCOUNTJSON),
-			UserImport:                util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.USERIMPORT),
-			DisableAccountJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON),
-			EntitlementValueImport:    util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ENTITLEMENTVALUEIMPORT),
-			ConnectionType:            util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ConnectionType),
-			UpdateUserJSON:            util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.UPDATEUSERJSON),
-			PasswordNoOfSplChars:      util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFSPLCHARS),
-			RevokeAccessJSON:          util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.REVOKEACCESSJSON),
-			URL:                       util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.URL),
-			SystemImport:              util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.SYSTEMIMPORT),
-			DriverName:                util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DRIVERNAME),
-			DeleteAccountJSON:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DELETEACCOUNTJSON),
-			StatusThresholdConfig:     util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG),
-			Username:                  util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.USERNAME),
-			IsTimeoutSupported:        util.SafeBoolDatasource(apiResp.DBConnectionResponse.Connectionattributes.IsTimeoutSupported),
-			PasswordNoOfCapsAlpha:     util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFCAPSALPHA),
-			PasswordNoOfDigits:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFDIGITS),
-			ConnectionProperties:      util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CONNECTIONPROPERTIES),
-			ModifyUserDataJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON),
-			IsTimeoutConfigValidated:  util.SafeBoolDatasource(apiResp.DBConnectionResponse.Connectionattributes.IsTimeoutConfigValidated),
-			AccountsImport:            util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ACCOUNTSIMPORT),
-			Password:                  util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD),
-			EnableAccountJSON:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON),
-			PasswordMaxLength:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_MAX_LENGTH),
-			MaxPaginationSize:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.MAX_PAGINATION_SIZE),
-			UpdateAccountJSON:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON),
-			GrantAccessJSON:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.GRANTACCESSJSON),
-			CliCommandJSON:            util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CLI_COMMAND_JSON),
+			PasswordMinLength:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_MIN_LENGTH),
+			ChangePassJSON:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CHANGEPASSJSON),
+			AccountExistsJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ACCOUNTEXISTSJSON),
+			RolesImport:              util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ROLESIMPORT),
+			RoleOwnerImport:          util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ROLEOWNERIMPORT),
+			CreateAccountJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CREATEACCOUNTJSON),
+			UserImport:               util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.USERIMPORT),
+			DisableAccountJSON:       util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DISABLEACCOUNTJSON),
+			EntitlementValueImport:   util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ENTITLEMENTVALUEIMPORT),
+			ConnectionType:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ConnectionType),
+			UpdateUserJSON:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.UPDATEUSERJSON),
+			PasswordNoOfSplChars:     util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFSPLCHARS),
+			RevokeAccessJSON:         util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.REVOKEACCESSJSON),
+			URL:                      util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.URL),
+			SystemImport:             util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.SYSTEMIMPORT),
+			DriverName:               util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DRIVERNAME),
+			DeleteAccountJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.DELETEACCOUNTJSON),
+			StatusThresholdConfig:    util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.STATUS_THRESHOLD_CONFIG),
+			Username:                 util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.USERNAME),
+			IsTimeoutSupported:       util.SafeBoolDatasource(apiResp.DBConnectionResponse.Connectionattributes.IsTimeoutSupported),
+			PasswordNoOfCapsAlpha:    util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFCAPSALPHA),
+			PasswordNoOfDigits:       util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_NOOFDIGITS),
+			ConnectionProperties:     util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CONNECTIONPROPERTIES),
+			ModifyUserDataJSON:       util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON),
+			IsTimeoutConfigValidated: util.SafeBoolDatasource(apiResp.DBConnectionResponse.Connectionattributes.IsTimeoutConfigValidated),
+			AccountsImport:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ACCOUNTSIMPORT),
+			Password:                 util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD),
+			EnableAccountJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.ENABLEACCOUNTJSON),
+			PasswordMaxLength:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.PASSWORD_MAX_LENGTH),
+			MaxPaginationSize:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.MAX_PAGINATION_SIZE),
+			UpdateAccountJSON:        util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.UPDATEACCOUNTJSON),
+			GrantAccessJSON:          util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.GRANTACCESSJSON),
+			CliCommandJSON:           util.SafeStringDatasource(apiResp.DBConnectionResponse.Connectionattributes.CLI_COMMAND_JSON),
 		}
 		if apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig != nil {
 			state.ConnectionAttributes.ConnectionTimeoutConfig = &ConnectionTimeoutConfig{
 				RetryWait:               util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
-				// RetryFailureStatusCode: util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryFailureStatusCode: SafeInt64FromStringPointer(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryWaitMaxValue:      util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
-				RetryCount:             util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
-				ReadTimeout:            util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
-				ConnectionTimeout:      util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				// RetryFailureStatusCode:  SafeInt64FromStringPointer(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryWaitMaxValue:       util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
+				RetryCount:              util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
+				ReadTimeout:             util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
+				ConnectionTimeout:       util.SafeInt64(apiResp.DBConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
 			}
 		}
 	}
-	
+
 	if apiResp.DBConnectionResponse.Connectionattributes == nil {
 		state.ConnectionAttributes = nil
 	}
