@@ -260,7 +260,6 @@ func (d *WorkdayConnectionDataSource) Read(ctx context.Context, req datasource.R
 	state.CreatedOn = util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Createdon)
 	state.CreatedBy = util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Createdby)
 	state.UpdatedBy = util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Updatedby)
-	state.Msg = util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Msg)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.WorkdayConnectionResponse.Emailtemplate)
 
 	if apiResp.WorkdayConnectionResponse.Connectionattributes != nil {

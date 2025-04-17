@@ -32,17 +32,16 @@ type GithubRestConnectionDataSourceModel struct {
 }
 
 type GithubRestConnectionAttributes struct {
-	IsTimeoutSupported       types.Bool   `tfsdk:"is_timeout_supported"`
-	ConnectionJSON           types.String `tfsdk:"connection_json"`
-	OrganizationList         types.String `tfsdk:"organization_list"`
-	ImportAccountEntJSON     types.String `tfsdk:"import_account_ent_json"`
-	StatusThresholdConfig    types.String `tfsdk:"status_threshold_config"`
-	AccessTokens             types.String `tfsdk:"access_tokens"`
-	ConnectionTimeoutConfig          *ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
-	ConnectionType           types.String `tfsdk:"connection_type"`
-	IsTimeoutConfigValidated types.Bool   `tfsdk:"is_timeout_config_validated"`
+	IsTimeoutSupported       types.Bool               `tfsdk:"is_timeout_supported"`
+	ConnectionJSON           types.String             `tfsdk:"connection_json"`
+	OrganizationList         types.String             `tfsdk:"organization_list"`
+	ImportAccountEntJSON     types.String             `tfsdk:"import_account_ent_json"`
+	StatusThresholdConfig    types.String             `tfsdk:"status_threshold_config"`
+	AccessTokens             types.String             `tfsdk:"access_tokens"`
+	ConnectionTimeoutConfig  *ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
+	ConnectionType           types.String             `tfsdk:"connection_type"`
+	IsTimeoutConfigValidated types.Bool               `tfsdk:"is_timeout_config_validated"`
 }
-
 
 var _ datasource.DataSource = &GithubRestConnectionDataSource{}
 
@@ -143,7 +142,6 @@ func (d *GithubRestConnectionDataSource) Schema(ctx context.Context, req datasou
 	}
 }
 
-
 func (d *GithubRestConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
@@ -212,11 +210,10 @@ func (d *GithubRestConnectionDataSource) Read(ctx context.Context, req datasourc
 	state.CreatedOn = util.SafeStringDatasource(apiResp.GithubRESTConnectionResponse.Createdon)
 	state.CreatedBy = util.SafeStringDatasource(apiResp.GithubRESTConnectionResponse.Createdby)
 	state.UpdatedBy = util.SafeStringDatasource(apiResp.GithubRESTConnectionResponse.Updatedby)
-	state.Msg = util.SafeStringDatasource(apiResp.GithubRESTConnectionResponse.Msg)
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.GithubRESTConnectionResponse.Emailtemplate)
 
 	if apiResp.GithubRESTConnectionResponse.Connectionattributes != nil {
-	
+
 		state.ConnectionAttributes = &GithubRestConnectionAttributes{
 			IsTimeoutSupported:       util.SafeBoolDatasource(apiResp.GithubRESTConnectionResponse.Connectionattributes.IsTimeoutSupported),
 			ConnectionJSON:           util.SafeStringDatasource(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionJSON),
@@ -231,16 +228,15 @@ func (d *GithubRestConnectionDataSource) Read(ctx context.Context, req datasourc
 			state.ConnectionAttributes.ConnectionTimeoutConfig = &ConnectionTimeoutConfig{
 				RetryWait:               util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWait),
 				TokenRefreshMaxTryCount: util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.TokenRefreshMaxTryCount),
-				RetryFailureStatusCode: util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
-				RetryWaitMaxValue:      util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
-				RetryCount:             util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
-				ReadTimeout:            util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
-				ConnectionTimeout:      util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryWaitMaxValue:       util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryWaitMaxValue),
+				RetryCount:              util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
+				ReadTimeout:             util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
+				ConnectionTimeout:       util.SafeInt64(apiResp.GithubRESTConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
 			}
 		}
 	}
 
-	
 	if apiResp.GithubRESTConnectionResponse.Connectionattributes == nil {
 		state.ConnectionAttributes = nil
 	}
