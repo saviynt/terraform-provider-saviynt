@@ -297,17 +297,12 @@ func (r *unixConnectionResource) Configure(ctx context.Context, req resource.Con
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
-		resp.Diagnostics.AddError(
-			"Provider Data Not Found",
-			"Provider data is not set. Please configure the provider.",
-		)
 		return
 	}
 
 	// Cast provider data to your provider type.
 	prov, ok := req.ProviderData.(*saviyntProvider)
 	if !ok {
-		log.Println("ProviderData is not of type *saviyntProvider, returning early.")
 		resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *saviyntProvider")
 		return
 	}
