@@ -137,17 +137,12 @@ func (r *githubRestConnectionResource) Configure(ctx context.Context, req resour
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
-		resp.Diagnostics.AddError(
-			"Provider Data Not Found",
-			"Provider data is not set. Please configure the provider.",
-		)
 		return
 	}
 
 	// Cast provider data to your provider type.
 	prov, ok := req.ProviderData.(*saviyntProvider)
 	if !ok {
-		log.Print("[ERROR] ProviderData is not of type *saviyntProvider")
 		resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *saviyntProvider")
 		return
 	}
