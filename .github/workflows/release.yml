@@ -1,4 +1,4 @@
-name: Release Terraform Provider
+name: Release build for Saviynt Terraform Provider
 
 on:
   push:
