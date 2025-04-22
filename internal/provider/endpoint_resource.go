@@ -203,7 +203,7 @@ func (r *endpointResource) Metadata(ctx context.Context, req resource.MetadataRe
 
 func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage endpoints",
+		Description: util.EndpointDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

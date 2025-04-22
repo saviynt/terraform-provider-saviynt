@@ -56,7 +56,7 @@ func (r *salesforceConnectionResource) Metadata(ctx context.Context, req resourc
 
 func (r *salesforceConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Salesforce Connections",
+		Description: util.SalesforceConnDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
