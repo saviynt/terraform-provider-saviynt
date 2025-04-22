@@ -1,12 +1,12 @@
 resource "saviynt_ad_connection_resource" "example" {
-  connection_type     = "AD"
-  connection_name     = "namefortheconnection"
-  url                 = format("%s://%s:%d", var.LDAP_PROTOCOL, var.IP_ADDRESS, var.LDAP_PORT)
-  password            = var.PASSWORD
-  username            = var.BIND_USER
-  vault_connection    = var.VAULT_CONNECTION
-  vault_configuration = var.VAULT_CONFIG
-  save_in_vault       = var.SAVE_IN_VAULT
+  connection_type               = "AD"
+  connection_name               = "namefortheconnection"
+  url                           = format("%s://%s:%d", var.LDAP_PROTOCOL, var.IP_ADDRESS, var.LDAP_PORT)
+  password                      = var.PASSWORD
+  username                      = var.BIND_USER
+  vault_connection              = var.VAULT_CONNECTION
+  vault_configuration           = var.VAULT_CONFIG
+  save_in_vault                 = var.SAVE_IN_VAULT
   object_filter                 = "example"
   entitlement_attribute         = "example"
   group_search_base_dn          = var.BASE_CONTAINER
@@ -24,4 +24,4 @@ resource "saviynt_ad_connection_resource" "example" {
   password_no_of_spl_chars      = "2"
   unlock_account_json           = "example"
   pam_config                    = "example"
-  }
+}
