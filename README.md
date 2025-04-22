@@ -1,5 +1,19 @@
+[![Release build for Saviynt Terraform Provider](https://github.com/saviynt/terraform-provider-saviynt/actions/workflows/release.yml/badge.svg)](https://github.com/saviynt/terraform-provider-saviynt/actions/workflows/release.yml)
+<br/><br/>
 
-# Terraform Provider from Saviynt
+<a href="https://terraform.io">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="assets/hashicorp-terraform-dark.svg">
+        <source media="(prefers-color-scheme: light)" srcset="assets/hashicorp-terraform-light.svg">
+        <img alt="Terraform logo" title="Terraform" height="60" src="assets/hashicorp-terraform-dark.svg">
+    </picture>
+</a>
+
+<a href="https://saviynt.com/">
+    <img src="assets/s-platform-icon-01.svg" alt="Saviynt logo" title="Saviynt" height="75" />
+</a>
+
+# Terraform Provider for Saviynt
 
 This Terraform provider enables efficient provisioning, configuration, and management of security systems, endpoints, and associated connections through the Saviynt API. Designed for seamless integration with Saviynt EIC, it brings Infrastructure-as-Code (IaC) principles to identity and access management.
 
