@@ -50,4 +50,4 @@ Create and manage Security Systems in Saviynt
 
 ### Read-Only
 
-- `id` (String) The unique ID of the resource.
+- `id` (String, Sensitive) The unique ID of the resource.
