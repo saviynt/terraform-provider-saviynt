@@ -73,7 +73,7 @@ func (r *unixConnectionResource) Metadata(ctx context.Context, req resource.Meta
 
 func (r *unixConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage UNIX Connections",
+		Description: util.UnixConnDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

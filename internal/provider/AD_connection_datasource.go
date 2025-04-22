@@ -145,7 +145,7 @@ func (d *ADConnectionsDataSource) Metadata(ctx context.Context, req datasource.M
 
 func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Retrieve the details for a given AD connector by its name or key",
+		Description:util.ADConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
