@@ -481,6 +481,11 @@ func (r *dbConnectionResource) Read(ctx context.Context, req resource.ReadReques
 
 func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan DBConnectorResourceModel
+	var state DBConnectionDataSourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -492,6 +497,11 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
+		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+			return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 
 	dbConn := openapi.DBConnector{

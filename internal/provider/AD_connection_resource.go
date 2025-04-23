@@ -740,6 +740,11 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 
 func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
+	var state ADConnectionDataSourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -754,6 +759,11 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
+		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+			return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
