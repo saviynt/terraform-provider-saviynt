@@ -14,7 +14,7 @@ provider "saviynt" {
 }
 resource "saviynt_rest_connection_resource" "rest" {
   connection_type = "REST"
-  connection_name = "Terraform_Rest_Connector8"
+  connection_name = "Terraform_Rest_Connector10"
   connection_json = jsonencode({
     url      = "https://api.example.com"
     authType = "Bearer"
@@ -165,8 +165,8 @@ resource "saviynt_rest_connection_resource" "rest" {
   })
 }
 resource "saviynt_security_system_resource" "ss" {
-  systemname                      = "Terraform_Security_System8"
-  display_name                    = "Terraform_Security_System8"
+  systemname                      = "Terraform_Security_System10"
+  display_name                    = "Terraform_Security_System10"
   hostname                        = "EntitlementsOnly"
   port                            = "443"
   access_add_workflow             = "autoapprovalwf"
@@ -179,12 +179,12 @@ resource "saviynt_security_system_resource" "ss" {
   instant_provision               = "true"
   provisioning_tries              = "3"
   provisioning_comments           = "Auto-provisioned by Terraform"
-  connectionname="Terraform_Rest_Connector8"
+  connectionname="Terraform_Rest_Connector10"
 }
 resource "saviynt_endpoint_resource" "ep" {
-  endpointname                                  = "Terraform_Endpoint8"
-  display_name                                  = "Terraform_Endpoint8"
-  security_system                               = "Terraform_Security_System8"
+  endpointname                                  = "Terraform_Endpoint10"
+  display_name                                  = "Terraform_Endpoint10"
+  security_system                               = "Terraform_Security_System10"
   description                                   = "Endpoint for Jira Production Access"
   owner_type                                    = "USER"
   owner                                         = "admin"
