@@ -481,7 +481,7 @@ func (r *dbConnectionResource) Read(ctx context.Context, req resource.ReadReques
 
 func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan DBConnectorResourceModel
-	var state DBConnectionDataSourceModel
+	var state DBConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -497,9 +497,9 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
-			return
+		return
 	}
 
 	cfg.HTTPClient = http.DefaultClient

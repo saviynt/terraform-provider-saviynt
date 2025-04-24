@@ -583,7 +583,7 @@ func (r *adsiConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 
 func (r *adsiConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADSIConnectorResourceModel
-	var state ADSIConnectionDataSourceModel
+	var state ADSIConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -599,9 +599,9 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
-			return
+		return
 	}
 
 	cfg.HTTPClient = http.DefaultClient
