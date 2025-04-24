@@ -21,145 +21,145 @@ import (
 )
 
 type endpointResourceModel struct {
-	ID                                      types.String          `tfsdk:"id"`
-	EndpointName                            types.String          `tfsdk:"endpointname"`
-	DisplayName                             types.String          `tfsdk:"display_name"`
-	SecuritySystem                          types.String          `tfsdk:"security_system"`
-	Description                             types.String          `tfsdk:"description"`
-	OwnerType                               types.String          `tfsdk:"owner_type"`
-	Owner                                   types.String          `tfsdk:"owner"`
-	ResourceOwnerType                       types.String          `tfsdk:"resource_owner_type"`
-	ResourceOwner                           types.String          `tfsdk:"resource_owner"`
-	AccessQuery                             types.String          `tfsdk:"access_query"`
-	EnableCopyAccess                        types.String          `tfsdk:"enable_copy_access"`
-	DisableNewAccountRequestIfAccountExists types.String          `tfsdk:"disable_new_account_request_if_account_exists"`
-	DisableRemoveAccount                    types.String          `tfsdk:"disable_remove_account"`
-	DisableModifyAccount                    types.String          `tfsdk:"disable_modify_account"`
-	UserAccountCorrelationRule              types.String          `tfsdk:"user_account_correlation_rule"`
-	CreateEntTaskforRemoveAcc               types.String          `tfsdk:"create_ent_task_for_remove_acc"`
-	OutOfBandAction                         types.String          `tfsdk:"out_of_band_action"`
-	ConnectionConfig                        types.String          `tfsdk:"connection_config"`
-	Requestable                             types.String          `tfsdk:"requestable"`
-	ParentAccountPattern                    types.String          `tfsdk:"parent_account_pattern"`
-	ServiceAccountNameRule                  types.String          `tfsdk:"service_account_name_rule"`
-	ServiceAccountAccessQuery               types.String          `tfsdk:"service_account_access_query"`
-	BlockInflightRequest                    types.String          `tfsdk:"block_inflight_request"`
-	AccountNameRule                         types.String          `tfsdk:"account_name_rule"`
-	AllowChangePasswordSQLQuery             types.String          `tfsdk:"allow_change_password_sql_query"`
-	AccountNameValidatorRegex               types.String          `tfsdk:"account_name_validator_regex"`
-	StatusConfig                            types.String          `tfsdk:"status_config"`
-	PluginConfigs                           types.String          `tfsdk:"plugin_configs"`
-	EndpointConfig                          types.String          `tfsdk:"endpoint_config"`
-	CustomProperty1                         types.String          `tfsdk:"custom_property1"`
-	CustomProperty2                         types.String          `tfsdk:"custom_property2"`
-	CustomProperty3                         types.String          `tfsdk:"custom_property3"`
-	CustomProperty4                         types.String          `tfsdk:"custom_property4"`
-	CustomProperty5                         types.String          `tfsdk:"custom_property5"`
-	CustomProperty6                         types.String          `tfsdk:"custom_property6"`
-	CustomProperty7                         types.String          `tfsdk:"custom_property7"`
-	CustomProperty8                         types.String          `tfsdk:"custom_property8"`
-	CustomProperty9                         types.String          `tfsdk:"custom_property9"`
-	CustomProperty10                        types.String          `tfsdk:"custom_property10"`
-	CustomProperty11                        types.String          `tfsdk:"custom_property11"`
-	CustomProperty12                        types.String          `tfsdk:"custom_property12"`
-	CustomProperty13                        types.String          `tfsdk:"custom_property13"`
-	CustomProperty14                        types.String          `tfsdk:"custom_property14"`
-	CustomProperty15                        types.String          `tfsdk:"custom_property15"`
-	CustomProperty16                        types.String          `tfsdk:"custom_property16"`
-	CustomProperty17                        types.String          `tfsdk:"custom_property17"`
-	CustomProperty18                        types.String          `tfsdk:"custom_property18"`
-	CustomProperty19                        types.String          `tfsdk:"custom_property19"`
-	CustomProperty20                        types.String          `tfsdk:"custom_property20"`
-	CustomProperty21                        types.String          `tfsdk:"custom_property21"`
-	CustomProperty22                        types.String          `tfsdk:"custom_property22"`
-	CustomProperty23                        types.String          `tfsdk:"custom_property23"`
-	CustomProperty24                        types.String          `tfsdk:"custom_property24"`
-	CustomProperty25                        types.String          `tfsdk:"custom_property25"`
-	CustomProperty26                        types.String          `tfsdk:"custom_property26"`
-	CustomProperty27                        types.String          `tfsdk:"custom_property27"`
-	CustomProperty28                        types.String          `tfsdk:"custom_property28"`
-	CustomProperty29                        types.String          `tfsdk:"custom_property29"`
-	CustomProperty30                        types.String          `tfsdk:"custom_property30"`
-	CustomProperty31                        types.String          `tfsdk:"custom_property31"`
-	CustomProperty32                        types.String          `tfsdk:"custom_property32"`
-	CustomProperty33                        types.String          `tfsdk:"custom_property33"`
-	CustomProperty34                        types.String          `tfsdk:"custom_property34"`
-	CustomProperty35                        types.String          `tfsdk:"custom_property35"`
-	CustomProperty36                        types.String          `tfsdk:"custom_property36"`
-	CustomProperty37                        types.String          `tfsdk:"custom_property37"`
-	CustomProperty38                        types.String          `tfsdk:"custom_property38"`
-	CustomProperty39                        types.String          `tfsdk:"custom_property39"`
-	CustomProperty40                        types.String          `tfsdk:"custom_property40"`
-	CustomProperty41                        types.String          `tfsdk:"custom_property41"`
-	CustomProperty42                        types.String          `tfsdk:"custom_property42"`
-	CustomProperty43                        types.String          `tfsdk:"custom_property43"`
-	CustomProperty44                        types.String          `tfsdk:"custom_property44"`
-	CustomProperty45                        types.String          `tfsdk:"custom_property45"`
-	CustomProperty1Label                    types.String          `tfsdk:"custom_property1_label"`
-	CustomProperty2Label                    types.String          `tfsdk:"custom_property2_label"`
-	CustomProperty3Label                    types.String          `tfsdk:"custom_property3_label"`
-	CustomProperty4Label                    types.String          `tfsdk:"custom_property4_label"`
-	CustomProperty5Label                    types.String          `tfsdk:"custom_property5_label"`
-	CustomProperty6Label                    types.String          `tfsdk:"custom_property6_label"`
-	CustomProperty7Label                    types.String          `tfsdk:"custom_property7_label"`
-	CustomProperty8Label                    types.String          `tfsdk:"custom_property8_label"`
-	CustomProperty9Label                    types.String          `tfsdk:"custom_property9_label"`
-	CustomProperty10Label                   types.String          `tfsdk:"custom_property10_label"`
-	CustomProperty11Label                   types.String          `tfsdk:"custom_property11_label"`
-	CustomProperty12Label                   types.String          `tfsdk:"custom_property12_label"`
-	CustomProperty13Label                   types.String          `tfsdk:"custom_property13_label"`
-	CustomProperty14Label                   types.String          `tfsdk:"custom_property14_label"`
-	CustomProperty15Label                   types.String          `tfsdk:"custom_property15_label"`
-	CustomProperty16Label                   types.String          `tfsdk:"custom_property16_label"`
-	CustomProperty17Label                   types.String          `tfsdk:"custom_property17_label"`
-	CustomProperty18Label                   types.String          `tfsdk:"custom_property18_label"`
-	CustomProperty19Label                   types.String          `tfsdk:"custom_property19_label"`
-	CustomProperty20Label                   types.String          `tfsdk:"custom_property20_label"`
-	CustomProperty21Label                   types.String          `tfsdk:"custom_property21_label"`
-	CustomProperty22Label                   types.String          `tfsdk:"custom_property22_label"`
-	CustomProperty23Label                   types.String          `tfsdk:"custom_property23_label"`
-	CustomProperty24Label                   types.String          `tfsdk:"custom_property24_label"`
-	CustomProperty25Label                   types.String          `tfsdk:"custom_property25_label"`
-	CustomProperty26Label                   types.String          `tfsdk:"custom_property26_label"`
-	CustomProperty27Label                   types.String          `tfsdk:"custom_property27_label"`
-	CustomProperty28Label                   types.String          `tfsdk:"custom_property28_label"`
-	CustomProperty29Label                   types.String          `tfsdk:"custom_property29_label"`
-	CustomProperty30Label                   types.String          `tfsdk:"custom_property30_label"`
-	CustomProperty31Label                   types.String          `tfsdk:"custom_property31_label"`
-	CustomProperty32Label                   types.String          `tfsdk:"custom_property32_label"`
-	CustomProperty33Label                   types.String          `tfsdk:"custom_property33_label"`
-	CustomProperty34Label                   types.String          `tfsdk:"custom_property34_label"`
-	CustomProperty35Label                   types.String          `tfsdk:"custom_property35_label"`
-	CustomProperty36Label                   types.String          `tfsdk:"custom_property36_label"`
-	CustomProperty37Label                   types.String          `tfsdk:"custom_property37_label"`
-	CustomProperty38Label                   types.String          `tfsdk:"custom_property38_label"`
-	CustomProperty39Label                   types.String          `tfsdk:"custom_property39_label"`
-	CustomProperty40Label                   types.String          `tfsdk:"custom_property40_label"`
-	CustomProperty41Label                   types.String          `tfsdk:"custom_property41_label"`
-	CustomProperty42Label                   types.String          `tfsdk:"custom_property42_label"`
-	CustomProperty43Label                   types.String          `tfsdk:"custom_property43_label"`
-	CustomProperty44Label                   types.String          `tfsdk:"custom_property44_label"`
-	CustomProperty45Label                   types.String          `tfsdk:"custom_property45_label"`
-	CustomProperty46Label                   types.String          `tfsdk:"custom_property46_label"`
-	CustomProperty47Label                   types.String          `tfsdk:"custom_property47_label"`
-	CustomProperty48Label                   types.String          `tfsdk:"custom_property48_label"`
-	CustomProperty49Label                   types.String          `tfsdk:"custom_property49_label"`
-	CustomProperty50Label                   types.String          `tfsdk:"custom_property50_label"`
-	CustomProperty51Label                   types.String          `tfsdk:"custom_property51_label"`
-	CustomProperty52Label                   types.String          `tfsdk:"custom_property52_label"`
-	CustomProperty53Label                   types.String          `tfsdk:"custom_property53_label"`
-	CustomProperty54Label                   types.String          `tfsdk:"custom_property54_label"`
-	CustomProperty55Label                   types.String          `tfsdk:"custom_property55_label"`
-	CustomProperty56Label                   types.String          `tfsdk:"custom_property56_label"`
-	CustomProperty57Label                   types.String          `tfsdk:"custom_property57_label"`
-	CustomProperty58Label                   types.String          `tfsdk:"custom_property58_label"`
-	CustomProperty59Label                   types.String          `tfsdk:"custom_property59_label"`
-	CustomProperty60Label                   types.String          `tfsdk:"custom_property60_label"`
-	AllowRemoveAllRoleOnRequest             types.String          `tfsdk:"allow_remove_all_role_on_request"`
-	ChangePasswordAccessQuery               types.String          `tfsdk:"change_password_access_query"`
-	RequestableRoleType                     []RequestableRoleType `tfsdk:"requestable_role_type"`
-	EmailTemplate                           []EmailTemplate       `tfsdk:"email_template"`
-	MappedEndpoints                         []MappedEndpoint      `tfsdk:"mapped_endpoints"`
+	ID                                      types.String `tfsdk:"id"`
+	EndpointName                            types.String `tfsdk:"endpointname"`
+	DisplayName                             types.String `tfsdk:"display_name"`
+	SecuritySystem                          types.String `tfsdk:"security_system"`
+	Description                             types.String `tfsdk:"description"`
+	OwnerType                               types.String `tfsdk:"owner_type"`
+	Owner                                   types.String `tfsdk:"owner"`
+	ResourceOwnerType                       types.String `tfsdk:"resource_owner_type"`
+	ResourceOwner                           types.String `tfsdk:"resource_owner"`
+	AccessQuery                             types.String `tfsdk:"access_query"`
+	EnableCopyAccess                        types.String `tfsdk:"enable_copy_access"`
+	DisableNewAccountRequestIfAccountExists types.String `tfsdk:"disable_new_account_request_if_account_exists"`
+	DisableRemoveAccount                    types.String `tfsdk:"disable_remove_account"`
+	DisableModifyAccount                    types.String `tfsdk:"disable_modify_account"`
+	UserAccountCorrelationRule              types.String `tfsdk:"user_account_correlation_rule"`
+	CreateEntTaskforRemoveAcc               types.String `tfsdk:"create_ent_task_for_remove_acc"`
+	OutOfBandAction                         types.String `tfsdk:"out_of_band_action"`
+	ConnectionConfig                        types.String `tfsdk:"connection_config"`
+	Requestable                             types.String `tfsdk:"requestable"`
+	ParentAccountPattern                    types.String `tfsdk:"parent_account_pattern"`
+	ServiceAccountNameRule                  types.String `tfsdk:"service_account_name_rule"`
+	ServiceAccountAccessQuery               types.String `tfsdk:"service_account_access_query"`
+	BlockInflightRequest                    types.String `tfsdk:"block_inflight_request"`
+	AccountNameRule                         types.String `tfsdk:"account_name_rule"`
+	AllowChangePasswordSQLQuery             types.String `tfsdk:"allow_change_password_sql_query"`
+	AccountNameValidatorRegex               types.String `tfsdk:"account_name_validator_regex"`
+	StatusConfig                            types.String `tfsdk:"status_config"`
+	PluginConfigs                           types.String `tfsdk:"plugin_configs"`
+	EndpointConfig                          types.String `tfsdk:"endpoint_config"`
+	CustomProperty1                         types.String `tfsdk:"custom_property1"`
+	CustomProperty2                         types.String `tfsdk:"custom_property2"`
+	CustomProperty3                         types.String `tfsdk:"custom_property3"`
+	CustomProperty4                         types.String `tfsdk:"custom_property4"`
+	CustomProperty5                         types.String `tfsdk:"custom_property5"`
+	CustomProperty6                         types.String `tfsdk:"custom_property6"`
+	CustomProperty7                         types.String `tfsdk:"custom_property7"`
+	CustomProperty8                         types.String `tfsdk:"custom_property8"`
+	CustomProperty9                         types.String `tfsdk:"custom_property9"`
+	CustomProperty10                        types.String `tfsdk:"custom_property10"`
+	CustomProperty11                        types.String `tfsdk:"custom_property11"`
+	CustomProperty12                        types.String `tfsdk:"custom_property12"`
+	CustomProperty13                        types.String `tfsdk:"custom_property13"`
+	CustomProperty14                        types.String `tfsdk:"custom_property14"`
+	CustomProperty15                        types.String `tfsdk:"custom_property15"`
+	CustomProperty16                        types.String `tfsdk:"custom_property16"`
+	CustomProperty17                        types.String `tfsdk:"custom_property17"`
+	CustomProperty18                        types.String `tfsdk:"custom_property18"`
+	CustomProperty19                        types.String `tfsdk:"custom_property19"`
+	CustomProperty20                        types.String `tfsdk:"custom_property20"`
+	CustomProperty21                        types.String `tfsdk:"custom_property21"`
+	CustomProperty22                        types.String `tfsdk:"custom_property22"`
+	CustomProperty23                        types.String `tfsdk:"custom_property23"`
+	CustomProperty24                        types.String `tfsdk:"custom_property24"`
+	CustomProperty25                        types.String `tfsdk:"custom_property25"`
+	CustomProperty26                        types.String `tfsdk:"custom_property26"`
+	CustomProperty27                        types.String `tfsdk:"custom_property27"`
+	CustomProperty28                        types.String `tfsdk:"custom_property28"`
+	CustomProperty29                        types.String `tfsdk:"custom_property29"`
+	CustomProperty30                        types.String `tfsdk:"custom_property30"`
+	CustomProperty31                        types.String `tfsdk:"custom_property31"`
+	CustomProperty32                        types.String `tfsdk:"custom_property32"`
+	CustomProperty33                        types.String `tfsdk:"custom_property33"`
+	CustomProperty34                        types.String `tfsdk:"custom_property34"`
+	CustomProperty35                        types.String `tfsdk:"custom_property35"`
+	CustomProperty36                        types.String `tfsdk:"custom_property36"`
+	CustomProperty37                        types.String `tfsdk:"custom_property37"`
+	CustomProperty38                        types.String `tfsdk:"custom_property38"`
+	CustomProperty39                        types.String `tfsdk:"custom_property39"`
+	CustomProperty40                        types.String `tfsdk:"custom_property40"`
+	CustomProperty41                        types.String `tfsdk:"custom_property41"`
+	CustomProperty42                        types.String `tfsdk:"custom_property42"`
+	CustomProperty43                        types.String `tfsdk:"custom_property43"`
+	CustomProperty44                        types.String `tfsdk:"custom_property44"`
+	CustomProperty45                        types.String `tfsdk:"custom_property45"`
+	CustomProperty1Label                    types.String `tfsdk:"custom_property1_label"`
+	CustomProperty2Label                    types.String `tfsdk:"custom_property2_label"`
+	CustomProperty3Label                    types.String `tfsdk:"custom_property3_label"`
+	CustomProperty4Label                    types.String `tfsdk:"custom_property4_label"`
+	CustomProperty5Label                    types.String `tfsdk:"custom_property5_label"`
+	CustomProperty6Label                    types.String `tfsdk:"custom_property6_label"`
+	CustomProperty7Label                    types.String `tfsdk:"custom_property7_label"`
+	CustomProperty8Label                    types.String `tfsdk:"custom_property8_label"`
+	CustomProperty9Label                    types.String `tfsdk:"custom_property9_label"`
+	CustomProperty10Label                   types.String `tfsdk:"custom_property10_label"`
+	CustomProperty11Label                   types.String `tfsdk:"custom_property11_label"`
+	CustomProperty12Label                   types.String `tfsdk:"custom_property12_label"`
+	CustomProperty13Label                   types.String `tfsdk:"custom_property13_label"`
+	CustomProperty14Label                   types.String `tfsdk:"custom_property14_label"`
+	CustomProperty15Label                   types.String `tfsdk:"custom_property15_label"`
+	CustomProperty16Label                   types.String `tfsdk:"custom_property16_label"`
+	CustomProperty17Label                   types.String `tfsdk:"custom_property17_label"`
+	CustomProperty18Label                   types.String `tfsdk:"custom_property18_label"`
+	CustomProperty19Label                   types.String `tfsdk:"custom_property19_label"`
+	CustomProperty20Label                   types.String `tfsdk:"custom_property20_label"`
+	CustomProperty21Label                   types.String `tfsdk:"custom_property21_label"`
+	CustomProperty22Label                   types.String `tfsdk:"custom_property22_label"`
+	CustomProperty23Label                   types.String `tfsdk:"custom_property23_label"`
+	CustomProperty24Label                   types.String `tfsdk:"custom_property24_label"`
+	CustomProperty25Label                   types.String `tfsdk:"custom_property25_label"`
+	CustomProperty26Label                   types.String `tfsdk:"custom_property26_label"`
+	CustomProperty27Label                   types.String `tfsdk:"custom_property27_label"`
+	CustomProperty28Label                   types.String `tfsdk:"custom_property28_label"`
+	CustomProperty29Label                   types.String `tfsdk:"custom_property29_label"`
+	CustomProperty30Label                   types.String `tfsdk:"custom_property30_label"`
+	CustomProperty31Label                   types.String `tfsdk:"custom_property31_label"`
+	CustomProperty32Label                   types.String `tfsdk:"custom_property32_label"`
+	CustomProperty33Label                   types.String `tfsdk:"custom_property33_label"`
+	CustomProperty34Label                   types.String `tfsdk:"custom_property34_label"`
+	CustomProperty35Label                   types.String `tfsdk:"custom_property35_label"`
+	CustomProperty36Label                   types.String `tfsdk:"custom_property36_label"`
+	CustomProperty37Label                   types.String `tfsdk:"custom_property37_label"`
+	CustomProperty38Label                   types.String `tfsdk:"custom_property38_label"`
+	CustomProperty39Label                   types.String `tfsdk:"custom_property39_label"`
+	CustomProperty40Label                   types.String `tfsdk:"custom_property40_label"`
+	CustomProperty41Label                   types.String `tfsdk:"custom_property41_label"`
+	CustomProperty42Label                   types.String `tfsdk:"custom_property42_label"`
+	CustomProperty43Label                   types.String `tfsdk:"custom_property43_label"`
+	CustomProperty44Label                   types.String `tfsdk:"custom_property44_label"`
+	CustomProperty45Label                   types.String `tfsdk:"custom_property45_label"`
+	CustomProperty46Label                   types.String `tfsdk:"custom_property46_label"`
+	CustomProperty47Label                   types.String `tfsdk:"custom_property47_label"`
+	CustomProperty48Label                   types.String `tfsdk:"custom_property48_label"`
+	CustomProperty49Label                   types.String `tfsdk:"custom_property49_label"`
+	CustomProperty50Label                   types.String `tfsdk:"custom_property50_label"`
+	CustomProperty51Label                   types.String `tfsdk:"custom_property51_label"`
+	CustomProperty52Label                   types.String `tfsdk:"custom_property52_label"`
+	CustomProperty53Label                   types.String `tfsdk:"custom_property53_label"`
+	CustomProperty54Label                   types.String `tfsdk:"custom_property54_label"`
+	CustomProperty55Label                   types.String `tfsdk:"custom_property55_label"`
+	CustomProperty56Label                   types.String `tfsdk:"custom_property56_label"`
+	CustomProperty57Label                   types.String `tfsdk:"custom_property57_label"`
+	CustomProperty58Label                   types.String `tfsdk:"custom_property58_label"`
+	CustomProperty59Label                   types.String `tfsdk:"custom_property59_label"`
+	CustomProperty60Label                   types.String `tfsdk:"custom_property60_label"`
+	AllowRemoveAllRoleOnRequest             types.String `tfsdk:"allow_remove_all_role_on_request"`
+	ChangePasswordAccessQuery               types.String `tfsdk:"change_password_access_query"`
+	// RequestableRoleType                     []RequestableRoleType `tfsdk:"requestable_role_type"`
+	// EmailTemplate                           []EmailTemplate       `tfsdk:"email_template"`
+	// MappedEndpoints                         []MappedEndpoint      `tfsdk:"mapped_endpoints"`
 
 	Result    types.String `tfsdk:"result"`
 	Msg       types.String `tfsdk:"msg"`
@@ -169,28 +169,6 @@ type endpointResourceModel struct {
 type endpointResource struct {
 	client *s.Client
 	token  string
-}
-
-type RequestableRoleType struct {
-	RoleType       types.String `tfsdk:"role_type"`
-	RequestOption  types.String `tfsdk:"request_option"`
-	Required       types.Bool   `tfsdk:"required"`
-	RequestedQuery types.String `tfsdk:"requested_query"`
-	SelectedQuery  types.String `tfsdk:"selected_query"`
-	ShowOn         types.String `tfsdk:"show_on"`
-}
-
-type EmailTemplate struct {
-	EmailTemplateType types.String `tfsdk:"email_template_type"`
-	TaskType          types.String `tfsdk:"task_type"`
-	EmailTemplate     types.String `tfsdk:"email_template"`
-}
-
-type MappedEndpoint struct {
-	SecuritySystem types.String `tfsdk:"security_system"`
-	Endpoint       types.String `tfsdk:"endpoint"`
-	Requestable    types.String `tfsdk:"requestable"`
-	Operation      types.String `tfsdk:"operation"`
 }
 
 func NewEndpointResource() resource.Resource {
@@ -369,84 +347,6 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 	resp.Schema.Attributes["change_password_access_query"] = schema.StringAttribute{
 		Optional:    true,
 		Description: "Specify query to restrict the access for changing the account password of the endpoint.",
-	}
-
-	resp.Schema.Attributes["requestable_role_type"] = schema.ListNestedAttribute{
-		Description: "A list of requestable role types associated with the endpoint.",
-		Optional:    true,
-		NestedObject: schema.NestedAttributeObject{
-			Attributes: map[string]schema.Attribute{
-				"role_type": schema.StringAttribute{
-					Description: "Type of role that can be requested.",
-					Optional:    true,
-				},
-				"request_option": schema.StringAttribute{
-					Description: "Option for requesting the role.",
-					Optional:    true,
-				},
-				"required": schema.BoolAttribute{
-					Description: "Indicates whether the role is required.",
-					Optional:    true,
-				},
-				"requested_query": schema.StringAttribute{
-					Description: "Query for requested role selection.",
-					Optional:    true,
-				},
-				"selected_query": schema.StringAttribute{
-					Description: "Query for selected role display.",
-					Optional:    true,
-				},
-				"show_on": schema.StringAttribute{
-					Description: "Specifies where the role should be shown.",
-					Optional:    true,
-				},
-			},
-		},
-	}
-	resp.Schema.Attributes["email_template"] = schema.ListNestedAttribute{
-		Description: "A list of email templates associated with the endpoint.",
-		Optional:    true,
-		NestedObject: schema.NestedAttributeObject{
-			Attributes: map[string]schema.Attribute{
-				"email_template_type": schema.StringAttribute{
-					Description: "Type of email template (e.g., Approval, Rejection).",
-					Optional:    true,
-				},
-				"task_type": schema.StringAttribute{
-					Description: "Task type associated with the email template (e.g., Create, Delete).",
-					Optional:    true,
-				},
-				"email_template": schema.StringAttribute{
-					Description: "The email template name to be used.",
-					Optional:    true,
-				},
-			},
-		},
-	}
-
-	resp.Schema.Attributes["mapped_endpoints"] = schema.ListNestedAttribute{
-		Description: "List of mapped endpoints with individual security systems.",
-		Optional:    true,
-		NestedObject: schema.NestedAttributeObject{
-			Attributes: map[string]schema.Attribute{
-				"security_system": schema.StringAttribute{
-					Description: "The security system specific to this mapped endpoint.",
-					Required:    true,
-				},
-				"endpoint": schema.StringAttribute{
-					Description: "Logical name of the endpoint.",
-					Required:    true,
-				},
-				"requestable": schema.StringAttribute{
-					Description: "Indicates whether the endpoint is requestable.",
-					Optional:    true,
-				},
-				"operation": schema.StringAttribute{
-					Description: "Specifies the operation associated with the endpoint.",
-					Optional:    true,
-				},
-			},
-		},
 	}
 }
 
@@ -895,124 +795,6 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 }
 
 func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state endpointResourceModel
-
-	// Retrieve the current state
-	stateRetrievalDiagnostics := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(stateRetrievalDiagnostics...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	cfg := openapi.NewConfiguration()
-	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
-	cfg.Host = apiBaseURL
-	cfg.Scheme = "https"
-	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	cfg.HTTPClient = http.DefaultClient
-
-	apiClient := openapi.NewAPIClient(cfg)
-	endpointName := state.EndpointName.ValueString()
-	readReq := openapi.NewGetEndpointsRequest()
-	readReq.Endpointname = &endpointName
-	apiResp, httpResp, err := apiClient.EndpointsAPI.GetEndpoints(ctx).GetEndpointsRequest(*readReq).Execute()
-	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-		return
-	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-
-	var foundItem *openapi.GetEndpoints200ResponseEndpointsInner
-	for _, item := range apiResp.Endpoints {
-		if item.Endpointname != nil && *item.Endpointname == state.EndpointName.ValueString() {
-			foundItem = &item
-			break
-		}
-	}
-	if foundItem == nil {
-		resp.State.RemoveResource(ctx)
-	}
-	state.ID = types.StringValue("endpoint-" + state.EndpointName.ValueString())
-	state.OwnerType = types.StringValue(util.SafeDeref(foundItem.OwnerType))
-	state.SecuritySystem = types.StringValue(util.SafeDeref(foundItem.Securitysystem))
-	state.EndpointName = types.StringValue(util.SafeDeref(foundItem.Endpointname))
-	state.DisplayName = types.StringValue(util.SafeDeref(foundItem.DisplayName))
-	state.AllowRemoveAllRoleOnRequest = types.StringValue(util.SafeDeref(foundItem.AllowRemoveAllRoleOnRequest))
-	state.ChangePasswordAccessQuery = types.StringValue(util.SafeDeref(foundItem.ChangePasswordAccessQuery))
-	state.PluginConfigs = types.StringValue(util.SafeDeref(foundItem.PluginConfigs))
-	state.CreateEntTaskforRemoveAcc = types.StringValue(util.SafeDeref(foundItem.CreateEntTaskforRemoveAcc))
-	state.EnableCopyAccess = types.StringValue(util.SafeDeref(foundItem.EnableCopyAccess))
-	state.EndpointConfig = types.StringValue(util.SafeDeref(foundItem.EndpointConfig))
-	state.ServiceAccountAccessQuery = types.StringValue(util.SafeDeref(foundItem.ServiceAccountAccessQuery))
-	state.UserAccountCorrelationRule = types.StringValue(util.SafeDeref(foundItem.UserAccountCorrelationRule))
-	state.StatusConfig = types.StringValue(util.SafeDeref(foundItem.StatusConfig))
-
-	// Custom properties (Custom Property 1 to Custom Property 45)
-	state.CustomProperty1 = types.StringValue(util.SafeDeref(foundItem.CustomProperty1))
-	state.CustomProperty2 = types.StringValue(util.SafeDeref(foundItem.CustomProperty2))
-	state.CustomProperty3 = types.StringValue(util.SafeDeref(foundItem.CustomProperty3))
-	state.CustomProperty4 = types.StringValue(util.SafeDeref(foundItem.CustomProperty4))
-	state.CustomProperty5 = types.StringValue(util.SafeDeref(foundItem.CustomProperty5))
-	state.CustomProperty6 = types.StringValue(util.SafeDeref(foundItem.CustomProperty6))
-	state.CustomProperty7 = types.StringValue(util.SafeDeref(foundItem.CustomProperty7))
-	state.CustomProperty8 = types.StringValue(util.SafeDeref(foundItem.CustomProperty8))
-	state.CustomProperty9 = types.StringValue(util.SafeDeref(foundItem.CustomProperty9))
-	state.CustomProperty10 = types.StringValue(util.SafeDeref(foundItem.CustomProperty10))
-	state.CustomProperty11 = types.StringValue(util.SafeDeref(foundItem.CustomProperty11))
-	state.CustomProperty12 = types.StringValue(util.SafeDeref(foundItem.CustomProperty12))
-	state.CustomProperty13 = types.StringValue(util.SafeDeref(foundItem.CustomProperty13))
-	state.CustomProperty14 = types.StringValue(util.SafeDeref(foundItem.CustomProperty14))
-	state.CustomProperty15 = types.StringValue(util.SafeDeref(foundItem.CustomProperty15))
-	state.CustomProperty16 = types.StringValue(util.SafeDeref(foundItem.CustomProperty16))
-	state.CustomProperty17 = types.StringValue(util.SafeDeref(foundItem.CustomProperty17))
-	state.CustomProperty18 = types.StringValue(util.SafeDeref(foundItem.CustomProperty18))
-	state.CustomProperty19 = types.StringValue(util.SafeDeref(foundItem.CustomProperty19))
-	state.CustomProperty20 = types.StringValue(util.SafeDeref(foundItem.CustomProperty20))
-	state.CustomProperty21 = types.StringValue(util.SafeDeref(foundItem.CustomProperty21))
-	state.CustomProperty22 = types.StringValue(util.SafeDeref(foundItem.CustomProperty22))
-	state.CustomProperty23 = types.StringValue(util.SafeDeref(foundItem.CustomProperty23))
-	state.CustomProperty24 = types.StringValue(util.SafeDeref(foundItem.CustomProperty24))
-	state.CustomProperty25 = types.StringValue(util.SafeDeref(foundItem.CustomProperty25))
-	state.CustomProperty26 = types.StringValue(util.SafeDeref(foundItem.CustomProperty26))
-	state.CustomProperty27 = types.StringValue(util.SafeDeref(foundItem.CustomProperty27))
-	state.CustomProperty28 = types.StringValue(util.SafeDeref(foundItem.CustomProperty28))
-	state.CustomProperty29 = types.StringValue(util.SafeDeref(foundItem.CustomProperty29))
-	state.CustomProperty30 = types.StringValue(util.SafeDeref(foundItem.CustomProperty30))
-	state.CustomProperty31 = types.StringValue(util.SafeDeref(foundItem.CustomProperty31))
-	state.CustomProperty32 = types.StringValue(util.SafeDeref(foundItem.CustomProperty32))
-	state.CustomProperty33 = types.StringValue(util.SafeDeref(foundItem.CustomProperty33))
-	state.CustomProperty34 = types.StringValue(util.SafeDeref(foundItem.CustomProperty34))
-	state.CustomProperty35 = types.StringValue(util.SafeDeref(foundItem.CustomProperty35))
-	state.CustomProperty36 = types.StringValue(util.SafeDeref(foundItem.CustomProperty36))
-	state.CustomProperty37 = types.StringValue(util.SafeDeref(foundItem.CustomProperty37))
-	state.CustomProperty38 = types.StringValue(util.SafeDeref(foundItem.CustomProperty38))
-	state.CustomProperty39 = types.StringValue(util.SafeDeref(foundItem.CustomProperty39))
-	state.CustomProperty40 = types.StringValue(util.SafeDeref(foundItem.CustomProperty40))
-	state.CustomProperty41 = types.StringValue(util.SafeDeref(foundItem.CustomProperty41))
-	state.CustomProperty42 = types.StringValue(util.SafeDeref(foundItem.CustomProperty42))
-	state.CustomProperty43 = types.StringValue(util.SafeDeref(foundItem.CustomProperty43))
-	state.CustomProperty44 = types.StringValue(util.SafeDeref(foundItem.CustomProperty44))
-	state.CustomProperty45 = types.StringValue(util.SafeDeref(foundItem.CustomProperty45))
-	msgValue := util.SafeDeref(apiResp.Message)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-	state.Msg = types.StringValue(msgValue)
-	state.ErrorCode = types.StringValue(errorCodeValue)
-	resultObj := map[string]string{
-		"msg":        msgValue,
-		"error_code": errorCodeValue,
-	}
-	resultJSON, err := util.MarshalDeterministic(resultObj)
-	if err != nil {
-		log.Printf("[ERROR] API Call Failed: %v", err)
-		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
-		return
-	}
-	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
-	state.Result = types.StringValue(string(resultJSON))
-
-	stateSetDiagnostics := resp.State.Set(ctx, &state)
-	resp.Diagnostics.Append(stateSetDiagnostics...)
 }
 
 func (r *endpointResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -1400,102 +1182,6 @@ func (r *endpointResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 	if !plan.CustomProperty60Label.IsNull() && plan.CustomProperty60Label.ValueString() != "" {
 		updateReq.SetCustomproperty60Label(plan.CustomProperty60Label.ValueString())
-	}
-
-	var requestableRoleTypes []openapi.UpdateEndpointRequestRequestableRoleTypeInner
-
-	for _, role := range plan.RequestableRoleType {
-		var requestableRole openapi.UpdateEndpointRequestRequestableRoleTypeInner
-
-		if !role.RoleType.IsNull() && role.RoleType.ValueString() != "" {
-			requestableRole.RoleType = role.RoleType.ValueStringPointer()
-		}
-		if !role.RequestOption.IsNull() && role.RequestOption.ValueString() != "" {
-			requestableRole.RequestOption = role.RequestOption.ValueStringPointer()
-		}
-		if !role.Required.IsNull() {
-			requestableRole.Required = role.Required.ValueBoolPointer()
-		}
-		if !role.RequestedQuery.IsNull() && role.RequestedQuery.ValueString() != "" {
-			requestableRole.RequestedQuery = role.RequestedQuery.ValueStringPointer()
-		}
-		if !role.SelectedQuery.IsNull() && role.SelectedQuery.ValueString() != "" {
-			requestableRole.SelectedQuery = role.SelectedQuery.ValueStringPointer()
-		}
-		if !role.ShowOn.IsNull() && role.ShowOn.ValueString() != "" {
-			requestableRole.ShowOn = role.ShowOn.ValueStringPointer()
-		}
-
-		// Add the role type if any value is set
-		if requestableRole.RoleType != nil || requestableRole.RequestOption != nil || requestableRole.Required != nil ||
-			requestableRole.RequestedQuery != nil || requestableRole.SelectedQuery != nil || requestableRole.ShowOn != nil {
-			requestableRoleTypes = append(requestableRoleTypes, requestableRole)
-		}
-	}
-
-	// Assign to update request if populated
-	if len(requestableRoleTypes) > 0 {
-		updateReq.RequestableRoleType = requestableRoleTypes
-	}
-
-	var emailTemplates []openapi.UpdateEndpointRequestEmailTemplateInner
-
-	// Iterate over email templates from Terraform plan
-	for _, template := range plan.EmailTemplate {
-		var emailTemplate openapi.UpdateEndpointRequestEmailTemplateInner
-
-		// Check and set each field if it's not null or empty
-		if !template.EmailTemplateType.IsNull() && template.EmailTemplateType.ValueString() != "" {
-			emailTemplate.EmailTemplateType = template.EmailTemplateType.ValueStringPointer()
-		}
-		if !template.TaskType.IsNull() && template.TaskType.ValueString() != "" {
-			emailTemplate.TaskType = template.TaskType.ValueStringPointer()
-		}
-		if !template.EmailTemplate.IsNull() && template.EmailTemplate.ValueString() != "" {
-			emailTemplate.EmailTemplate = template.EmailTemplate.ValueStringPointer()
-		}
-
-		// Append only if at least one field is set
-		if emailTemplate.EmailTemplateType != nil || emailTemplate.TaskType != nil || emailTemplate.EmailTemplate != nil {
-			emailTemplates = append(emailTemplates, emailTemplate)
-		}
-	}
-
-	// Assign to update request if email templates exist
-	if len(emailTemplates) > 0 {
-		updateReq.EmailTemplate = emailTemplates
-	}
-
-	var mappedEndpoints []openapi.UpdateEndpointRequestMappedEndpointsInner
-
-	// Iterate over mapped endpoints from Terraform plan
-	for _, endpoint := range plan.MappedEndpoints {
-		var mappedEndpoint openapi.UpdateEndpointRequestMappedEndpointsInner
-
-		// Check and set each field if it's not null or empty
-		if !endpoint.SecuritySystem.IsNull() && endpoint.SecuritySystem.ValueString() != "" {
-			mappedEndpoint.Securitysystem = endpoint.SecuritySystem.ValueStringPointer()
-		}
-		if !endpoint.Endpoint.IsNull() && endpoint.Endpoint.ValueString() != "" {
-			mappedEndpoint.Endpoint = endpoint.Endpoint.ValueStringPointer()
-		}
-		if !endpoint.Requestable.IsNull() && endpoint.Requestable.ValueString() != "" {
-			mappedEndpoint.Requestable = endpoint.Requestable.ValueStringPointer()
-		}
-		if !endpoint.Operation.IsNull() && endpoint.Operation.ValueString() != "" {
-			mappedEndpoint.Operation = endpoint.Operation.ValueStringPointer()
-		}
-
-		// Append only if at least one field is set
-		if mappedEndpoint.Securitysystem != nil || mappedEndpoint.Endpoint != nil ||
-			mappedEndpoint.Requestable != nil || mappedEndpoint.Operation != nil {
-			mappedEndpoints = append(mappedEndpoints, mappedEndpoint)
-		}
-	}
-
-	// Assign to update request if mapped endpoints exist
-	if len(mappedEndpoints) > 0 {
-		updateReq.MappedEndpoints = mappedEndpoints
 	}
 
 	apiResp, httpResp, err := apiClient.EndpointsAPI.

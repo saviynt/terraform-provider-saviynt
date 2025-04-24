@@ -752,6 +752,11 @@ func (r *sapConnectionResource) Read(ctx context.Context, req resource.ReadReque
 
 func (r *sapConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan SAPConnectorResourceModel
+	var state SAPConnectorResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -763,6 +768,11 @@ func (r *sapConnectionResource) Update(ctx context.Context, req resource.UpdateR
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
+		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+			return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 	sapConn := openapi.SAPConnector{
 		BaseConnector: openapi.BaseConnector{

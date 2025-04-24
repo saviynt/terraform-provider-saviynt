@@ -556,6 +556,11 @@ func (r *workdayConnectionResource) Read(ctx context.Context, req resource.ReadR
 }
 func (r *workdayConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan WORKDAYConnectorResourceModel
+	var state WORKDAYConnectorResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -567,6 +572,11 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
+		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+			return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 	workdayConn := openapi.WorkdayConnector{
 		BaseConnector: openapi.BaseConnector{
