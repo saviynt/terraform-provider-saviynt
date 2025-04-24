@@ -593,16 +593,15 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
+		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+		return
+	}
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
-		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
-		return
-	}
 
 	cfg.HTTPClient = http.DefaultClient
 	if plan.EntitlementAttribute.IsNull() || plan.EntitlementAttribute.IsUnknown() {

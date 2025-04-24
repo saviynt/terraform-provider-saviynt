@@ -15,7 +15,7 @@ provider "saviynt" {
 
 resource "saviynt_rest_connection_resource" "rest" {
   connection_type = "REST"
-  connection_name = "Terraform_Rest_Connector20"
+  connection_name = "Terraform_Rest_Connector25"
   connection_json = jsonencode({
     url      = "https://api.example.com"
     authType = "Bearer"
@@ -122,11 +122,11 @@ resource "saviynt_rest_connection_resource" "rest" {
     numSpecialChar = 1
   })
   config_json = jsonencode({
-    showLogs="true"
+    showLogs=true
   })
   add_ffid_access_json = jsonencode({
     method = "POST"
-    url    = "https://api.example.com/ffid/acces111"
+    url    = "https://api.example.com/ffid/access"
     body = {
       userID = "$${user.userID}"
       ffid   = "$${entitlement.ffid}"

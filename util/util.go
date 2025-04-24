@@ -212,7 +212,7 @@ func Int32PtrToTFString(val *int32) types.String {
 	return types.StringNull()
 }
 
-func ConvertTypesStringToStrings1(input []types.String) []string {
+func ConvertTypesStringToStrings_SecuritySystem(input []types.String) []string {
 	var result []string
 	for _, s := range input {
 		if !s.IsNull() && !s.IsUnknown() {

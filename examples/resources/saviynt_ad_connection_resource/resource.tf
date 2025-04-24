@@ -27,7 +27,4 @@ resource "saviynt_ad_connection_resource" "example" {
   base                 = var.BASE_CONTAINER
   ldap_or_ad                   = "AD"
   entitlement_attribute        = "memberOf"
-  objectfilter=jsonencode(
-     {"full":"(&(objectCategory=person)(objectClass=user)(sAMAccountName=*))","incremental":"(&(objectCategory=person)(objectClass=user)(sAMAccountName=*))"}
-  )
 }

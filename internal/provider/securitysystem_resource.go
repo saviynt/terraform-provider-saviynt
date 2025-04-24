@@ -482,7 +482,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 		updateReq.SetExternalRiskConnectionJson(plan.ExternalRiskConnectionJson.ValueString())
 	}
 	if len(plan.InherentSODReportFields) > 0 {
-		inherentFields := util.ConvertTypesStringToStrings1(plan.InherentSODReportFields)
+		inherentFields := util.ConvertTypesStringToStrings_SecuritySystem(plan.InherentSODReportFields)
 		updateReq.SetInherentSODReportFields(inherentFields)
 	}
 	// Execute the update API call.
