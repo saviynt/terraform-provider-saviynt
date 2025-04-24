@@ -102,7 +102,8 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
 			},
 			"connection_type": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Connection type (e.g., 'AD' for Active Directory). Example: \"AD\"",
 			},
 			"description": schema.StringAttribute{
@@ -485,6 +486,7 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionType=types.StringValue("AzureAD")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
