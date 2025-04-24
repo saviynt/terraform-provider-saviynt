@@ -526,9 +526,15 @@ func (r *unixConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
-		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
-			return
+	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
+		log.Printf("[ERROR]: Connection name cannot be updated")
+		return
+	}
+	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
+		log.Printf("[ERROR]: Connection type cannot by updated")
+		return
 	}
 
 	cfg.HTTPClient = http.DefaultClient

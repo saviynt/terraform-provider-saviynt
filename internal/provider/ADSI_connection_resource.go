@@ -593,8 +593,14 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
-		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
+		log.Printf("[ERROR]: Connection name cannot be updated")
+		return
+	}
+	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
+		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
 	}
 	cfg := openapi.NewConfiguration()

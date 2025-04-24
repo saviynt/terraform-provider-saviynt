@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"log"
 
 	"terraform-provider-Saviynt/util"
 
@@ -387,11 +388,23 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 }
 func (r *SecuritySystemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan securitySystemResourceModel
+	var state securitySystemResourceModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	
 	// Extract the desired state from the request.
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if plan.Systemname.ValueString()!=state.Systemname.ValueString(){
+		resp.Diagnostics.AddError("Error", "System name cannot by updated")
+		log.Printf("[ERROR]: System name cannot by updated")
 		return
 	}
 
