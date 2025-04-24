@@ -73,8 +73,6 @@ type ADConnectorResourceModel struct {
 	Filter                    types.String `tfsdk:"filter"`
 	Objectfilter              types.String `tfsdk:"objectfilter"`
 	UpdateUserJson            types.String `tfsdk:"update_user_json"`
-	SaveConnection            types.String `tfsdk:"save_connection"`
-	SystemName                types.String `tfsdk:"system_name"`
 	Setrandompassword         types.String `tfsdk:"set_random_password"`
 	PasswordMinLength         types.String `tfsdk:"password_min_length"`
 	PasswordMaxLength         types.String `tfsdk:"password_max_length"`
@@ -339,16 +337,6 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:    true,
 				Description: "JSON to update a user. Example: '{\"mail\":\"${user.email}\", ...}'",
 			},
-			"save_connection": schema.StringAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "Flag to permanently save connection. Example: \"N\"",
-			},
-			"system_name": schema.StringAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "Associated system name. Example: \"Dummyapplication\"",
-			},
 			"set_random_password": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
@@ -530,8 +518,6 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		FILTER:                      util.StringPointerOrEmpty(plan.Filter),
 		OBJECTFILTER:                util.StringPointerOrEmpty(plan.Objectfilter),
 		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson),
-		Saveconnection:              util.StringPointerOrEmpty(plan.SaveConnection),
-		Systemname:                  util.StringPointerOrEmpty(plan.SystemName),
 		SETRANDOMPASSWORD:           util.StringPointerOrEmpty(plan.Setrandompassword),
 		PASSWORD_MIN_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMinLength),
 		PASSWORD_MAX_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMaxLength),
@@ -610,8 +596,6 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	plan.Filter = util.SafeStringDatasource(plan.Filter.ValueStringPointer())
 	plan.Objectfilter = util.SafeStringDatasource(plan.Objectfilter.ValueStringPointer())
 	plan.UpdateUserJson = util.SafeStringDatasource(plan.UpdateUserJson.ValueStringPointer())
-	plan.SaveConnection = util.SafeStringDatasource(plan.SaveConnection.ValueStringPointer())
-	plan.SystemName = util.SafeStringDatasource(plan.SystemName.ValueStringPointer())
 	plan.Setrandompassword = util.SafeStringDatasource(plan.Setrandompassword.ValueStringPointer())
 	plan.PasswordMinLength = util.SafeStringDatasource(plan.PasswordMinLength.ValueStringPointer())
 	plan.PasswordMaxLength = util.SafeStringDatasource(plan.PasswordMaxLength.ValueStringPointer())
@@ -712,8 +696,6 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.Filter = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.FILTER)
 	state.Objectfilter = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.OBJECTFILTER)
 	state.UpdateUserJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.UPDATEUSERJSON)
-	state.SaveConnection = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.Saveconnection)
-	state.SystemName = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.Systemname)
 	state.GroupImportMapping = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.GroupImportMapping)
 	state.UnlockAccountJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.UNLOCKACCOUNTJSON)
 	state.ModifyUserdataJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
@@ -740,6 +722,11 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 
 func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan ADConnectorResourceModel
+	var state ADConnectorResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -754,6 +741,11 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
+		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
+		return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
@@ -804,8 +796,6 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		FILTER:                      util.StringPointerOrEmpty(plan.Filter),
 		OBJECTFILTER:                util.StringPointerOrEmpty(plan.Objectfilter),
 		UPDATEUSERJSON:              util.StringPointerOrEmpty(plan.UpdateUserJson),
-		Saveconnection:              util.StringPointerOrEmpty(plan.SaveConnection),
-		Systemname:                  util.StringPointerOrEmpty(plan.SystemName),
 		SETRANDOMPASSWORD:           util.StringPointerOrEmpty(plan.Setrandompassword),
 		PASSWORD_MIN_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMinLength),
 		PASSWORD_MAX_LENGTH:         util.StringPointerOrEmpty(plan.PasswordMaxLength),
@@ -907,8 +897,6 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	plan.Filter = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.FILTER)
 	plan.Objectfilter = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.OBJECTFILTER)
 	plan.UpdateUserJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.UPDATEUSERJSON)
-	plan.SaveConnection = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.Saveconnection)
-	plan.SystemName = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.Systemname)
 	plan.GroupImportMapping = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.GroupImportMapping)
 	plan.UnlockAccountJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.UNLOCKACCOUNTJSON)
 	plan.ModifyUserdataJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.MODIFYUSERDATAJSON)
