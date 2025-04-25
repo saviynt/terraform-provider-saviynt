@@ -15,6 +15,7 @@ import (
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -956,4 +957,9 @@ func (r *sapConnectionResource) Update(ctx context.Context, req resource.UpdateR
 
 func (r *sapConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *sapConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+    // Retrieve import ID and save to id attribute
+    resource.ImportStatePassthroughID(ctx, path.Root("connection_key"), req, resp)
 }
