@@ -8,6 +8,10 @@ import (
 	"encoding/json"
 	"sort"
 	"strconv"
+	"math/rand"
+	"time"
+	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -210,16 +214,4 @@ func Int32PtrToTFString(val *int32) types.String {
 		return types.StringValue(str)
 	}
 	return types.StringNull()
-}
-
-func ConvertTypesStringToStrings_SecuritySystem(input []types.String) []string {
-	var result []string
-	for _, s := range input {
-		if !s.IsNull() && !s.IsUnknown() {
-			result = append(result, s.ValueString())
-		} else {
-			result = append(result, "")
-		}
-	}
-	return result
 }
