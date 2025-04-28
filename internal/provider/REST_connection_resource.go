@@ -80,7 +80,8 @@ func (r *restConnectionResource) Schema(ctx context.Context, req resource.Schema
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
 			},
 			"connection_type": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Connection type (e.g., 'AD' for Active Directory). Example: \"AD\"",
 			},
 			"description": schema.StringAttribute{
@@ -336,6 +337,7 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionType=types.StringValue("REST")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -450,14 +452,16 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	//for connJson data conversion from string to map[string]interface{}
-	var connJSON map[string]interface{}
-	if !plan.ConnectionJSON.IsNull() && plan.ConnectionJSON.ValueString() != "" {
-		err := json.Unmarshal([]byte(plan.ConnectionJSON.ValueString()), &connJSON)
-		if err != nil {
-			resp.Diagnostics.AddError("Invalid JSON", fmt.Sprintf("Failed to parse connection_json: %v", err))
-			return
-		}
+
+	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
+		log.Printf("[ERROR]: Connection name cannot be updated")
+		return
+	}
+	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
+		log.Printf("[ERROR]: Connection type cannot by updated")
+		return
 	}
 
 	cfg := openapi.NewConfiguration()
@@ -468,12 +472,19 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if(plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString()){
-		resp.Diagnostics.AddError("Error", fmt.Sprintf("Connection name cannot be updated"))
-			return
-	}
 
 	cfg.HTTPClient = http.DefaultClient
+
+	//for connJson data conversion from string to map[string]interface{}
+	var connJSON map[string]interface{}
+	if !plan.ConnectionJSON.IsNull() && plan.ConnectionJSON.ValueString() != "" {
+		err := json.Unmarshal([]byte(plan.ConnectionJSON.ValueString()), &connJSON)
+		if err != nil {
+			resp.Diagnostics.AddError("Invalid JSON", fmt.Sprintf("Failed to parse connection_json: %v", err))
+			return
+		}
+	}
+
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required fields
