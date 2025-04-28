@@ -128,7 +128,6 @@ func SafeStringConnector(s string) *string {
 
 func StringPointerOrEmpty(tfStr types.String) *string {
 	if tfStr.IsNull() || tfStr.IsUnknown() {
-		// Value is null, unknown, or empty — treat it as not set
 		return nil
 	}
 	val := tfStr.ValueString()
@@ -210,16 +209,4 @@ func Int32PtrToTFString(val *int32) types.String {
 		return types.StringValue(str)
 	}
 	return types.StringNull()
-}
-
-func ConvertTypesStringToStrings_SecuritySystem(input []types.String) []string {
-	var result []string
-	for _, s := range input {
-		if !s.IsNull() && !s.IsUnknown() {
-			result = append(result, s.ValueString())
-		} else {
-			result = append(result, "")
-		}
-	}
-	return result
 }
