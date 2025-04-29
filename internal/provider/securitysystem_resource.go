@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"log"
 
 	"terraform-provider-Saviynt/util"
 
@@ -404,12 +405,27 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 }
 func (r *SecuritySystemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan securitySystemResourceModel
-	// Extract plan from request
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	var state securitySystemResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	
+	// Extract the desired state from the request.
+	diags := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
+	if plan.Systemname.ValueString()!=state.Systemname.ValueString(){
+		resp.Diagnostics.AddError("Error", "System name cannot by updated")
+		log.Printf("[ERROR]: System name cannot by updated")
+		return
+	}
+
+	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
