@@ -23,9 +23,9 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create Step
 			{
-				Config: testAccSalesforceConnectionResourceConfig(testSalesforceConnectionName),
+				Config: testAccSalesforceConnectionResourceConfig("SalesForce", testSalesforceConnectionName),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(testSAPConnectionName)),
+					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(testSalesforceConnectionName)),
 					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_type"), knownvalue.StringExact("SalesForce")),
 					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
@@ -33,28 +33,34 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 			// Import
 			{
 				ResourceName:      "saviynt_salesforce_connection_resource.ss",
+        ImportStateId: testSalesforceConnectionName,
 				ImportState:       true,
 				ImportStateVerify: true,
+        ImportStateVerifyIgnore: []string{"msg", "client_secret", "refresh_token"},
 			},
 			// Update Step
 			{
-				Config: testAccSalesforceConnectionResourceObjImpConfig("Profile,Group,PermissionSet"),
+				Config: testAccSalesforceConnectionResourceObjImpConfig(testSalesforceConnectionName, "Profile,Group,PermissionSet"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("password_min_length"), knownvalue.StringExact("Profile,Group,PermissionSet")),
+					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact("Profile,Group,PermissionSet")),
 					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
 
 			{
-				Config:      testAccSalesforceConnectionResourceConfig("new_"+testSalesforceConnectionName),
+				Config:      testAccSalesforceConnectionResourceConfig("SalesForce", "new_"+testSalesforceConnectionName),
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
 
+      {
+				Config:      testAccSalesforceConnectionResourceConfig("AD", testSalesforceConnectionName),
+				ExpectError: regexp.MustCompile(`Connection type cannot be updated`),
+			},
 		},
 	})
 }
 
-func testAccSalesforceConnectionResourceConfig(connName string) string {
+func testAccSalesforceConnectionResourceConfig(connType string, connName string) string {
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
@@ -63,7 +69,7 @@ func testAccSalesforceConnectionResourceConfig(connName string) string {
 }
 
   resource "saviynt_salesforce_connection_resource" "ss" {
-  connection_type       = "SalesForce"
+  connection_type       = "%s"
   connection_name       = "%s"
   client_id             = "<client_id>"
   client_secret         = "<client_secret>"
@@ -148,12 +154,12 @@ func testAccSalesforceConnectionResourceConfig(connName string) string {
 }`,
  os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), connName,
+		os.Getenv("SAVIYNT_PASSWORD"), connType, connName,
 	)
 }
 
 
-func testAccSalesforceConnectionResourceObjImpConfig(objImp string) string {
+func testAccSalesforceConnectionResourceObjImpConfig(connName string, objImp string) string {
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
@@ -247,7 +253,7 @@ func testAccSalesforceConnectionResourceObjImpConfig(objImp string) string {
 }`,
  os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), testSalesforceConnectionName, objImp,
+		os.Getenv("SAVIYNT_PASSWORD"), connName, objImp,
 	)
 }
 

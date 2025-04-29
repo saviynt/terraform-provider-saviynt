@@ -386,8 +386,8 @@ func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.
 		return
 	}
 	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
-		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
-		log.Printf("[ERROR]: Connection type cannot by updated")
+		resp.Diagnostics.AddError("Error", "Connection type cannot be updated")
+		log.Printf("[ERROR]: Connection type cannot be updated")
 		return
 	}
 
@@ -481,5 +481,5 @@ func (r *salesforceConnectionResource) Delete(ctx context.Context, req resource.
 
 func (r *salesforceConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
     // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_key"), req, resp)
+    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
