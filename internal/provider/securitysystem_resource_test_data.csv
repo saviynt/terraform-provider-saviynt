@@ -1,0 +1,3 @@
+systemname,display_name,access_add_workflow,access_remove_workflow,add_service_account_workflow,remove_service_account_workflow,automated_provisioning
+testsecurity180cc,testsecurity180cc,Autoapprovalwf,Autoapprovalwf,Autoapprovalwf,Autoapprovalwf,true
+testsecurity181cc,testsecurity181cc,Manager Approval,Manager Approval,Manager Approval,Manager Approval,false
