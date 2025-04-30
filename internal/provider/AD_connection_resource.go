@@ -708,13 +708,13 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.MaxChangeNumber = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
 	state.IncrementalConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
 	state.CheckForUnique = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
-	apiMessage := util.SafeDeref(apiResp.ADConnectionResponse.Msg)
-	if apiMessage == "success" {
-		state.Msg = types.StringValue("Connection Successful")
-	} else {
-		state.Msg = types.StringValue(apiMessage)
-	}
-	state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
+	// apiMessage := util.SafeDeref(apiResp.ADConnectionResponse.Msg)
+	// if apiMessage == "success" {
+	// 	state.Msg = types.StringValue("Connection Successful")
+	// } else {
+	// 	state.Msg = types.StringValue(apiMessage)
+	// }
+	// state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
@@ -914,13 +914,8 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	plan.MaxChangeNumber = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
 	plan.IncrementalConfig = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
 	plan.CheckForUnique = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
-	apiMessage := util.SafeDeref(getResp.ADConnectionResponse.Msg)
-	if apiMessage == "success" {
-		plan.Msg = types.StringValue("Connection Successful")
-	} else {
-		plan.Msg = types.StringValue(apiMessage)
-	}
-	plan.ErrorCode = util.Int32PtrToTFString(getResp.ADConnectionResponse.Errorcode)
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }

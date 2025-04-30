@@ -13,31 +13,28 @@ import (
 )
 
 type ADConnectorTestData struct {
-	ConnectionName       string
-	ConnectionType       string
-	URL                  string
-	Password             string
-	Username             string
-	VaultConnection      string
-	VaultConfiguration   string
-	SaveInVault          string
-	SearchFilter         string
-	Base                 string
-	GroupSearchBaseDN    string
-	LdapOrAd             string
-	ObjectFilter         string
-	AccountAttribute     string
-	EntitlementAttribute string
-	PageSize             string
-	UserAttribute        string
-	EndpointsFilter      string
-	CreateAccountJson    string
-	UpdateAccountJson    string
-	UpdateUserJson       string
-	EnableAccountJson    string
-	AccountNameRule      string
-	RemoveAccountAction  string
-	SetRandomPassword    string
+	ConnectionName string
+	ConnectionType string
+	URL            string
+	Password       string
+	Username       string
+	// SearchFilter         string
+	// Base                 string
+	// GroupSearchBaseDN    string
+	// LdapOrAd             string
+	// ObjectFilter         string
+	// AccountAttribute     string
+	// EntitlementAttribute string
+	// PageSize             string
+	// UserAttribute        string
+	// EndpointsFilter      string
+	// CreateAccountJson    string
+	// UpdateAccountJson    string
+	// UpdateUserJson       string
+	EnableAccountJson string
+	// AccountNameRule      string
+	// RemoveAccountAction  string
+	// SetRandomPassword    string
 }
 
 func loadADConnectorTestData(csvPath string) ([]ADConnectorTestData, error) {
@@ -59,31 +56,28 @@ func loadADConnectorTestData(csvPath string) ([]ADConnectorTestData, error) {
 			continue // skip header
 		}
 		data = append(data, ADConnectorTestData{
-			ConnectionName:       row[0],
-			ConnectionType:       row[1],
-			URL:                  row[2],
-			Password:             row[3],
-			Username:             row[4],
-			VaultConnection:      row[5],
-			VaultConfiguration:   row[6],
-			SaveInVault:          row[7],
-			SearchFilter:         row[8],
-			Base:                 row[9],
-			GroupSearchBaseDN:    row[10],
-			LdapOrAd:             row[11],
-			ObjectFilter:         row[12],
-			AccountAttribute:     row[13],
-			EntitlementAttribute: row[14],
-			PageSize:             row[15],
-			UserAttribute:        row[16],
-			EndpointsFilter:      row[17],
-			CreateAccountJson:    row[18],
-			UpdateAccountJson:    row[19],
-			UpdateUserJson:       row[20],
-			EnableAccountJson:    row[21],
-			AccountNameRule:      row[22],
-			RemoveAccountAction:  row[23],
-			SetRandomPassword:    row[24],
+			ConnectionType: row[0],
+			ConnectionName: row[1],
+			URL:            row[2],
+			Password:       row[3],
+			Username:       row[4],
+			// SearchFilter:         row[8],
+			// Base:                 row[9],
+			// GroupSearchBaseDN:    row[10],
+			// LdapOrAd:             row[11],
+			// ObjectFilter:         row[12],
+			// AccountAttribute:     row[13],
+			// EntitlementAttribute: row[14],
+			// PageSize:             row[15],
+			// UserAttribute:        row[16],
+			// EndpointsFilter:      row[17],
+			// CreateAccountJson:    row[18],
+			// UpdateAccountJson:    row[19],
+			// UpdateUserJson:       row[20],
+			EnableAccountJson: row[5],
+			// AccountNameRule:      row[22],
+			// RemoveAccountAction:  row[23],
+			// SetRandomPassword:    row[24],
 		})
 	}
 
@@ -91,7 +85,7 @@ func loadADConnectorTestData(csvPath string) ([]ADConnectorTestData, error) {
 }
 
 func TestAccSaviyntADConnectorResource(t *testing.T) {
-	testData, err := loadADConnectorTestData("ad_connector_test_data_20250430_000441.csv")
+	testData, err := loadADConnectorTestData("AD_connection_resource_test_data.csv")
 	if err != nil {
 		t.Fatalf("failed to load test data: %s", err)
 	}
@@ -109,6 +103,26 @@ func TestAccSaviyntADConnectorResource(t *testing.T) {
 						ConfigStateChecks: []statecheck.StateCheck{
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("connection_name"), knownvalue.StringExact(row.ConnectionName)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("connection_type"), knownvalue.StringExact(row.ConnectionType)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact(row.URL)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact(row.Password)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact(row.Username)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("searchfilter"), knownvalue.StringExact(row.SearchFilter)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("base"), knownvalue.StringExact(row.Base)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("group_search_base_dn"), knownvalue.StringExact(row.GroupSearchBaseDN)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ldap_or_ad"), knownvalue.StringExact(row.LdapOrAd)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("objectfilter"), knownvalue.StringExact(row.ObjectFilter)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_attribute"), knownvalue.StringExact(row.AccountAttribute)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("entitlement_attribute"), knownvalue.StringExact(row.EntitlementAttribute)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("page_size"), knownvalue.StringExact(row.PageSize)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("user_attribute"), knownvalue.StringExact(row.UserAttribute)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("endpoints_filter"), knownvalue.StringExact(row.EndpointsFilter)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("create_account_json"), knownvalue.StringExact(row.CreateAccountJson)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("update_account_json"), knownvalue.StringExact(row.UpdateAccountJson)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("update_user_json"), knownvalue.StringExact(row.UpdateUserJson)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enable_account_json"), knownvalue.StringExact(row.EnableAccountJson)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_name_rule"), knownvalue.StringExact(row.AccountNameRule)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("remove_account_action"), knownvalue.StringExact(row.RemoveAccountAction)),
+							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("set_random_password"), knownvalue.StringExact(row.SetRandomPassword)),
 						},
 					},
 				},
@@ -118,7 +132,7 @@ func TestAccSaviyntADConnectorResource(t *testing.T) {
 }
 
 func generateADConnectorConfigFromRow(row ADConnectorTestData) string {
-	return fmt.Sprintf(` + "`" + `
+	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
   username   = "%s"
@@ -126,45 +140,18 @@ provider "saviynt" {
 }
 
 resource "saviynt_ad_connection_resource" "%s" {
-  connection_name = "%s"
-  connection_type = "%s"
-  url = "%s"
-  password = "%s"
-  username = "%s"
-  vault_connection = "%s"
-  vault_configuration = "%s"
-  save_in_vault = "%s"
-  searchfilter = "%s"
-  base = "%s"
-  group_search_base_dn = "%s"
-  ldap_or_ad = "%s"
-  objectfilter = "%s"
-  account_attribute = "%s"
-  entitlement_attribute = "%s"
-  page_size = "%s"
-  user_attribute = "%s"
-  endpoints_filter = %s
-  create_account_json = %s
-  update_account_json = %s
-  update_user_json = %s
-  enable_account_json = %s
-  account_name_rule = "%s"
-  remove_account_action = %s
-  set_random_password = "%s"
-  group_import_mapping = %s
+  connection_type     = "%s"
+  connection_name     = "%s"
+  url				  ="%s"
+  password            = "%s"
+  username            = "%s"
+  enable_account_json=jsonencode(%s)
 }
-` + "`" + `,
+`,
 		os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
 		os.Getenv("SAVIYNT_PASSWORD"),
-		row.ConnectionName, row.ConnectionName, row.ConnectionType,
-		row.URL, row.Password, row.Username, row.VaultConnection,
-		row.VaultConfiguration, row.SaveInVault, row.SearchFilter,
-		row.Base, row.GroupSearchBaseDN, row.LdapOrAd, row.ObjectFilter,
-		row.AccountAttribute, row.EntitlementAttribute, row.PageSize,
-		row.UserAttribute, row.EndpointsFilter, row.CreateAccountJson,
-		row.UpdateAccountJson, row.UpdateUserJson, row.EnableAccountJson,
-		row.AccountNameRule, row.RemoveAccountAction, row.SetRandomPassword,
-		row.GroupImportMapping,
+		row.ConnectionName, row.ConnectionType, row.ConnectionName, row.URL,
+		row.Password, row.Username, row.EnableAccountJson,
 	)
 }
