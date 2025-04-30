@@ -85,7 +85,8 @@ func (r *dbConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
 			},
 			"connection_type": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Connection type (e.g., 'AD' for Active Directory). Example: \"AD\"",
 			},
 			"description": schema.StringAttribute{
@@ -369,6 +370,7 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionType=types.StringValue("DB")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -481,6 +483,11 @@ func (r *dbConnectionResource) Read(ctx context.Context, req resource.ReadReques
 
 func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan DBConnectorResourceModel
+	var state DBConnectorResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -492,6 +499,17 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
+		log.Printf("[ERROR]: Connection name cannot be updated")
+		return
+	}
+	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
+		log.Printf("[ERROR]: Connection type cannot by updated")
+		return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 
 	dbConn := openapi.DBConnector{

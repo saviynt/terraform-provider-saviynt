@@ -1,251 +1,166 @@
-resource "saviynt_rest_connection_resource" "sample" {
+terraform {
+  required_providers {
+    saviynt = {
+      source  = "registry.terraform.io/local/saviynt"
+      version = "1.0.0"
+    }
+  }
+}
+
+provider "saviynt" {
+  server_url      = var.SAVIYNT_SERVER_URL
+  username = var.SAVIYNT_USERNAME
+  password = var.SAVIYNT_PASSWORD
+}
+
+resource "saviynt_rest_connection_resource" "rest" {
   connection_type = "REST"
-  connection_name = "sample-rest-connector"
-  config_json     = <<EOF
-  {"showLogs":true}
-   EOF
-  create_account_json = jsonencode({
-    "accountIdPath" : "call1.message.id",
-    "dateFormat" : "yyyy-MM-dd'T'HH:mm:ssXXX",
-    "responseColsToPropsMap" : {
-      "displayName" : "call1.message.displayName~#~char",
-      "name" : "call1.message.userPrincipalName~#~char"
-    },
-    "call" : [
-      {
-        "name" : "call1",
-        "connection" : "EntraIDAuth",
-        "url" : "<...>",
-        "httpMethod" : "POST",
-        "httpParams" : "{\"accountEnabled\":true,\"displayName\":\"$${user.firstname} $${user.lastname}\",\"mailNickname\":\"$${user.firstname}\",\"userPrincipalName\":\"$${user.firstname}.$${user.lastname}@saviyntlivedev.onmicrosoft.com\",\"passwordProfile\":{\"forceChangePasswordNextSignIn\":true,\"password\":\"$${password}\"}}",
-        "httpHeaders" : {
-          "Authorization" : "$${access_token}"
-        },
-        "httpContentType" : "application/json",
-        "successResponses" : {
-          "statusCode" : [
-            200,
-            201,
-            204,
-            205
-          ]
-        }
-      }
-    ]
-  })
+  connection_name = "Terraform_Rest_Connector25"
   connection_json = jsonencode({
-    "authentications" : {
-      "EntraIDAuth" : {
-        "authType" : "oauth2",
-        "url" : "<...>",
-        "httpMethod" : "POST",
-        "httpParams" : {
-          "grant_type" : "client_credentials",
-          "client_secret" : "XXXXX",
-          "client_id" : "XXXX",
-          "resource" : "<...>"
-        },
-        "httpHeaders" : {
-          "contentType" : "application/x-www-form-urlencoded"
-        },
-        "httpContentType" : "application/x-www-form-urlencoded",
-        "errorPath" : "errors.type",
-        "retryFailureStatusCode" : [
-          401
-        ],
-        "maxRefreshTryCount" : 5,
-        "tokenResponsePath" : "access_token",
-        "tokenType" : "Bearer",
-        "accessToken" : "Bearer access_token"
-      }
+    url      = "https://api.example.com"
+    authType = "Bearer"
+    token    = "$${access_token}"
+  })
+  import_user_json = jsonencode({
+    method = "GET"
+    url    = "https://api.example.com/users"
+    headers = {
+      Authorization = "Bearer $${access_token}"
+    }
+    keyField = "id"
+    colsToPropsMap = {
+      userID   = "id~#~char"
+      username = "username~#~char"
+      email    = "email~#~char"
     }
   })
   import_account_ent_json = jsonencode({
-    "accountParams" : {
-      "connection" : "EntraIDAuth",
-      "processingType" : "SequentialAndIterative",
-      "call" : {
-        "call1" : {
-          "callOrder" : 0,
-          "stageNumber" : 0,
-          "showJobHistory" : true,
-          "http" : {
-            "url" : "<...>",
-            "httpContentType" : "application/json",
-            "httpMethod" : "GET",
-            "httpHeaders" : {
-              "Authorization" : "$${access_token}",
-              "Accept" : "application/json"
-            }
-          },
-          "listField" : "value",
-          "keyField" : "accountID",
-          "colsToPropsMap" : {
-            "accountID" : "id~#~char",
-            "name" : "userPrincipalName~#~char",
-            "displayName" : "displayName~#~char",
-            "customproperty10" : "accountEnabled~#~char",
-            "customproperty31" : "STORE#ACC#ENT#MAPPINGINFO~#~char"
-          },
-          "pagination" : {
-            "nextUrl" : {
-              "nextUrlPath" : "@odata.nextLink"
-            }
-          },
-          "disableDeletedAccounts" : true
-        }
-      },
-      "successResponses" : {
-        "statusCode" : [
-          200,
-          201,
-          202,
-          203,
-          204,
-          205
-        ]
-      }
-    },
-    "entitlementParams" : {
-      "connection" : "EntraIDAuth",
-      "processingType" : "SequentialAndIterative",
-      "unsuccessResponses" : null,
-      "doNotChangeIfFailed" : true,
-      "entTypes" : {
-        "AccessPackages" : {
-          "entTypeOrder" : 0,
-          "entTypeLabels" : {
-            "customproperty1" : "PolicyID"
-          },
-          "call" : {
-            "call1" : {
-              "connection" : "EntraIDAuth",
-              "callOrder" : 0,
-              "stageNumber" : 0,
-              "showJobHistory" : true,
-              "http" : {
-                "url" : "<...>",
-                "httpContentType" : "application/json",
-                "httpMethod" : "GET",
-                "httpHeaders" : {
-                  "Authorization" : "$${access_token}",
-                  "Accept" : "application/json"
-                }
-              },
-              "listField" : "value",
-              "keyField" : "entitlementID",
-              "colsToPropsMap" : {
-                "entitlement_value" : "displayName~#~char",
-                "entitlementID" : "id~#~char",
-                "displayname" : "displayName~#~char",
-                "entitlementMappingJson" : "STORE#ENT#MAPPINGINFO~#~char"
-              }
-            }
-          },
-          "entMappings" : {
-            "AssignmentPolicy" : {
-              "listPath" : "assignmentPolicies",
-              "idPath" : "id",
-              "idColumn" : "entitlementID",
-              "mappingTypes" : [
-                "ENT2"
-              ]
-            }
-          }
-        },
-        "AssignmentPolicy" : {
-          "entTypeOrder" : 1,
-          "entTypeLabels" : {
-            "customproperty1" : "PolicyID"
-          },
-          "call" : {
-            "call1" : {
-              "connection" : "EntraIDAuth",
-              "callOrder" : 0,
-              "stageNumber" : 0,
-              "showJobHistory" : true,
-              "http" : {
-                "url" : "<...>",
-                "httpContentType" : "application/json",
-                "httpMethod" : "GET",
-                "httpHeaders" : {
-                  "Authorization" : "$${access_token}",
-                  "Accept" : "application/json"
-                }
-              },
-              "listField" : "value",
-              "keyField" : "entitlementID",
-              "colsToPropsMap" : {
-                "entitlement_value" : "displayName~#~char",
-                "entitlementID" : "id~#~char",
-                "displayname" : "displayName~#~char"
-              },
-              "pagination" : {
-                "nextUrl" : {
-                  "nextUrlPath" : "@odata.nextLink"
-                }
-              },
-              "disableDeletedEntitlements" : true
-            }
-          }
-        }
-      },
-      "successResponses" : {
-        "statusCode" : [
-          200,
-          201,
-          202,
-          203,
-          204,
-          205
-        ]
-      }
-    },
-    "acctEntParams" : {
-      "entTypes" : {
-        "AccessPackages" : {
-          "call" : {
-            "call1" : {
-              "connection" : "EntraIDAuth",
-              "showJobHistory" : true,
-              "callOrder" : 0,
-              "stageNumber" : 0,
-              "processingType" : "http",
-              "http" : {
-                "url" : "<...>",
-
-                "httpContentType" : "application/json",
-                "httpMethod" : "GET",
-                "httpHeaders" : {
-                  "Authorization" : "$${access_token}",
-                  "Accept" : "application/json"
-                }
-              },
-              "listField" : "value",
-              "acctIdPath" : "target.objectId",
-              "acctKeyField" : "accountID",
-              "entIdPath" : "accessPackage.id",
-              "entKeyField" : "entitlementID",
-              "pagination" : {
-                "nextUrl" : {
-                  "nextUrlPath" : "@odata.nextLink"
-                }
-              }
-            }
-          }
-        }
-      },
-      "successResponses" : {
-        "statusCode" : [
-          200,
-          201,
-          202,
-          203,
-          204,
-          205
-        ]
-      },
-      "unsuccessResponses" : null
+    method   = "GET"
+    url      = "https://api.example.com/userEntitlements"
+    keyField = "accountID"
+    colsToPropsMap = {
+      accountID = "account.id~#~char"
+      entName   = "entitlement.name~#~char"
     }
+  })
+  status_threshold_config = jsonencode({
+    threshold = 5
+    unit      = "days"
+  })
+  create_account_json = jsonencode({
+    method = "POST"
+    url    = "https://api.example.com/accounts"
+    body = {
+      username = "$${user.username}"
+      email    = "$${user.email}"
+      role     = "$${user.defaultRole}"
+    }
+  })
+  update_account_json = jsonencode({
+    method = "PUT"
+    url    = "https://api.example.com/accounts/$${user.accountID}"
+    body = {
+      displayName = "$${user.fullname}"
+    }
+  })
+  enable_account_json = jsonencode({
+    method = "PATCH"
+    url    = "https://api.example.com/accounts/$${user.accountID}/enable"
+  })
+  disable_account_json = jsonencode({
+    method = "PATCH"
+    url    = "https://api.example.com/accounts/$${user.accountID}/disable"
+  })
+  add_access_json = jsonencode({
+    method = "POST"
+    url    = "https://api.example.com/accounts/$${user.accountID}/access"
+    body = {
+      entitlementID = "$${entitlement.id}"
+    }
+  })
+  remove_access_json = jsonencode({
+    method = "DELETE"
+    url    = "https://api.example.com/accounts/$${user.accountID}/access/$${entitlement.id}"
+  })
+  update_user_json = jsonencode({
+    method = "PATCH"
+    url    = "https://api.example.com/users/$${user.userID}"
+    body = {
+      phone = "$${user.phone}"
+    }
+  })
+  change_pass_json = jsonencode({
+    method = "POST"
+    url    = "https://api.example.com/accounts/$${user.accountID}/password"
+    body = {
+      newPassword = "$${user.new_password}"
+    }
+  })
+  remove_account_json = jsonencode({
+    method = "DELETE"
+    url    = "https://api.example.com/accounts/$${user.accountID}"
+  })
+  ticket_status_json = jsonencode({
+    method = "GET"
+    url    = "https://servicedesk.example.com/tickets/$${ticketID}/status"
+  })
+  create_ticket_json = jsonencode({
+    method = "POST"
+    url    = "https://servicedesk.example.com/tickets"
+    body = {
+      subject     = "Access Request for $${user.username}"
+      description = "Please grant access to $${entitlement.name}"
+      priority    = "Medium"
+    }
+  })
+  endpoints_filter = "endpoint_type = 'REST'"
+  passwd_policy_json = jsonencode({
+    minLength      = 8
+    maxLength      = 16
+    numUpperCase   = 1
+    numDigits      = 2
+    numSpecialChar = 1
+  })
+  config_json = jsonencode({
+    showLogs=true
+  })
+  add_ffid_access_json = jsonencode({
+    method = "POST"
+    url    = "https://api.example.com/ffid/access"
+    body = {
+      userID = "$${user.userID}"
+      ffid   = "$${entitlement.ffid}"
+    }
+  })
+  remove_ffid_access_json = jsonencode({
+    method = "DELETE"
+    url    = "https://api.example.com/ffid/access/$${entitlement.ffid}?user=$${user.userID}"
+  })
+  modify_user_data_json = jsonencode({
+    method = "PATCH"
+    url    = "https://api.example.com/users/$${user.userID}"
+    body = {
+      department = "$${user.department}"
+    }
+  })
+  send_otp_json = jsonencode({
+    method = "POST"
+    url    = "https://api.example.com/otp/send"
+    body = {
+      user = "$${user.email}"
+    }
+  })
+  validate_otp_json = jsonencode({
+    method = "POST"
+    url    = "https://api.example.com/otp/validate"
+    body = {
+      otp   = "$${otp}"
+      email = "$${user.email}"
+    }
+  })
+  pam_config = jsonencode({
+    pam_enabled  = true
+    vault_system = "CyberArk"
+    rotation     = "on_login"
   })
 }
