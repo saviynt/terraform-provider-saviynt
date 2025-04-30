@@ -1,0 +1,23 @@
+connection_type,connection_name,url,password,username,vault_connection,vault_configuration,save_in_vault,searchfilter,base,group_search_base_dn,ldap_or_ad,objectfilter,account_attribute,entitlement_attribute,page_size,user_attribute,endpoints_filter,create_account_json,update_account_json,update_user_json,enable_account_json,account_name_rule,remove_account_action,set_random_password
+AD,Terraform_AD_Connector,ldap://192.168.1.1:389,Test@123,bind_user,MyVaultConnection,"{""path"":""secret/myapp/ad""}",TRUE,CN=Users,DC=corp,DC=SaviyntAD,DC=com,CN=Users,DC=corp,DC=SaviyntAD,DC=com,AD,(&(objectCategory=person)(objectClass=user)),"jsonencode(
+    {samaccountname=""$${task.accountName}"",sn=""$${user.lastname}"",displayName=""$${user.displayname}"",cn=""$${cn}"",objectclass=[""top"",""person"",""organizationalPerson"",""user""],  userAccountControl=""544"",givenName=""$${user.firstname}"",name=""$${user.displayname}""}
+  )","jsonencode({ 
+  department= ""$${user.departmentname ?: null}"", 
+  division= ""$${user.siteid ?: null}"" 
+  })
+  update_user_json=jsonencode({ 
+    sn= ""$${user.lastname}""
+  })","jsonencode({ 
+    sn= ""$${user.lastname}""
+  })","jsonencode({
+    USEDNFROMACCOUNT= ""YES"",
+    MOVEDN= ""NO"",
+    REMOVEGROUPS= ""NO"",
+    ENABLEACCOUNTOU= ""CN=Users,DC=corp,DC=SaviyntAD,DC=com"",
+    AFTERMOVEACTIONS= {
+      userAccountControl= ""544"",
+      otherMailbox= [
+        ""$${user?.customproperty15.toString().replace(',','\"",\""')}""
+      ]
+    }
+  })","""CN=$${user.username},CN=Users,DC=corp,DC=SaviyntAD,DC=com""","jsonencode({removeAction=""SUSPEND"",userAccountControl=""546"" })",FALSE
