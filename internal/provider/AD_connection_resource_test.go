@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -13,28 +14,21 @@ import (
 )
 
 type ADConnectorTestData struct {
-	ConnectionName string
-	ConnectionType string
-	URL            string
-	Password       string
-	Username       string
-	// SearchFilter         string
-	// Base                 string
-	// GroupSearchBaseDN    string
-	// LdapOrAd             string
-	// ObjectFilter         string
-	// AccountAttribute     string
-	// EntitlementAttribute string
-	// PageSize             string
-	// UserAttribute        string
-	// EndpointsFilter      string
-	// CreateAccountJson    string
-	// UpdateAccountJson    string
-	// UpdateUserJson       string
-	EnableAccountJson string
-	// AccountNameRule      string
-	// RemoveAccountAction  string
-	// SetRandomPassword    string
+	ConnectionType       string
+	ConnectionName       string
+	URL                  string
+	Password             string
+	Username             string
+	SearchFilter         string
+	Base                 string
+	GroupSearchBaseDN    string
+	LdapOrAd             string
+	ObjectFilter         string
+	AccountAttribute     string
+	EntitlementAttribute string
+	UserAttribute        string
+	EndpointsFilter      string
+	EnableAccountJson    string
 }
 
 func loadADConnectorTestData(csvPath string) ([]ADConnectorTestData, error) {
@@ -56,28 +50,21 @@ func loadADConnectorTestData(csvPath string) ([]ADConnectorTestData, error) {
 			continue // skip header
 		}
 		data = append(data, ADConnectorTestData{
-			ConnectionType: row[0],
-			ConnectionName: row[1],
-			URL:            row[2],
-			Password:       row[3],
-			Username:       row[4],
-			// SearchFilter:         row[8],
-			// Base:                 row[9],
-			// GroupSearchBaseDN:    row[10],
-			// LdapOrAd:             row[11],
-			// ObjectFilter:         row[12],
-			// AccountAttribute:     row[13],
-			// EntitlementAttribute: row[14],
-			// PageSize:             row[15],
-			// UserAttribute:        row[16],
-			// EndpointsFilter:      row[17],
-			// CreateAccountJson:    row[18],
-			// UpdateAccountJson:    row[19],
-			// UpdateUserJson:       row[20],
-			EnableAccountJson: row[5],
-			// AccountNameRule:      row[22],
-			// RemoveAccountAction:  row[23],
-			// SetRandomPassword:    row[24],
+			ConnectionType:       row[0],
+			ConnectionName:       row[1],
+			URL:                  row[2],
+			Password:             row[3],
+			Username:             row[4],
+			SearchFilter:         row[5],
+			Base:                 row[6],
+			GroupSearchBaseDN:    row[7],
+			LdapOrAd:             row[8],
+			ObjectFilter:         row[9],
+			AccountAttribute:     row[10],
+			EntitlementAttribute: row[11],
+			UserAttribute:        row[12],
+			EndpointsFilter:      row[13],
+			EnableAccountJson:    row[14],
 		})
 	}
 
@@ -94,6 +81,7 @@ func TestAccSaviyntADConnectorResource(t *testing.T) {
 		resourceName := "saviynt_ad_connection_resource." + row.ConnectionName
 
 		t.Run(row.ConnectionName, func(t *testing.T) {
+			stateJson := strings.ReplaceAll(row.EnableAccountJson, "$$", "$")
 			resource.Test(t, resource.TestCase{
 				PreCheck:                 func() { testAccPreCheck(t) },
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -106,23 +94,16 @@ func TestAccSaviyntADConnectorResource(t *testing.T) {
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("url"), knownvalue.StringExact(row.URL)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("password"), knownvalue.StringExact(row.Password)),
 							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("username"), knownvalue.StringExact(row.Username)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("searchfilter"), knownvalue.StringExact(row.SearchFilter)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("base"), knownvalue.StringExact(row.Base)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("group_search_base_dn"), knownvalue.StringExact(row.GroupSearchBaseDN)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ldap_or_ad"), knownvalue.StringExact(row.LdapOrAd)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("objectfilter"), knownvalue.StringExact(row.ObjectFilter)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_attribute"), knownvalue.StringExact(row.AccountAttribute)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("entitlement_attribute"), knownvalue.StringExact(row.EntitlementAttribute)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("page_size"), knownvalue.StringExact(row.PageSize)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("user_attribute"), knownvalue.StringExact(row.UserAttribute)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("endpoints_filter"), knownvalue.StringExact(row.EndpointsFilter)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("create_account_json"), knownvalue.StringExact(row.CreateAccountJson)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("update_account_json"), knownvalue.StringExact(row.UpdateAccountJson)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("update_user_json"), knownvalue.StringExact(row.UpdateUserJson)),
-							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enable_account_json"), knownvalue.StringExact(row.EnableAccountJson)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_name_rule"), knownvalue.StringExact(row.AccountNameRule)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("remove_account_action"), knownvalue.StringExact(row.RemoveAccountAction)),
-							// statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("set_random_password"), knownvalue.StringExact(row.SetRandomPassword)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("searchfilter"), knownvalue.StringExact(row.SearchFilter)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("base"), knownvalue.StringExact(row.Base)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("group_search_base_dn"), knownvalue.StringExact(row.GroupSearchBaseDN)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("ldap_or_ad"), knownvalue.StringExact(row.LdapOrAd)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("objectfilter"), knownvalue.StringExact(row.ObjectFilter)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("account_attribute"), knownvalue.StringExact(row.AccountAttribute)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("entitlement_attribute"), knownvalue.StringExact(row.EntitlementAttribute)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("user_attribute"), knownvalue.StringExact(row.UserAttribute)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("endpoints_filter"), knownvalue.StringExact(row.EndpointsFilter)),
+							statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("enable_account_json"), knownvalue.StringExact(stateJson)),
 						},
 					},
 				},

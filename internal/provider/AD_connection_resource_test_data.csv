@@ -1,2 +1,2 @@
 connection_type,connection_name,url,password,username,enable_account_json
-AD,Terraform_AD_Connector_Updated12898,ldap://192.168.10.10:389,Test@123,bind_user,"{ ""sn"": ""$${user.lastname}"" }"
+AD,Terraform_AD_Connector_Updated128981,ldap://192.168.10.10:389,Test@123,bind_user,"{""sn"":""$${user.lastname}""}"
