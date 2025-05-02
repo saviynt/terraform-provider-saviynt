@@ -9,10 +9,10 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"log"
 
 	"terraform-provider-Saviynt/util"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -411,7 +411,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	
+
 	// Extract the desired state from the request.
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
@@ -419,9 +419,9 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	if plan.Systemname.ValueString()!=state.Systemname.ValueString(){
-		resp.Diagnostics.AddError("Error", "System name cannot by updated")
-		log.Printf("[ERROR]: System name cannot by updated")
+	if plan.Systemname.ValueString() != state.Systemname.ValueString() {
+		resp.Diagnostics.AddError("Error", "System name cannot be updated")
+		log.Printf("[ERROR]: System name cannot be updated")
 		return
 	}
 
@@ -508,4 +508,9 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 
 func (r *SecuritySystemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *SecuritySystemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("systemname"), req, resp)
 }

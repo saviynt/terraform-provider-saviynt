@@ -100,7 +100,7 @@ func (r *sapConnectionResource) Metadata(ctx context.Context, req resource.Metad
 
 func (r *sapConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage SAP Connections",
+		Description: util.SAPConnDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
