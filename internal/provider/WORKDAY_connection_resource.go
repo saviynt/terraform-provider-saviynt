@@ -15,6 +15,7 @@ import (
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -364,6 +365,21 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	// reqParams.SetConnectionkey(state.ConnectionKey.String())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+	}
+	if existingResource != nil && existingResource.WorkdayConnectionResponse != nil && existingResource.WorkdayConnectionResponse.Errorcode != nil && *existingResource.WorkdayConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
+
 	workdayConn := openapi.WorkdayConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required fields
@@ -422,13 +438,14 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 		WorkdayConnector: &workdayConn,
 	}
 
-	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(workdayConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
 		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
+	}
+	if plan.UseEnhancedOrgRole.IsNull() || plan.UseEnhancedOrgRole.ValueString()==""{
+		plan.UseEnhancedOrgRole=types.StringValue("TRUE")
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
 	plan.ConnectionType=types.StringValue("Workday")
@@ -473,7 +490,6 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *workdayConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -716,4 +732,9 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 
 func (r *workdayConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *workdayConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+    // Retrieve import ID and save to id attribute
+    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
