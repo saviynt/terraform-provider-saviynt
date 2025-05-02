@@ -15,6 +15,7 @@ import (
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -229,6 +230,20 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	// reqParams.SetConnectionkey(state.ConnectionKey.String())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+	}
+	if existingResource != nil && existingResource.SalesforceConnectionResponse != nil && existingResource.SalesforceConnectionResponse.Errorcode != nil && *existingResource.SalesforceConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
 	salesforceConn := openapi.SalesforceConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required fields
@@ -263,9 +278,6 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	salesforceConnRequest := openapi.CreateOrUpdateRequest{
 		SalesforceConnector: &salesforceConn,
 	}
-
-	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
 
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(salesforceConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
@@ -385,8 +397,8 @@ func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.
 		return
 	}
 	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
-		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
-		log.Printf("[ERROR]: Connection type cannot by updated")
+		resp.Diagnostics.AddError("Error", "Connection type cannot be updated")
+		log.Printf("[ERROR]: Connection type cannot be updated")
 		return
 	}
 
@@ -476,4 +488,9 @@ func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.
 }
 func (r *salesforceConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *salesforceConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+    // Retrieve import ID and save to id attribute
+    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
