@@ -267,16 +267,6 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 	}
 	// Execute the API call.
 	apiResp, _, err := apiClient.SecuritySystemsAPI.CreateSecuritySystem(ctx).CreateSecuritySystemRequest(createReq).Execute()
-	// Check if already exists error
-	if *apiResp.ErrorCode == "1" && strings.Contains(strings.ToLower(util.SafeDeref(apiResp.Msg)), "already exists") {
-		message := fmt.Sprintf("Security System %s already exists. Import the existing resource into Terraform state.", plan.Systemname.ValueString())
-		resp.Diagnostics.AddError(
-			"Security System Already Exists",
-			message,
-		)
-		return
-	}
-	// If some other error
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
 		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
@@ -328,6 +318,10 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 		plan.InstantProvision = types.StringValue("false")
 	}
 
+	if plan.AutomatedProvisioning.IsNull() || plan.AutomatedProvisioning.IsUnknown() || plan.AutomatedProvisioning.ValueString() == "" {
+		plan.AutomatedProvisioning = types.StringValue("false")
+	}
+
 	plan.Hostname = util.SafeString(plan.Hostname.ValueStringPointer())
 	plan.Port = util.SafeString(plan.Port.ValueStringPointer())
 	plan.ProvisioningTries = util.SafeString(plan.ProvisioningTries.ValueStringPointer())
@@ -338,7 +332,6 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 	plan.AddServiceAccountWorkflow = util.SafeString(plan.AddServiceAccountWorkflow.ValueStringPointer())
 	plan.RemoveServiceAccountWorkflow = util.SafeString(plan.RemoveServiceAccountWorkflow.ValueStringPointer())
 	plan.ProposedAccountOwnersWorkflow = util.SafeString(plan.ProposedAccountOwnersWorkflow.ValueStringPointer())
-	plan.AutomatedProvisioning = util.SafeString(plan.AutomatedProvisioning.ValueStringPointer())
 	plan.FirefighterIDWorkflow = util.SafeString(plan.FirefighterIDWorkflow.ValueStringPointer())
 	plan.FirefighterIDRequestAccessWorkflow = util.SafeString(plan.FirefighterIDRequestAccessWorkflow.ValueStringPointer())
 	plan.Connectionname = util.SafeString(plan.Connectionname.ValueStringPointer())
@@ -351,6 +344,7 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {

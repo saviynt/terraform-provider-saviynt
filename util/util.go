@@ -130,7 +130,6 @@ func SafeStringConnector(s string) *string {
 
 func StringPointerOrEmpty(tfStr types.String) *string {
 	if tfStr.IsNull() || tfStr.IsUnknown() {
-		// Value is null, unknown, or empty — treat it as not set
 		return nil
 	}
 	val := tfStr.ValueString()
