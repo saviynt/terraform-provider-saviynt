@@ -61,7 +61,8 @@ func (r *githubRestConnectionResource) Schema(ctx context.Context, req resource.
 				Description: "Name of the connection. Example: \"Active Directory_Doc\"",
 			},
 			"connection_type": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Connection type (e.g., 'AD' for Active Directory). Example: \"AD\"",
 			},
 			"description": schema.StringAttribute{
@@ -204,6 +205,7 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
+	plan.ConnectionType=types.StringValue("GithubRest")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -272,6 +274,11 @@ func (r *githubRestConnectionResource) Read(ctx context.Context, req resource.Re
 
 func (r *githubRestConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan GITHUBRESTConnectorResourceModel
+	var state GITHUBRESTConnectorResourceModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -284,6 +291,17 @@ func (r *githubRestConnectionResource) Update(ctx context.Context, req resource.
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
+	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
+		log.Printf("[ERROR]: Connection name cannot be updated")
+		return
+	}
+	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
+		log.Printf("[ERROR]: Connection type cannot by updated")
+		return
+	}
+
 	cfg.HTTPClient = http.DefaultClient
 	githubRestConn := openapi.GithubRESTConnector{
 		BaseConnector: openapi.BaseConnector{
