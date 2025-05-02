@@ -14,53 +14,68 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-var testSalesforceConnectionName = util.GenerateRandomName("salesforce")
-
 func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
+  filePath := "salesforce_connection_test_data.json"
+	createCfg := util.LoadConnectorData(t, filePath, "create")
+	updateCfg := util.LoadConnectorData(t, filePath, "update")
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Create Step
 			{
-				Config: testAccSalesforceConnectionResourceConfig("SalesForce", testSalesforceConnectionName),
+				Config: testAccSalesforceConnectionResourceConfig("create"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(testSalesforceConnectionName)),
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_type"), knownvalue.StringExact("SalesForce")),
+					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(createCfg["connection_name"])),
+					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_type"), knownvalue.StringExact(createCfg["connection_type"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("client_id"), knownvalue.StringExact(createCfg["client_id"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("redirect_uri"), knownvalue.StringExact(createCfg["redirect_uri"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("instance_url"), knownvalue.StringExact(createCfg["instance_url"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact(createCfg["object_to_be_imported"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("createaccountjson"), knownvalue.StringExact(createCfg["createaccountjson"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("status_threshold_config"), knownvalue.StringExact(createCfg["status_threshold_config"])),
 					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
 			// Import
 			{
 				ResourceName:      "saviynt_salesforce_connection_resource.ss",
-        ImportStateId: testSalesforceConnectionName,
+        ImportStateId: createCfg["connection_name"],
 				ImportState:       true,
 				ImportStateVerify: true,
         ImportStateVerifyIgnore: []string{"msg", "client_secret", "refresh_token"},
 			},
 			// Update Step
 			{
-				Config: testAccSalesforceConnectionResourceObjImpConfig(testSalesforceConnectionName, "Profile,Group,PermissionSet"),
+				Config: testAccSalesforceConnectionResourceConfig("update"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact("Profile,Group,PermissionSet")),
+					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(updateCfg["connection_name"])),
+					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_type"), knownvalue.StringExact(updateCfg["connection_type"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("client_id"), knownvalue.StringExact(updateCfg["client_id"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("redirect_uri"), knownvalue.StringExact(updateCfg["redirect_uri"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("instance_url"), knownvalue.StringExact(updateCfg["instance_url"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact(updateCfg["object_to_be_imported"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("createaccountjson"), knownvalue.StringExact(updateCfg["createaccountjson"])),
+          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("status_threshold_config"), knownvalue.StringExact(createCfg["status_threshold_config"])),
 					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
-
+      // Update the Connectionname to a new value
 			{
-				Config:      testAccSalesforceConnectionResourceConfig("SalesForce", "new_"+testSalesforceConnectionName),
+				Config:      testAccSalesforceConnectionResourceConfig("update_connection_name"),
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
-
+      // Update the Connectiontype to a new value
       {
-				Config:      testAccSalesforceConnectionResourceConfig("AD", testSalesforceConnectionName),
+				Config:      testAccSalesforceConnectionResourceConfig("update_connection_type"),
 				ExpectError: regexp.MustCompile(`Connection type cannot be updated`),
 			},
 		},
 	})
 }
 
-func testAccSalesforceConnectionResourceConfig(connType string, connName string) string {
+func testAccSalesforceConnectionResourceConfig(operation string) string {
+  jsonPath:="{path}/salesforce_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
@@ -68,192 +83,24 @@ func testAccSalesforceConnectionResourceConfig(connType string, connName string)
   password   = "%s"
 }
 
-  resource "saviynt_salesforce_connection_resource" "ss" {
-  connection_type       = "%s"
-  connection_name       = "%s"
-  client_id             = "<client_id>"
-  client_secret         = "<client_secret>"
-  refresh_token         = "<refresh_token>"
-  redirect_uri          = "https://<domain>/services/oauth2/success"
-  instance_url          = "https://<domain>/services/oauth2/success"
-  object_to_be_imported = "Profile,Group,PermissionSet,Role"
-  account_field_query   = "Id,Username,LastName,FirstName,Name,CompanyName,Email,IsActive,UserRoleId,ProfileId,UserType,ManagerId,LastLoginDate,LastPasswordChangeDate,CreatedDate,CreatedById,LastModifiedDate,LastModifiedById,SystemModstamp,ContactId,AccountId,FederationIdentifier,UserPermissionsSupportUser"
-  field_mapping_json = jsonencode({
-    accountfield_mapping = {
-        accountID                = "Id~#~char"
-        name                     = "Username~#~char"
-        customproperty2          = "LastName~#~char"
-        customproperty1          = "FirstName~#~char"
-        displayName              = "Name~#~char"
-        customproperty3          = "CompanyName~#~char"
-        customproperty4          = "Email~#~char"
-        status                   = "IsActive~#~bool"
-        customproperty12         = "IsActive~#~bool"
-        customproperty5          = "UserRoleId~#~char"
-        customproperty6          = "ProfileId~#~char"
-        accounttype              = "UserType~#~char"
-        customproperty7          = "ManagerId~#~char"
-        lastlogondate            = "LastLoginDate~#~date"
-        lastpasswordchange       = "LastPasswordChangeDate~#~date"
-        CREATED_ON               = "CreatedDate~#~date"
-        creator                  = "CreatedById~#~char"
-        customproperty8          = "LastModifiedDate~#~date"
-        updateUser               = "LastModifiedById~#~char"
-        updatedate               = "SystemModstamp~#~date"
-        customproperty9          = "ContactId~#~char"
-        customproperty10         = "AccountId~#~char"
-        customproperty13         = "FederationIdentifier~#~char"
-        customproperty21         = "UserPermissionsSupportUser~#~bool"
-        customproperty20         = "CreatedDate~#~char"
-    }
-    })
-
-  createaccountjson = jsonencode({
-    Alias                 = "$${user?.getFirstname()}"
-    Email                 = "$${user?.getEmail()}"
-    Username              = "$${user?.getEmail()}"
-    CommunityNickname     = "$${user?.getFirstname()}"
-    FirstName             = "$${user?.getFirstname()}"
-    LastName              = "$${user?.getLastname()}"
-    TimeZoneSidKey        = "America/Los_Angeles"
-    LocaleSidKey          = "en_US"
-    EmailEncodingKey      = "ISO-8859-1"
-    ProfileId             = "$${profileId}"
-    LanguageLocaleKey     = "en_US"
-    IsActive              = true
-    FederationIdentifier  = "$${user?.getEmail()}"
-    })
-
-  modifyaccountjson = jsonencode({
-    Username             = "$${user?.customproperty16 + \".company\"}"
-    FirstName            = "$${user?.getFirstname()}"
-    LastName             = "$${user?.getLastname()}"
-    FederationIdentifier = "$${user?.customproperty16}"
-    })
-  status_threshold_config = jsonencode({
-    statusAndThresholdConfig = {
-        accountThresholdValue = 100
-        statusColumn          = "customproperty12"
-        activeStatus          = [
-        "true"
-        ]
-        deleteLinks           = true
-        lockedStatusColumn    = "customproperty28"
-        lockedStatusMapping   = {
-        Locked   = ["1"]
-        Unlocked = ["0"]
-        }
-    }
-})
-
-  customconfigjson = jsonencode({
-        disableAccountForRevokeTask = false
-        defaultEntitlementId       = "<entitlement_id>"
-    })
-
-}`,
- os.Getenv("SAVIYNT_URL"),
-		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), connType, connName,
-	)
-}
-
-
-func testAccSalesforceConnectionResourceObjImpConfig(connName string, objImp string) string {
-	return fmt.Sprintf(`
-	provider "saviynt" {
-  server_url = "%s"
-  username   = "%s"
-  password   = "%s"
+locals {
+  cfg = jsondecode(file("%s"))["%s"]
 }
 
   resource "saviynt_salesforce_connection_resource" "ss" {
-  connection_type       = "SalesForce"
-  connection_name       = "%s"
-  client_id             = "<client_id>"
-  client_secret         = "<client_secret>"
-  refresh_token         = "<refresh_token>"
-  redirect_uri          = "https://<domain>/services/oauth2/success"
-  instance_url          = "https://<domain>/services/oauth2/success"
-  object_to_be_imported = "%s"
-  account_field_query   = "Id,Username,LastName,FirstName,Name,CompanyName,Email,IsActive,UserRoleId,ProfileId,UserType,ManagerId,LastLoginDate,LastPasswordChangeDate,CreatedDate,CreatedById,LastModifiedDate,LastModifiedById,SystemModstamp,ContactId,AccountId,FederationIdentifier,UserPermissionsSupportUser"
-  field_mapping_json = jsonencode({
-    accountfield_mapping = {
-        accountID                = "Id~#~char"
-        name                     = "Username~#~char"
-        customproperty2          = "LastName~#~char"
-        customproperty1          = "FirstName~#~char"
-        displayName              = "Name~#~char"
-        customproperty3          = "CompanyName~#~char"
-        customproperty4          = "Email~#~char"
-        status                   = "IsActive~#~bool"
-        customproperty12         = "IsActive~#~bool"
-        customproperty5          = "UserRoleId~#~char"
-        customproperty6          = "ProfileId~#~char"
-        accounttype              = "UserType~#~char"
-        customproperty7          = "ManagerId~#~char"
-        lastlogondate            = "LastLoginDate~#~date"
-        lastpasswordchange       = "LastPasswordChangeDate~#~date"
-        CREATED_ON               = "CreatedDate~#~date"
-        creator                  = "CreatedById~#~char"
-        customproperty8          = "LastModifiedDate~#~date"
-        updateUser               = "LastModifiedById~#~char"
-        updatedate               = "SystemModstamp~#~date"
-        customproperty9          = "ContactId~#~char"
-        customproperty10         = "AccountId~#~char"
-        customproperty13         = "FederationIdentifier~#~char"
-        customproperty21         = "UserPermissionsSupportUser~#~bool"
-        customproperty20         = "CreatedDate~#~char"
-    }
-    })
-
-  createaccountjson = jsonencode({
-    Alias                 = "$${user?.getFirstname()}"
-    Email                 = "$${user?.getEmail()}"
-    Username              = "$${user?.getEmail()}"
-    CommunityNickname     = "$${user?.getFirstname()}"
-    FirstName             = "$${user?.getFirstname()}"
-    LastName              = "$${user?.getLastname()}"
-    TimeZoneSidKey        = "America/Los_Angeles"
-    LocaleSidKey          = "en_US"
-    EmailEncodingKey      = "ISO-8859-1"
-    ProfileId             = "$${profileId}"
-    LanguageLocaleKey     = "en_US"
-    IsActive              = true
-    FederationIdentifier  = "$${user?.getEmail()}"
-    })
-
-  modifyaccountjson = jsonencode({
-    Username             = "$${user?.customproperty16 + \".company\"}"
-    FirstName            = "$${user?.getFirstname()}"
-    LastName             = "$${user?.getLastname()}"
-    FederationIdentifier = "$${user?.customproperty16}"
-    })
-  status_threshold_config = jsonencode({
-    statusAndThresholdConfig = {
-        accountThresholdValue = 100
-        statusColumn          = "customproperty12"
-        activeStatus          = [
-        "true"
-        ]
-        deleteLinks           = true
-        lockedStatusColumn    = "customproperty28"
-        lockedStatusMapping   = {
-        Locked   = ["1"]
-        Unlocked = ["0"]
-        }
-    }
-})
-
-  customconfigjson = jsonencode({
-        disableAccountForRevokeTask = false
-        defaultEntitlementId       = "<entitlement_id>"
-    })
-
+  connection_type       = local.cfg.connection_type
+  connection_name       = local.cfg.connection_name
+  client_id             = local.cfg.client_id
+  redirect_uri          = local.cfg.redirect_uri
+  instance_url          = local.cfg.instance_url
+  object_to_be_imported = local.cfg.object_to_be_imported
+  createaccountjson = jsonencode(local.cfg.createaccountjson)
+  status_threshold_config=jsonencode(local.cfg.status_threshold_config)
 }`,
  os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), connName, objImp,
+		os.Getenv("SAVIYNT_PASSWORD"), 
+    jsonPath, 
+    operation,
 	)
 }
-

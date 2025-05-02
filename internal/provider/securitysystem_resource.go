@@ -6,12 +6,13 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
-	"log"
 
 	"terraform-provider-Saviynt/util"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,44 +22,41 @@ import (
 
 // securitySystemResourceModel defines the state for our security system resource.
 type securitySystemResourceModel struct {
-	ID                                 types.String   `tfsdk:"id"`
-	Systemname                         types.String   `tfsdk:"systemname"`
-	DisplayName                        types.String   `tfsdk:"display_name"`
-	Hostname                           types.String   `tfsdk:"hostname"`
-	Port                               types.String   `tfsdk:"port"`
-	AccessAddWorkflow                  types.String   `tfsdk:"access_add_workflow"`
-	AccessRemoveWorkflow               types.String   `tfsdk:"access_remove_workflow"`
-	AddServiceAccountWorkflow          types.String   `tfsdk:"add_service_account_workflow"`
-	RemoveServiceAccountWorkflow       types.String   `tfsdk:"remove_service_account_workflow"`
-	Connectionparameters               types.String   `tfsdk:"connection_parameters"`
-	AutomatedProvisioning              types.String   `tfsdk:"automated_provisioning"`
-	UseOpenConnector                   types.String   `tfsdk:"use_open_connector"`
-	ReconApplication                   types.String   `tfsdk:"recon_application"`
-	InstantProvision                   types.String   `tfsdk:"instant_provision"`
-	ProvisioningTries                  types.String   `tfsdk:"provisioning_tries"`
-	Provisioningcomments               types.String   `tfsdk:"provisioning_comments"`
-	ProposedAccountOwnersWorkflow      types.String   `tfsdk:"proposed_account_owners_workflow"`
-	FirefighterIDWorkflow              types.String   `tfsdk:"firefighterid_workflow"`
-	FirefighterIDRequestAccessWorkflow types.String   `tfsdk:"firefighterid_request_access_workflow"`
-	PolicyRule                         types.String   `tfsdk:"policy_rule"`
-	PolicyRuleServiceAccount           types.String   `tfsdk:"policy_rule_service_account"`
-	Connectionname                     types.String   `tfsdk:"connectionname"`
-	ProvisioningConnection             types.String   `tfsdk:"provisioning_connection"`
-	ServiceDeskConnection              types.String   `tfsdk:"service_desk_connection"`
-	ExternalRiskConnectionJson         types.String   `tfsdk:"external_risk_connection_json"`
-	InherentSODReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
-	Msg                                types.String   `tfsdk:"msg"`
-	ErrorCode                          types.String   `tfsdk:"error_code"`
+	ID                                 types.String `tfsdk:"id"`
+	Systemname                         types.String `tfsdk:"systemname"`
+	DisplayName                        types.String `tfsdk:"display_name"`
+	Hostname                           types.String `tfsdk:"hostname"`
+	Port                               types.String `tfsdk:"port"`
+	AccessAddWorkflow                  types.String `tfsdk:"access_add_workflow"`
+	AccessRemoveWorkflow               types.String `tfsdk:"access_remove_workflow"`
+	AddServiceAccountWorkflow          types.String `tfsdk:"add_service_account_workflow"`
+	RemoveServiceAccountWorkflow       types.String `tfsdk:"remove_service_account_workflow"`
+	Connectionparameters               types.String `tfsdk:"connection_parameters"`
+	AutomatedProvisioning              types.String `tfsdk:"automated_provisioning"`
+	UseOpenConnector                   types.String `tfsdk:"use_open_connector"`
+	ReconApplication                   types.String `tfsdk:"recon_application"`
+	InstantProvision                   types.String `tfsdk:"instant_provision"`
+	ProvisioningTries                  types.String `tfsdk:"provisioning_tries"`
+	Provisioningcomments               types.String `tfsdk:"provisioning_comments"`
+	ProposedAccountOwnersWorkflow      types.String `tfsdk:"proposed_account_owners_workflow"`
+	FirefighterIDWorkflow              types.String `tfsdk:"firefighterid_workflow"`
+	FirefighterIDRequestAccessWorkflow types.String `tfsdk:"firefighterid_request_access_workflow"`
+	PolicyRule                         types.String `tfsdk:"policy_rule"`
+	PolicyRuleServiceAccount           types.String `tfsdk:"policy_rule_service_account"`
+	Connectionname                     types.String `tfsdk:"connectionname"`
+	ProvisioningConnection             types.String `tfsdk:"provisioning_connection"`
+	ServiceDeskConnection              types.String `tfsdk:"service_desk_connection"`
+	ExternalRiskConnectionJson         types.String `tfsdk:"external_risk_connection_json"`
+	InherentSODReportFields            types.List   `tfsdk:"inherent_sod_report_fields"`
+	Msg                                types.String `tfsdk:"msg"`
+	ErrorCode                          types.String `tfsdk:"error_code"`
 }
 
-// securitySystemResource represents the Security System resource.
 type SecuritySystemResource struct {
 	client *s.Client
 	token  string
 }
 
-// NewSecuritySystemResource returns a new instance of securitySystemResource.
-// After: no parameters
 func NewSecuritySystemResource() resource.Resource {
 	return &SecuritySystemResource{}
 }
@@ -69,10 +67,11 @@ func (r *SecuritySystemResource) Metadata(ctx context.Context, req resource.Meta
 
 func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: util.SecuritySystemDescription,
+		Description: "Create and manage Security Systems in Saviynt",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
+				Sensitive:   true,
 				Description: "The unique ID of the resource.",
 			},
 			"systemname": schema.StringAttribute{
@@ -85,93 +84,116 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 			},
 			"hostname": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Security system for which you want to create an endpoint.",
 			},
 			"port": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Description for the endpoint.",
 			},
 			"access_add_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the workflow to be used for approvals for an access request, which can be for an account, entitlements, role, and so on.",
 			},
 			"access_remove_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the workflow to be used when access has to be revoked, which can be for an account, entitlement, or any other de-provisioning task.",
 			},
 			"add_service_account_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Workflow for adding a service account.",
 			},
 			"remove_service_account_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Workflow for removing a service account.",
 			},
 			"proposed_account_owners_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Query to filter the access and display of the endpoint to specific users. If you do not define a query, the endpoint is displayed for all users",
 			},
 			"firefighterid_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Firefighter ID Workflow.",
 			},
 			"firefighterid_request_access_workflow": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Firefighter ID Request Access Workflow.",
 			},
 			"connection_parameters": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Query to filter the access and display of the endpoint to specific users. If you do not define a query, the endpoint is displayed for all users",
 			},
 			"automated_provisioning": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify true to enable automated provisioning.",
 			},
 			"provisioning_tries": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the number of tries to be used for performing provisioning / de-provisioning to the third-party application. You can specify provisioningTries between 1 to 20 based on your requirement.",
 			},
 			"connectionname": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Select the connection name for performing reconciliation of identity objects from third-party application.",
 			},
 			"provisioning_connection": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "You can use a separate connection to an endpoint where you are performing provisioning or deprovisioning. Based on your requirement, you can specify a separate connection where you want to perform provisioning and de-provisioning.",
 			},
 			"service_desk_connection": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify the Service Desk Connection used for integration with a ticketing system, which can be a disconnected system too.",
 			},
 			"provisioning_comments": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify relevant comments for performing provisioning.",
 			},
 			"policy_rule": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Use this setting to assign the password policy for the security system.",
 			},
 			"policy_rule_service_account": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Use this setting to assign the password policy which will be used to set the service account passwords for the security system.",
 			},
 			"use_open_connector": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify true to enable the connectivity with any system over the open-source connectors such as REST.",
 			},
 			"recon_application": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Specify true to import data from the endpoint associated to the security system.",
 			},
 			"instant_provision": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Use this flag to prevent users from raising duplicate requests for the same applications.",
 			},
 			"external_risk_connection_json": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Contains JSON configuration for external risk connections and is applicable only for a few connections like SAP.",
 			},
 			"inherent_sod_report_fields": schema.ListAttribute{
+				Computed:    true,
 				ElementType: types.StringType,
 				Optional:    true,
 				Description: "You can use this option used to filter out columns in SOD.",
@@ -193,6 +215,7 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 func (r *SecuritySystemResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
+		log.Println("ProviderData is nil, returning early.")
 		return
 	}
 
@@ -210,181 +233,181 @@ func (r *SecuritySystemResource) Configure(ctx context.Context, req resource.Con
 
 func (r *SecuritySystemResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan securitySystemResourceModel
-
-	// Extract the planned state from the request.
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	// Extract plan from request
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
-
-	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-	// Build the create request using mandatory fields.
 	createReq := openapi.CreateSecuritySystemRequest{
+		//required fields
 		Systemname:  plan.Systemname.ValueString(),
 		DisplayName: plan.DisplayName.ValueString(),
-	}
-
-	// Add optional fields if they are not empty
-	if !plan.Hostname.IsNull() && plan.Hostname.ValueString() != "" {
-		createReq.SetHostname(plan.Hostname.ValueString())
-	}
-	if !plan.Port.IsNull() && plan.Port.ValueString() != "" {
-		createReq.SetPort(plan.Port.ValueString())
-	}
-	if !plan.AccessAddWorkflow.IsNull() && plan.AccessAddWorkflow.ValueString() != "" {
-		createReq.SetAccessAddWorkflow(plan.AccessAddWorkflow.ValueString())
-	}
-	if !plan.AccessRemoveWorkflow.IsNull() && plan.AccessRemoveWorkflow.ValueString() != "" {
-		createReq.SetAccessRemoveWorkflow(plan.AccessRemoveWorkflow.ValueString())
-	}
-	if !plan.AddServiceAccountWorkflow.IsNull() && plan.AddServiceAccountWorkflow.ValueString() != "" {
-		createReq.SetAddServiceAccountWorkflow(plan.AddServiceAccountWorkflow.ValueString())
-	}
-	if !plan.RemoveServiceAccountWorkflow.IsNull() && plan.RemoveServiceAccountWorkflow.ValueString() != "" {
-		createReq.SetRemoveServiceAccountWorkflow(plan.RemoveServiceAccountWorkflow.ValueString())
-	}
-	if !plan.Connectionparameters.IsNull() && plan.Connectionparameters.ValueString() != "" {
-		createReq.SetConnectionparameters(plan.Connectionparameters.ValueString())
-	}
-	if !plan.AutomatedProvisioning.IsNull() && plan.AutomatedProvisioning.ValueString() != "" {
-		createReq.SetAutomatedProvisioning(plan.AutomatedProvisioning.ValueString())
-	}
-	if !plan.UseOpenConnector.IsNull() && plan.UseOpenConnector.ValueString() != "" {
-		createReq.SetUseopenconnector(plan.UseOpenConnector.ValueString())
-	}
-	if !plan.ReconApplication.IsNull() && plan.ReconApplication.ValueString() != "" {
-		createReq.SetReconApplication(plan.ReconApplication.ValueString())
-	}
-	if !plan.InstantProvision.IsNull() && plan.InstantProvision.ValueString() != "" {
-		createReq.SetInstantprovision(plan.InstantProvision.ValueString())
-	}
-	if !plan.ProvisioningTries.IsNull() && plan.ProvisioningTries.ValueString() != "" {
-		createReq.SetProvisioningTries(plan.ProvisioningTries.ValueString())
-	}
-	if !plan.Provisioningcomments.IsNull() && plan.Provisioningcomments.ValueString() != "" {
-		createReq.SetProvisioningcomments(plan.Provisioningcomments.ValueString())
+		//optional fields
+		Hostname:                     util.StringPointerOrEmpty(plan.Hostname),
+		Port:                         util.StringPointerOrEmpty(plan.Port),
+		AccessAddWorkflow:            util.StringPointerOrEmpty(plan.AccessAddWorkflow),
+		AccessRemoveWorkflow:         util.StringPointerOrEmpty(plan.AccessRemoveWorkflow),
+		AddServiceAccountWorkflow:    util.StringPointerOrEmpty(plan.AddServiceAccountWorkflow),
+		RemoveServiceAccountWorkflow: util.StringPointerOrEmpty(plan.RemoveServiceAccountWorkflow),
+		Connectionparameters:         util.StringPointerOrEmpty(plan.Connectionparameters),
+		AutomatedProvisioning:        util.StringPointerOrEmpty(plan.AutomatedProvisioning),
+		Useopenconnector:             util.StringPointerOrEmpty(plan.UseOpenConnector),
+		ReconApplication:             util.StringPointerOrEmpty(plan.ReconApplication),
+		Instantprovision:             util.StringPointerOrEmpty(plan.InstantProvision),
+		ProvisioningTries:            util.StringPointerOrEmpty(plan.ProvisioningTries),
+		Provisioningcomments:         util.StringPointerOrEmpty(plan.Provisioningcomments),
 	}
 	// Execute the API call.
-	apiResp, httpResp, err := apiClient.SecuritySystemsAPI.CreateSecuritySystem(ctx).
-		CreateSecuritySystemRequest(createReq).
-		Execute()
-
-	if err != nil {
+	apiResp, _, err := apiClient.SecuritySystemsAPI.CreateSecuritySystem(ctx).CreateSecuritySystemRequest(createReq).Execute()
+	// Check if already exists error
+	if *apiResp.ErrorCode == "1" && strings.Contains(strings.ToLower(util.SafeDeref(apiResp.Msg)), "already exists") {
+		message := fmt.Sprintf("Security System %s already exists. Import the existing resource into Terraform state.", plan.Systemname.ValueString())
 		resp.Diagnostics.AddError(
-			"Error Creating Security System",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
+			"Security System Already Exists",
+			message,
 		)
 		return
 	}
+	// If some other error
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		return
+	}
+	updateReq := openapi.UpdateSecuritySystemRequest{
+		//required fields
+		Systemname:  plan.Systemname.ValueString(),
+		DisplayName: plan.DisplayName.ValueString(),
+		//optional fields
+		Hostname:                           util.StringPointerOrEmpty(plan.Hostname),
+		Port:                               util.StringPointerOrEmpty(plan.Port),
+		AccessAddWorkflow:                  util.StringPointerOrEmpty(plan.AccessAddWorkflow),
+		AccessRemoveWorkflow:               util.StringPointerOrEmpty(plan.AccessRemoveWorkflow),
+		AddServiceAccountWorkflow:          util.StringPointerOrEmpty(plan.AddServiceAccountWorkflow),
+		RemoveServiceAccountWorkflow:       util.StringPointerOrEmpty(plan.RemoveServiceAccountWorkflow),
+		Connectionparameters:               util.StringPointerOrEmpty(plan.Connectionparameters),
+		AutomatedProvisioning:              util.StringPointerOrEmpty(plan.AutomatedProvisioning),
+		Useopenconnector:                   util.StringPointerOrEmpty(plan.UseOpenConnector),
+		ReconApplication:                   util.StringPointerOrEmpty(plan.ReconApplication),
+		Instantprovision:                   util.StringPointerOrEmpty(plan.InstantProvision),
+		ProvisioningTries:                  util.StringPointerOrEmpty(plan.ProvisioningTries),
+		Provisioningcomments:               util.StringPointerOrEmpty(plan.Provisioningcomments),
+		ProposedAccountOwnersworkflow:      util.StringPointerOrEmpty(plan.ProposedAccountOwnersWorkflow),
+		FirefighteridWorkflow:              util.StringPointerOrEmpty(plan.FirefighterIDWorkflow),
+		FirefighteridRequestAccessWorkflow: util.StringPointerOrEmpty(plan.FirefighterIDRequestAccessWorkflow),
+		PolicyRule:                         util.StringPointerOrEmpty(plan.PolicyRule),
+		PolicyRuleServiceAccount:           util.StringPointerOrEmpty(plan.PolicyRuleServiceAccount),
+		Connectionname:                     util.StringPointerOrEmpty(plan.Connectionname),
+		ProvisioningConnection:             util.StringPointerOrEmpty(plan.ProvisioningConnection),
+		ServiceDeskConnection:              util.StringPointerOrEmpty(plan.ServiceDeskConnection),
+		ExternalRiskConnectionJson:         util.StringPointerOrEmpty(plan.ExternalRiskConnectionJson),
+		InherentSODReportFields:            util.ConvertTFStringsToGoStrings(plan.InherentSODReportFields),
+	}
+	// Execute the update API call.
+	_, _, _ = apiClient.SecuritySystemsAPI.UpdateSecuritySystem(ctx).UpdateSecuritySystemRequest(updateReq).Execute()
 
 	// Set the resource ID and store the API response in state.
 	plan.ID = types.StringValue("security-system-" + plan.Systemname.ValueString())
+	if plan.UseOpenConnector.IsNull() || plan.UseOpenConnector.IsUnknown() || plan.UseOpenConnector.ValueString() == "" {
+		plan.UseOpenConnector = types.StringValue("false")
+	}
 
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
+	if plan.ReconApplication.IsNull() || plan.ReconApplication.IsUnknown() || plan.ReconApplication.ValueString() == "" {
+		plan.ReconApplication = types.StringValue("true")
+	}
 
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	if plan.InstantProvision.IsNull() || plan.InstantProvision.IsUnknown() || plan.InstantProvision.ValueString() == "" {
+		plan.InstantProvision = types.StringValue("false")
+	}
+
+	plan.Hostname = util.SafeString(plan.Hostname.ValueStringPointer())
+	plan.Port = util.SafeString(plan.Port.ValueStringPointer())
+	plan.ProvisioningTries = util.SafeString(plan.ProvisioningTries.ValueStringPointer())
+	plan.Connectionparameters = util.SafeString(plan.Connectionparameters.ValueStringPointer())
+	plan.AccessAddWorkflow = util.SafeString(plan.AccessAddWorkflow.ValueStringPointer())
+	plan.Provisioningcomments = util.SafeString(plan.Provisioningcomments.ValueStringPointer())
+	plan.AccessRemoveWorkflow = util.SafeString(plan.AccessRemoveWorkflow.ValueStringPointer())
+	plan.AddServiceAccountWorkflow = util.SafeString(plan.AddServiceAccountWorkflow.ValueStringPointer())
+	plan.RemoveServiceAccountWorkflow = util.SafeString(plan.RemoveServiceAccountWorkflow.ValueStringPointer())
+	plan.ProposedAccountOwnersWorkflow = util.SafeString(plan.ProposedAccountOwnersWorkflow.ValueStringPointer())
+	plan.AutomatedProvisioning = util.SafeString(plan.AutomatedProvisioning.ValueStringPointer())
+	plan.FirefighterIDWorkflow = util.SafeString(plan.FirefighterIDWorkflow.ValueStringPointer())
+	plan.FirefighterIDRequestAccessWorkflow = util.SafeString(plan.FirefighterIDRequestAccessWorkflow.ValueStringPointer())
+	plan.Connectionname = util.SafeString(plan.Connectionname.ValueStringPointer())
+	plan.ProvisioningConnection = util.SafeString(plan.ProvisioningConnection.ValueStringPointer())
+	plan.ServiceDeskConnection = util.SafeString(plan.ServiceDeskConnection.ValueStringPointer())
+	plan.PolicyRule = util.SafeString(plan.PolicyRule.ValueStringPointer())
+	plan.PolicyRuleServiceAccount = util.SafeString(plan.PolicyRuleServiceAccount.ValueStringPointer())
+	plan.ExternalRiskConnectionJson = util.SafeString(plan.ExternalRiskConnectionJson.ValueStringPointer())
+	plan.InherentSODReportFields = util.NormalizeTFListString(plan.InherentSODReportFields)
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state securitySystemResourceModel
 
-	// Load current state from Terraform
-	diags := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Initialize API client configuration
+	// Configure API client
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	cfg.Host = strings.TrimPrefix(apiBaseURL, "https://")
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
+	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
 
 	apiClient := openapi.NewAPIClient(cfg)
-
-	// Fetch current details of the security system using the unique identifier
-	apiResp, httpResp, err := apiClient.SecuritySystemsAPI.GetSecuritySystems(ctx).Systemname(state.Systemname.ValueString()).Execute()
+	apiResp, _, err := apiClient.SecuritySystemsAPI.GetSecuritySystems(ctx).Systemname(state.Systemname.ValueString()).Execute()
 	if err != nil {
-		// Handle 404: resource no longer exists, remove from state
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.State.RemoveResource(ctx)
-			return
-		}
-		resp.Diagnostics.AddError("Error Reading Security System", err.Error())
+		log.Printf("Problem with the get function in read block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	var foundItem *openapi.GetSecuritySystems200ResponseSecuritySystemDetailsInner
-	for _, item := range apiResp.SecuritySystemDetails {
-		if item.Systemname != nil && *item.Systemname == state.Systemname.ValueString() {
-			foundItem = &item
-			break
-		}
-	}
-
-	if foundItem == nil {
-		resp.State.RemoveResource(ctx)
+	state.ID = types.StringValue("security-system-" + *apiResp.SecuritySystemDetails[0].Systemname)
+	state.DisplayName = types.StringValue(util.SafeDeref(apiResp.SecuritySystemDetails[0].DisplayName))
+	state.Hostname = util.SafeString(apiResp.SecuritySystemDetails[0].Hostname)
+	state.Port = util.SafeString(apiResp.SecuritySystemDetails[0].Port)
+	state.AccessAddWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].AccessAddWorkflow)
+	state.AccessRemoveWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].AccessRemoveWorkflow)
+	state.AddServiceAccountWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].AddServiceAccountWorkflow)
+	state.RemoveServiceAccountWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].RemoveServiceAccountWorkflow)
+	state.Connectionparameters = util.SafeString(apiResp.SecuritySystemDetails[0].Connectionparameters)
+	state.AutomatedProvisioning = util.SafeString(apiResp.SecuritySystemDetails[0].AutomatedProvisioning)
+	state.UseOpenConnector = util.SafeString(apiResp.SecuritySystemDetails[0].Useopenconnector)
+	state.ReconApplication = util.SafeString(apiResp.SecuritySystemDetails[0].ReconApplication)
+	state.InstantProvision = util.SafeString(apiResp.SecuritySystemDetails[0].Instantprovision)
+	state.ProvisioningTries = util.SafeString(apiResp.SecuritySystemDetails[0].ProvisioningTries)
+	state.Provisioningcomments = util.SafeString(apiResp.SecuritySystemDetails[0].Provisioningcomments)
+	state.ProposedAccountOwnersWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].ProposedAccountOwnersworkflow)
+	state.FirefighterIDWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].FirefighteridWorkflow)
+	state.FirefighterIDRequestAccessWorkflow = util.SafeString(apiResp.SecuritySystemDetails[0].FirefighteridRequestAccessWorkflow)
+	state.PolicyRule = util.SafeString(apiResp.SecuritySystemDetails[0].PolicyRule)
+	state.PolicyRuleServiceAccount = util.SafeString(apiResp.SecuritySystemDetails[0].PolicyRuleServiceAccount)
+	state.Connectionname = util.SafeString(apiResp.SecuritySystemDetails[0].Connection)
+	state.ProvisioningConnection = util.SafeString(apiResp.SecuritySystemDetails[0].ProvisioningConnection)
+	state.ServiceDeskConnection = util.SafeString(apiResp.SecuritySystemDetails[0].ServiceDeskConnection)
+	state.ExternalRiskConnectionJson = util.SafeString(apiResp.SecuritySystemDetails[0].ExternalRiskConnectionJson)
+	state.InherentSODReportFields = util.ConvertStringsToTFListString(apiResp.SecuritySystemDetails[0].InherentSODReportFields)
+	state.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	state.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	stateDiagnostics := resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(stateDiagnostics...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	// Update state with the found item
-	state.ID = types.StringValue("security-system-" + state.Systemname.ValueString())
-	state.DisplayName = types.StringValue(util.SafeDeref(foundItem.DisplayName))
-	state.Hostname = types.StringValue(util.SafeDeref(foundItem.Hostname))
-	state.Port = types.StringValue(util.SafeDeref(foundItem.Port))
-	state.AccessAddWorkflow = types.StringValue(util.SafeDeref(foundItem.AccessAddWorkflow))
-	state.AccessRemoveWorkflow = types.StringValue(util.SafeDeref(foundItem.AccessRemoveWorkflow))
-	state.AddServiceAccountWorkflow = types.StringValue(util.SafeDeref(foundItem.AddServiceAccountWorkflow))
-	state.RemoveServiceAccountWorkflow = types.StringValue(util.SafeDeref(foundItem.RemoveServiceAccountWorkflow))
-	state.Connectionparameters = types.StringValue(util.SafeDeref(foundItem.Connectionparameters))
-	state.AutomatedProvisioning = types.StringValue(util.SafeDeref(foundItem.AutomatedProvisioning))
-	state.UseOpenConnector = types.StringValue(util.SafeDeref(foundItem.Useopenconnector))
-	state.ReconApplication = types.StringValue(util.SafeDeref(foundItem.ReconApplication))
-	state.InstantProvision = types.StringValue(util.SafeDeref(foundItem.Instantprovision))
-	state.ProvisioningTries = types.StringValue(util.SafeDeref(foundItem.ProvisioningTries))
-	state.Provisioningcomments = types.StringValue(util.SafeDeref(foundItem.Provisioningcomments))
-	state.ProposedAccountOwnersWorkflow = types.StringValue(util.SafeDeref(foundItem.ProposedAccountOwnersworkflow))
-	state.FirefighterIDWorkflow = types.StringValue(util.SafeDeref(foundItem.FirefighteridWorkflow))
-	state.FirefighterIDRequestAccessWorkflow = types.StringValue(util.SafeDeref(foundItem.FirefighteridRequestAccessWorkflow))
-	state.PolicyRule = types.StringValue(util.SafeDeref(foundItem.PolicyRule))
-	state.PolicyRuleServiceAccount = types.StringValue(util.SafeDeref(foundItem.PolicyRuleServiceAccount))
-	state.Connectionname = types.StringValue(util.SafeDeref(foundItem.Connectionname))
-	state.ProvisioningConnection = types.StringValue(util.SafeDeref(foundItem.ProvisioningConnection))
-	state.ServiceDeskConnection = types.StringValue(util.SafeDeref(foundItem.ServiceDeskConnection))
-	state.ExternalRiskConnectionJson = types.StringValue(util.SafeDeref(foundItem.ExternalRiskConnectionJson))
-
-	// Handle list attributes
-	state.InherentSODReportFields = util.ConvertStringsToTypesString(foundItem.InherentSODReportFields)
-
-	// Optional: Save response as debug info
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	state.Msg = types.StringValue(msgValue)
-	state.ErrorCode = types.StringValue(errorCodeValue)
-	diags = resp.State.Set(ctx, &state)
-	resp.Diagnostics.Append(diags...)
 }
 func (r *SecuritySystemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan securitySystemResourceModel
@@ -394,7 +417,7 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	
+
 	// Extract the desired state from the request.
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
@@ -402,133 +425,98 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	if plan.Systemname.ValueString()!=state.Systemname.ValueString(){
-		resp.Diagnostics.AddError("Error", "System name cannot by updated")
-		log.Printf("[ERROR]: System name cannot by updated")
+	if plan.Systemname.ValueString() != state.Systemname.ValueString() {
+		resp.Diagnostics.AddError("Error", "System name cannot be updated")
+		log.Printf("[ERROR]: System name cannot be updated")
 		return
 	}
 
 	// Initialize OpenAPI Client Configuration.
 	cfg := openapi.NewConfiguration()
-	apiBaseURL := r.client.APIBaseURL()
-	if strings.HasPrefix(apiBaseURL, "https://") {
-		apiBaseURL = strings.TrimPrefix(apiBaseURL, "https://")
-	}
+	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
-	// Initialize API client
 	apiClient := openapi.NewAPIClient(cfg)
-
-	// Build the update request using the required systemname.
 	updateReq := openapi.UpdateSecuritySystemRequest{
+		//required fields
 		Systemname:  plan.Systemname.ValueString(),
 		DisplayName: plan.DisplayName.ValueString(),
-	}
-
-	// Optional fields: set only if provided.
-	if !plan.Hostname.IsNull() && plan.Hostname.ValueString() != "" {
-		updateReq.SetHostname(plan.Hostname.ValueString())
-	}
-	if !plan.Port.IsNull() && plan.Port.ValueString() != "" {
-		updateReq.SetPort(plan.Port.ValueString())
-	}
-	if !plan.AccessAddWorkflow.IsNull() && plan.AccessAddWorkflow.ValueString() != "" {
-		updateReq.SetAccessAddWorkflow(plan.AccessAddWorkflow.ValueString())
-	}
-	if !plan.AccessRemoveWorkflow.IsNull() && plan.AccessRemoveWorkflow.ValueString() != "" {
-		updateReq.SetAccessRemoveWorkflow(plan.AccessRemoveWorkflow.ValueString())
-	}
-	if !plan.AddServiceAccountWorkflow.IsNull() && plan.AddServiceAccountWorkflow.ValueString() != "" {
-		updateReq.SetAddServiceAccountWorkflow(plan.AddServiceAccountWorkflow.ValueString())
-	}
-	if !plan.RemoveServiceAccountWorkflow.IsNull() && plan.RemoveServiceAccountWorkflow.ValueString() != "" {
-		updateReq.SetRemoveServiceAccountWorkflow(plan.RemoveServiceAccountWorkflow.ValueString())
-	}
-	if !plan.Connectionparameters.IsNull() && plan.Connectionparameters.ValueString() != "" {
-		updateReq.SetConnectionparameters(plan.Connectionparameters.ValueString())
-	}
-	if !plan.AutomatedProvisioning.IsNull() && plan.AutomatedProvisioning.ValueString() != "" {
-		updateReq.SetAutomatedProvisioning(plan.AutomatedProvisioning.ValueString())
-	}
-	if !plan.UseOpenConnector.IsNull() && plan.UseOpenConnector.ValueString() != "" {
-		updateReq.SetUseopenconnector(plan.UseOpenConnector.ValueString())
-	}
-	if !plan.ReconApplication.IsNull() && plan.ReconApplication.ValueString() != "" {
-		updateReq.SetReconApplication(plan.ReconApplication.ValueString())
-	}
-	if !plan.InstantProvision.IsNull() && plan.InstantProvision.ValueString() != "" {
-		updateReq.SetInstantprovision(plan.InstantProvision.ValueString())
-	}
-	if !plan.ProvisioningTries.IsNull() && plan.ProvisioningTries.ValueString() != "" {
-		updateReq.SetProvisioningTries(plan.ProvisioningTries.ValueString())
-	}
-	if !plan.Provisioningcomments.IsNull() && plan.Provisioningcomments.ValueString() != "" {
-		updateReq.SetProvisioningcomments(plan.Provisioningcomments.ValueString())
-	}
-	if !plan.ProposedAccountOwnersWorkflow.IsNull() && plan.ProposedAccountOwnersWorkflow.ValueString() != "" {
-		updateReq.SetProposedAccountOwnersworkflow(plan.ProposedAccountOwnersWorkflow.ValueString())
-	}
-	if !plan.FirefighterIDWorkflow.IsNull() && plan.FirefighterIDWorkflow.ValueString() != "" {
-		updateReq.SetFirefighteridWorkflow(plan.FirefighterIDWorkflow.ValueString())
-	}
-	if !plan.FirefighterIDRequestAccessWorkflow.IsNull() && plan.FirefighterIDRequestAccessWorkflow.ValueString() != "" {
-		updateReq.SetFirefighteridRequestAccessWorkflow(plan.FirefighterIDRequestAccessWorkflow.ValueString())
-	}
-	if !plan.PolicyRule.IsNull() && plan.PolicyRule.ValueString() != "" {
-		updateReq.SetPolicyRule(plan.PolicyRule.ValueString())
-	}
-	if !plan.PolicyRuleServiceAccount.IsNull() && plan.PolicyRuleServiceAccount.ValueString() != "" {
-		updateReq.SetPolicyRuleServiceAccount(plan.PolicyRuleServiceAccount.ValueString())
-	}
-	if !plan.Connectionname.IsNull() && plan.Connectionname.ValueString() != "" {
-		updateReq.SetConnectionname(plan.Connectionname.ValueString())
-	}
-	if !plan.ProvisioningConnection.IsNull() && plan.ProvisioningConnection.ValueString() != "" {
-		updateReq.SetProvisioningConnection(plan.ProvisioningConnection.ValueString())
-	}
-	if !plan.ServiceDeskConnection.IsNull() && plan.ServiceDeskConnection.ValueString() != "" {
-		updateReq.SetServiceDeskConnection(plan.ServiceDeskConnection.ValueString())
-	}
-	if !plan.ExternalRiskConnectionJson.IsNull() && plan.ExternalRiskConnectionJson.ValueString() != "" {
-		updateReq.SetExternalRiskConnectionJson(plan.ExternalRiskConnectionJson.ValueString())
-	}
-	if len(plan.InherentSODReportFields) > 0 {
-		inherentFields := util.ConvertTypesStringToStrings_SecuritySystem(plan.InherentSODReportFields)
-		updateReq.SetInherentSODReportFields(inherentFields)
+		//optional fields
+		Hostname:                           util.StringPointerOrEmpty(plan.Hostname),
+		Port:                               util.StringPointerOrEmpty(plan.Port),
+		AccessAddWorkflow:                  util.StringPointerOrEmpty(plan.AccessAddWorkflow),
+		AccessRemoveWorkflow:               util.StringPointerOrEmpty(plan.AccessRemoveWorkflow),
+		AddServiceAccountWorkflow:          util.StringPointerOrEmpty(plan.AddServiceAccountWorkflow),
+		RemoveServiceAccountWorkflow:       util.StringPointerOrEmpty(plan.RemoveServiceAccountWorkflow),
+		Connectionparameters:               util.StringPointerOrEmpty(plan.Connectionparameters),
+		AutomatedProvisioning:              util.StringPointerOrEmpty(plan.AutomatedProvisioning),
+		Useopenconnector:                   util.StringPointerOrEmpty(plan.UseOpenConnector),
+		ReconApplication:                   util.StringPointerOrEmpty(plan.ReconApplication),
+		Instantprovision:                   util.StringPointerOrEmpty(plan.InstantProvision),
+		ProvisioningTries:                  util.StringPointerOrEmpty(plan.ProvisioningTries),
+		Provisioningcomments:               util.StringPointerOrEmpty(plan.Provisioningcomments),
+		ProposedAccountOwnersworkflow:      util.StringPointerOrEmpty(plan.ProposedAccountOwnersWorkflow),
+		FirefighteridWorkflow:              util.StringPointerOrEmpty(plan.FirefighterIDWorkflow),
+		FirefighteridRequestAccessWorkflow: util.StringPointerOrEmpty(plan.FirefighterIDRequestAccessWorkflow),
+		PolicyRule:                         util.StringPointerOrEmpty(plan.PolicyRule),
+		PolicyRuleServiceAccount:           util.StringPointerOrEmpty(plan.PolicyRuleServiceAccount),
+		Connectionname:                     util.StringPointerOrEmpty(plan.Connectionname),
+		ProvisioningConnection:             util.StringPointerOrEmpty(plan.ProvisioningConnection),
+		ServiceDeskConnection:              util.StringPointerOrEmpty(plan.ServiceDeskConnection),
+		ExternalRiskConnectionJson:         util.StringPointerOrEmpty(plan.ExternalRiskConnectionJson),
+		InherentSODReportFields:            util.ConvertTFStringsToGoStrings(plan.InherentSODReportFields),
 	}
 	// Execute the update API call.
-	apiResp, httpResp, err := apiClient.SecuritySystemsAPI.
-		UpdateSecuritySystem(ctx).
-		UpdateSecuritySystemRequest(updateReq).
-		Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Updating Security System",
-			fmt.Sprintf("Error: %v\nHTTP Response: %v", err, httpResp),
-		)
+	apiResp, _, err := apiClient.SecuritySystemsAPI.UpdateSecuritySystem(ctx).UpdateSecuritySystemRequest(updateReq).Execute()
+	if err != nil || *apiResp.ErrorCode != "0" {
+		log.Printf("Problem with the update function")
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-
-	// Ensure the resource ID is preserved.
-	if plan.ID.IsUnknown() || plan.ID.IsNull() {
-		plan.ID = types.StringValue("security-system-" + plan.Systemname.ValueString())
+	getResp, _, err := apiClient.SecuritySystemsAPI.GetSecuritySystems(ctx).Systemname(plan.Systemname.ValueString()).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in update block")
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		return
 	}
-
-	// Update the state with the API response.
-	msgValue := util.SafeDeref(apiResp.Msg)
-	errorCodeValue := util.SafeDeref(apiResp.ErrorCode)
-
-	// Set the individual fields
-	plan.Msg = types.StringValue(msgValue)
-	plan.ErrorCode = types.StringValue(errorCodeValue)
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	plan.ID = types.StringValue("security-system-" + *getResp.SecuritySystemDetails[0].Systemname)
+	plan.DisplayName = types.StringValue(util.SafeDeref(getResp.SecuritySystemDetails[0].DisplayName))
+	plan.Hostname = util.SafeString(getResp.SecuritySystemDetails[0].Hostname)
+	plan.Port = util.SafeString(getResp.SecuritySystemDetails[0].Port)
+	plan.AccessAddWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].AccessAddWorkflow)
+	plan.AccessRemoveWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].AccessRemoveWorkflow)
+	plan.AddServiceAccountWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].AddServiceAccountWorkflow)
+	plan.RemoveServiceAccountWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].RemoveServiceAccountWorkflow)
+	plan.Connectionparameters = util.SafeString(getResp.SecuritySystemDetails[0].Connectionparameters)
+	plan.AutomatedProvisioning = util.SafeString(getResp.SecuritySystemDetails[0].AutomatedProvisioning)
+	plan.UseOpenConnector = util.SafeString(getResp.SecuritySystemDetails[0].Useopenconnector)
+	plan.ReconApplication = util.SafeString(getResp.SecuritySystemDetails[0].ReconApplication)
+	plan.InstantProvision = util.SafeString(getResp.SecuritySystemDetails[0].Instantprovision)
+	plan.ProvisioningTries = util.SafeString(getResp.SecuritySystemDetails[0].ProvisioningTries)
+	plan.Provisioningcomments = util.SafeString(getResp.SecuritySystemDetails[0].Provisioningcomments)
+	plan.ProposedAccountOwnersWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].ProposedAccountOwnersworkflow)
+	plan.FirefighterIDWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].FirefighteridWorkflow)
+	plan.FirefighterIDRequestAccessWorkflow = util.SafeString(getResp.SecuritySystemDetails[0].FirefighteridRequestAccessWorkflow)
+	plan.PolicyRule = util.SafeString(getResp.SecuritySystemDetails[0].PolicyRule)
+	plan.PolicyRuleServiceAccount = util.SafeString(getResp.SecuritySystemDetails[0].PolicyRuleServiceAccount)
+	plan.Connectionname = util.SafeString(getResp.SecuritySystemDetails[0].Connection)
+	plan.ProvisioningConnection = util.SafeString(getResp.SecuritySystemDetails[0].ProvisioningConnection)
+	plan.ServiceDeskConnection = util.SafeString(getResp.SecuritySystemDetails[0].ServiceDeskConnection)
+	plan.ExternalRiskConnectionJson = util.SafeString(getResp.SecuritySystemDetails[0].ExternalRiskConnectionJson)
+	plan.InherentSODReportFields = util.ConvertStringsToTFListString(getResp.SecuritySystemDetails[0].InherentSODReportFields)
+	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
+	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
+	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
+	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 
 func (r *SecuritySystemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	// If deletion is supported by the API, call the corresponding API endpoint.
-	// Otherwise, remove the resource from state.
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *SecuritySystemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("systemname"), req, resp)
 }

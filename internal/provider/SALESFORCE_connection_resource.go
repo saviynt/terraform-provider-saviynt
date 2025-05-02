@@ -230,6 +230,20 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	// reqParams.SetConnectionkey(state.ConnectionKey.String())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+	}
+	if existingResource != nil && existingResource.SalesforceConnectionResponse != nil && existingResource.SalesforceConnectionResponse.Errorcode != nil && *existingResource.SalesforceConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
 	salesforceConn := openapi.SalesforceConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required fields
@@ -264,9 +278,6 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 	salesforceConnRequest := openapi.CreateOrUpdateRequest{
 		SalesforceConnector: &salesforceConn,
 	}
-
-	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
 
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(salesforceConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {

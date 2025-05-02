@@ -6,14 +6,10 @@ package util
 
 import (
 	"encoding/json"
+	"os"
 	"sort"
 	"strconv"
-	"os"
-	"math/rand"
-	"time"
-	"encoding/csv"
-	"fmt"
-	"strings"
+	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -218,53 +214,43 @@ func Int32PtrToTFString(val *int32) types.String {
 	return types.StringNull()
 }
 
-func ConvertTypesStringToStrings_SecuritySystem(input []types.String) []string {
-	var result []string
-	for _, s := range input {
-		if !s.IsNull() && !s.IsUnknown() {
-			result = append(result, s.ValueString())
-		} else {
-			result = append(result, "")
+func LoadConnectorData(t *testing.T, filePath, scenario string) map[string]string {
+	// Load base JSON file
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		t.Fatalf("failed to read test config file: %v", err)
+	}
+	var allData map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &allData); err != nil {
+		t.Fatalf("failed to unmarshal test config: %v", err)
+	}
+	// Select create or update based on the scenario
+	secrets, exists := allData[scenario]
+	if !exists {
+		t.Fatalf("scenario '%s' not found in config", scenario)
+	}
+	result := make(map[string]string)
+	for key, value := range secrets {
+		switch v := value.(type) {
+		case string:
+			// Keep plain strings as-is
+			result[key] = v
+		default:
+			// Marshal complex/nested structures to JSON strings
+			jsonValue, err := json.Marshal(value)
+			if err != nil {
+				t.Fatalf("failed to marshal value for key %s: %v", key, err)
+			}
+			result[key] = string(jsonValue)
 		}
 	}
 	return result
 }
 
-func GenerateRandomName(resourceType string) string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	suffix := r.Intn(999999)
-	normalized := strings.ToLower(strings.ReplaceAll(resourceType, " ", "_"))
-	return fmt.Sprintf("%s_%d", normalized, suffix)
-}
-
-type ConnectorSecrets map[string]map[string]string
-
-func LoadAllConnectorSecrets(filePath string) (ConnectorSecrets, error) {
-	file, err := os.Open(filePath)
+func MustMarshal(t *testing.T, v interface{}) string {
+	b, err := json.Marshal(v)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open secrets file: %w", err)
+		t.Fatalf("failed to marshal JSON for check: %v", err)
 	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read secrets file: %w", err)
-	}
-
-	secrets := make(ConnectorSecrets)
-
-	// Skip header
-	for _, row := range records[1:] {
-		connector := row[0]
-		key := row[1]
-		value := row[2]
-
-		if _, exists := secrets[connector]; !exists {
-			secrets[connector] = make(map[string]string)
-		}
-		secrets[connector][key] = value
-	}
-
-	return secrets, nil
+	return string(b)
 }
