@@ -63,7 +63,7 @@ func TestAccSaviyntSecuritySystemResource(t *testing.T) {
 	}
 
 	for _, row := range testData {
-		resourceName := "saviynt_security_system_resource." + row.Systemname
+		resourceName := "saviynt_security_system_resource." + row.DisplayName
 
 		t.Run(row.Systemname, func(t *testing.T) {
 			updatedConfig, updatedRow := generateSecuritySystemWithNewValue(row)
