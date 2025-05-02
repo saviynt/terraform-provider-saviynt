@@ -61,15 +61,6 @@ type RESTConnectionAttributes struct {
 	ConnectionJSON           types.String            `tfsdk:"connection_json"`
 }
 
-// type RESTConnectionAttributesConnectionTimeoutConfig struct {
-// 	RetryWait               types.Int64 `tfsdk:"retry_wait"`
-// 	TokenRefreshMaxTryCount types.Int64 `tfsdk:"token_refresh_max_try_count"`
-// 	RetryWaitMaxValue       types.Int64 `tfsdk:"retry_wait_max_value"`
-// 	RetryCount              types.Int64 `tfsdk:"retry_count"`
-// 	ReadTimeout             types.Int64 `tfsdk:"read_timeout"`
-// 	ConnectionTimeout       types.Int64 `tfsdk:"connection_timeout"`
-// }
-
 var _ datasource.DataSource = &RESTConnectionsDataSource{}
 
 func NewRESTConnectionsDataSource() datasource.DataSource {
@@ -82,7 +73,7 @@ func (d *RESTConnectionsDataSource) Metadata(ctx context.Context, req datasource
 
 func (d *RESTConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Retrieve the details of a REST connector by its name or key",
+		Description: util.RestConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,

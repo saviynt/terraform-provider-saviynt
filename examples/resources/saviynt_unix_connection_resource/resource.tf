@@ -14,12 +14,12 @@ provider "saviynt" {
 }
 
 resource "saviynt_unix_connection_resource" "example" {
-  connection_type                = "Unix"
-  connection_name                = "Terraform_Unix_Connector"
-  host_name     = "unix.example.com"
-  port_number   = "22"
-  username      = "provision_user"
-  password      = "SuperSecretPassword123!"
+  connection_type = "Unix"
+  connection_name = "Terraform_Unix_Connector"
+  host_name       = "unix.example.com"
+  port_number     = "22"
+  username        = "provision_user"
+  password        = "SuperSecretPassword123!"
 
   groups_file   = "/etc/group"
   accounts_file = "/etc/passwd"
@@ -70,9 +70,9 @@ resource "saviynt_unix_connection_resource" "example" {
   })
 
   custom_config_json = jsonencode({
-    shell_type   = "bash"
-    timeout      = 30
-    retryPolicy  = {
+    shell_type = "bash"
+    timeout    = 30
+    retryPolicy = {
       maxAttempts = 3
       backoff     = "linear"
     }

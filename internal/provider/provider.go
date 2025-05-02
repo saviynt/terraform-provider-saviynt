@@ -7,6 +7,7 @@ import (
 	"context"
 	"log"
 	"strings"
+	"terraform-provider-Saviynt/util"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -52,7 +53,7 @@ func (p *saviyntProvider) Metadata(_ context.Context, _ provider.MetadataRequest
 
 func (p *saviyntProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Interact with the Saviynt ECM",
+		Description: util.ProviderDescription,
 		Attributes: map[string]schema.Attribute{
 			"server_url": schema.StringAttribute{
 				Required:    true,

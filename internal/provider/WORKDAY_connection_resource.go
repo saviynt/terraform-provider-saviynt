@@ -80,7 +80,7 @@ func (r *workdayConnectionResource) Metadata(ctx context.Context, req resource.M
 
 func (r *workdayConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage Workday Connections",
+		Description: util.WorkdayConnDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

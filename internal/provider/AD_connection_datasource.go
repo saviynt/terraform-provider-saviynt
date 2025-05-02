@@ -48,70 +48,70 @@ type ADConnectionDataSourceModel struct {
 }
 
 type ADConnectionAttributes struct {
-	URL                        types.String                                  `tfsdk:"url"`
-	ConnectionType             types.String                                  `tfsdk:"connection_type"`
-	LastImportTime             types.String                                  `tfsdk:"last_import_time"`
-	CreateAccountJSON          types.String                                  `tfsdk:"create_account_json"`
-	DisableAccountJSON         types.String                                  `tfsdk:"disable_account_json"`
-	GroupSearchBaseDN          types.String                                  `tfsdk:"group_search_base_dn"`
-	PasswordNoOfSplChars       types.String                                  `tfsdk:"password_no_of_spl_chars"`
-	PasswordNoOfDigits         types.String                                  `tfsdk:"password_no_of_digits"`
-	StatusKeyJSON              types.String                                  `tfsdk:"status_key_json"`
-	SearchFilter               types.String                                  `tfsdk:"search_filter"`
-	ConfigJSON                 types.String                                  `tfsdk:"config_json"`
-	RemoveAccountAction        types.String                                  `tfsdk:"remove_account_action"`
-	AccountAttribute           types.String                                  `tfsdk:"account_attribute"`
-	AccountNameRule            types.String                                  `tfsdk:"account_name_rule"`
-	AdvSearch                  types.String                                  `tfsdk:"adv_search"`
-	Username                   types.String                                  `tfsdk:"username"`
-	Password                   types.String                                  `tfsdk:"password"`
-	LDAPOrAD                   types.String                                  `tfsdk:"ldap_or_ad"`
-	EntitlementAttribute       types.String                                  `tfsdk:"entitlement_attribute"`
-	SetRandomPassword          types.String                                  `tfsdk:"set_random_password"`
-	PasswordMinLength          types.String                                  `tfsdk:"password_min_length"`
-	PasswordMaxLength          types.String                                  `tfsdk:"password_max_length"`
-	PasswordNoOfCapsAlpha      types.String                                  `tfsdk:"password_no_of_caps_alpha"`
-	SetDefaultPageSize         types.String                                  `tfsdk:"set_default_page_size"`
-	IsTimeoutSupported         types.Bool                                    `tfsdk:"is_timeout_supported"`
-	ReuseInactiveAccount       types.String                                  `tfsdk:"reuse_inactive_account"`
-	ImportJSON                 types.String                                  `tfsdk:"import_json"`
-	CreateUpdateMappings       types.String                                  `tfsdk:"create_update_mappings"`
-	AdvanceFilterJSON          types.String                                  `tfsdk:"advance_filter_json"`
-	OrgImportJSON              types.String                                  `tfsdk:"org_import_json"`
-	PAMConfig                  types.String                                  `tfsdk:"pam_config"`
-	PageSize                   types.String                                  `tfsdk:"page_size"`
-	Base                       types.String                                  `tfsdk:"base"`
-	DCLocator                  types.String                                  `tfsdk:"dc_locator"`
-	StatusThresholdConfig      types.String                                  `tfsdk:"status_threshold_config"`
-	ResetAndChangePasswordJSON types.String                                  `tfsdk:"reset_and_change_password_json"`
-	SupportEmptyString         types.String                                  `tfsdk:"support_empty_string"`
-	ReadOperationalAttributes  types.String                                  `tfsdk:"read_operational_attributes"`
-	EnableAccountJSON          types.String                                  `tfsdk:"enable_account_json"`
-	UserAttribute              types.String                                  `tfsdk:"user_attribute"`
-	DefaultUserRole            types.String                                  `tfsdk:"default_user_role"`
-	EndpointsFilter            types.String                                  `tfsdk:"endpoints_filter"`
-	UpdateAccountJSON          types.String                                  `tfsdk:"update_account_json"`
-	ReuseAccountJSON           types.String                                  `tfsdk:"reuse_account_json"`
-	EnforceTreeDeletion        types.String                                  `tfsdk:"enforce_tree_deletion"`
-	Filter                     types.String                                  `tfsdk:"filter"`
-	ObjectFilter               types.String                                  `tfsdk:"object_filter"`
-	UpdateUserJSON             types.String                                  `tfsdk:"update_user_json"`
-	SaveConnection             types.String                                  `tfsdk:"save_connection"`
-	SystemName                 types.String                                  `tfsdk:"system_name"`
-	GroupImportMapping         types.String                                  `tfsdk:"group_import_mapping"`
-	UnlockAccountJSON          types.String                                  `tfsdk:"unlock_account_json"`
-	EnableGroupManagement      types.String                                  `tfsdk:"enable_group_management"`
-	ModifyUserDataJSON         types.String                                  `tfsdk:"modify_user_data_json"`
-	OrgBase                    types.String                                  `tfsdk:"org_base"`
-	OrganizationAttribute      types.String                                  `tfsdk:"organization_attribute"`
-	CreateOrgJSON              types.String                                  `tfsdk:"create_org_json"`
-	UpdateOrgJSON              types.String                                  `tfsdk:"update_org_json"`
-	MaxChangeNumber            types.String                                  `tfsdk:"max_change_number"`
-	IncrementalConfig          types.String                                  `tfsdk:"incremental_config"`
-	CheckForUnique             types.String                                  `tfsdk:"check_for_unique"`
+	URL                        types.String            `tfsdk:"url"`
+	ConnectionType             types.String            `tfsdk:"connection_type"`
+	LastImportTime             types.String            `tfsdk:"last_import_time"`
+	CreateAccountJSON          types.String            `tfsdk:"create_account_json"`
+	DisableAccountJSON         types.String            `tfsdk:"disable_account_json"`
+	GroupSearchBaseDN          types.String            `tfsdk:"group_search_base_dn"`
+	PasswordNoOfSplChars       types.String            `tfsdk:"password_no_of_spl_chars"`
+	PasswordNoOfDigits         types.String            `tfsdk:"password_no_of_digits"`
+	StatusKeyJSON              types.String            `tfsdk:"status_key_json"`
+	SearchFilter               types.String            `tfsdk:"search_filter"`
+	ConfigJSON                 types.String            `tfsdk:"config_json"`
+	RemoveAccountAction        types.String            `tfsdk:"remove_account_action"`
+	AccountAttribute           types.String            `tfsdk:"account_attribute"`
+	AccountNameRule            types.String            `tfsdk:"account_name_rule"`
+	AdvSearch                  types.String            `tfsdk:"adv_search"`
+	Username                   types.String            `tfsdk:"username"`
+	Password                   types.String            `tfsdk:"password"`
+	LDAPOrAD                   types.String            `tfsdk:"ldap_or_ad"`
+	EntitlementAttribute       types.String            `tfsdk:"entitlement_attribute"`
+	SetRandomPassword          types.String            `tfsdk:"set_random_password"`
+	PasswordMinLength          types.String            `tfsdk:"password_min_length"`
+	PasswordMaxLength          types.String            `tfsdk:"password_max_length"`
+	PasswordNoOfCapsAlpha      types.String            `tfsdk:"password_no_of_caps_alpha"`
+	SetDefaultPageSize         types.String            `tfsdk:"set_default_page_size"`
+	IsTimeoutSupported         types.Bool              `tfsdk:"is_timeout_supported"`
+	ReuseInactiveAccount       types.String            `tfsdk:"reuse_inactive_account"`
+	ImportJSON                 types.String            `tfsdk:"import_json"`
+	CreateUpdateMappings       types.String            `tfsdk:"create_update_mappings"`
+	AdvanceFilterJSON          types.String            `tfsdk:"advance_filter_json"`
+	OrgImportJSON              types.String            `tfsdk:"org_import_json"`
+	PAMConfig                  types.String            `tfsdk:"pam_config"`
+	PageSize                   types.String            `tfsdk:"page_size"`
+	Base                       types.String            `tfsdk:"base"`
+	DCLocator                  types.String            `tfsdk:"dc_locator"`
+	StatusThresholdConfig      types.String            `tfsdk:"status_threshold_config"`
+	ResetAndChangePasswordJSON types.String            `tfsdk:"reset_and_change_password_json"`
+	SupportEmptyString         types.String            `tfsdk:"support_empty_string"`
+	ReadOperationalAttributes  types.String            `tfsdk:"read_operational_attributes"`
+	EnableAccountJSON          types.String            `tfsdk:"enable_account_json"`
+	UserAttribute              types.String            `tfsdk:"user_attribute"`
+	DefaultUserRole            types.String            `tfsdk:"default_user_role"`
+	EndpointsFilter            types.String            `tfsdk:"endpoints_filter"`
+	UpdateAccountJSON          types.String            `tfsdk:"update_account_json"`
+	ReuseAccountJSON           types.String            `tfsdk:"reuse_account_json"`
+	EnforceTreeDeletion        types.String            `tfsdk:"enforce_tree_deletion"`
+	Filter                     types.String            `tfsdk:"filter"`
+	ObjectFilter               types.String            `tfsdk:"object_filter"`
+	UpdateUserJSON             types.String            `tfsdk:"update_user_json"`
+	SaveConnection             types.String            `tfsdk:"save_connection"`
+	SystemName                 types.String            `tfsdk:"system_name"`
+	GroupImportMapping         types.String            `tfsdk:"group_import_mapping"`
+	UnlockAccountJSON          types.String            `tfsdk:"unlock_account_json"`
+	EnableGroupManagement      types.String            `tfsdk:"enable_group_management"`
+	ModifyUserDataJSON         types.String            `tfsdk:"modify_user_data_json"`
+	OrgBase                    types.String            `tfsdk:"org_base"`
+	OrganizationAttribute      types.String            `tfsdk:"organization_attribute"`
+	CreateOrgJSON              types.String            `tfsdk:"create_org_json"`
+	UpdateOrgJSON              types.String            `tfsdk:"update_org_json"`
+	MaxChangeNumber            types.String            `tfsdk:"max_change_number"`
+	IncrementalConfig          types.String            `tfsdk:"incremental_config"`
+	CheckForUnique             types.String            `tfsdk:"check_for_unique"`
 	ConnectionTimeoutConfig    ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
-	IsTimeoutConfigValidated   types.Bool                                    `tfsdk:"is_timeout_config_validated"`
-	ResetAndChangePasswdJSON   types.String                                  `tfsdk:"reset_and_change_passwd_json"`
+	IsTimeoutConfigValidated   types.Bool              `tfsdk:"is_timeout_config_validated"`
+	ResetAndChangePasswdJSON   types.String            `tfsdk:"reset_and_change_passwd_json"`
 }
 
 type ConnectionTimeoutConfig struct {
@@ -145,7 +145,7 @@ func (d *ADConnectionsDataSource) Metadata(ctx context.Context, req datasource.M
 
 func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Retrieve the details for a given AD connector by its name or key",
+		Description: util.ADConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -265,7 +265,7 @@ func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.Sch
 							"retry_count":                 schema.Int64Attribute{Computed: true},
 							"read_timeout":                schema.Int64Attribute{Computed: true},
 							"connection_timeout":          schema.Int64Attribute{Computed: true},
-							"retry_failure_status_code": schema.Float64Attribute{Computed: true},
+							"retry_failure_status_code":   schema.Float64Attribute{Computed: true},
 						},
 					},
 					"is_timeout_config_validated": schema.BoolAttribute{Computed: true},
@@ -416,7 +416,7 @@ func (d *ADConnectionsDataSource) Read(ctx context.Context, req datasource.ReadR
 				RetryCount:              util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryCount),
 				ReadTimeout:             util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ReadTimeout),
 				ConnectionTimeout:       util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.ConnectionTimeout),
-				RetryFailureStatusCode: util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
+				RetryFailureStatusCode:  util.SafeInt64(apiResp.ADConnectionResponse.Connectionattributes.ConnectionTimeoutConfig.RetryFailureStatusCode),
 			},
 		}
 	}

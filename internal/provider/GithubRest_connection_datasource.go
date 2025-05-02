@@ -55,7 +55,7 @@ func (d *GithubRestConnectionDataSource) Metadata(ctx context.Context, req datas
 
 func (d *GithubRestConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Retrieve the details for a given Github REST connector by its name or key",
+		Description: util.GithubRestConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,

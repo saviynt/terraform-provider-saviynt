@@ -84,7 +84,7 @@ func (d *UnixConnectionDataSource) Metadata(ctx context.Context, req datasource.
 
 func (d *UnixConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Retrieve the details for a given Unix connector by its name or key",
+		Description: util.UnixConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,

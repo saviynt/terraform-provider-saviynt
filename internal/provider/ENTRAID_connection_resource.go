@@ -87,7 +87,7 @@ func (r *entraidConnectionResource) Metadata(ctx context.Context, req resource.M
 
 func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Create and Manage EntraID(AzureAD) Connections",
+		Description: util.EntraIDConnDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

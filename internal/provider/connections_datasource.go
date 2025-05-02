@@ -62,7 +62,7 @@ func (d *ConnectionsDataSource) Metadata(ctx context.Context, req datasource.Met
 
 func (d *ConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Datasource to retrieve all connections",
+		MarkdownDescription: util.ConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,

@@ -101,7 +101,7 @@ func (d *ADSIConnectionsDataSource) Metadata(ctx context.Context, req datasource
 // Schema defines the attributes for the data source
 func (d *ADSIConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Retrieve the details for a given ADSI connector by its name or key",
+		Description: util.ADSIConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
 			"connection_name": schema.StringAttribute{
 				Optional:    true,
