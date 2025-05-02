@@ -708,13 +708,6 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.MaxChangeNumber = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
 	state.IncrementalConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
 	state.CheckForUnique = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
-	// apiMessage := util.SafeDeref(apiResp.ADConnectionResponse.Msg)
-	// if apiMessage == "success" {
-	// 	state.Msg = types.StringValue("Connection Successful")
-	// } else {
-	// 	state.Msg = types.StringValue(apiMessage)
-	// }
-	// state.ErrorCode = util.Int32PtrToTFString(apiResp.ADConnectionResponse.Errorcode)
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
