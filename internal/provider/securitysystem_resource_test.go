@@ -73,7 +73,7 @@ func TestAccSaviyntSecuritySystemResource(t *testing.T) {
 }
 
 func testAccSecuritySystemConnectionResourceConfig(operation string) string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/securitysystem_resource_test_data.json"
+	jsonPath := "${filepath}/securitysystem_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
