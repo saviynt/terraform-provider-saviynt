@@ -168,8 +168,20 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+	}
+	if existingResource != nil && existingResource.GithubRESTConnectionResponse != nil && existingResource.GithubRESTConnectionResponse.Errorcode != nil && *existingResource.GithubRESTConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
 	githubRestConn := openapi.GithubRESTConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required values
@@ -196,9 +208,7 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 	githubRestRequest := openapi.CreateOrUpdateRequest{
 		GithubRESTConnector: &githubRestConn,
 	}
-
-	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
+	
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(githubRestRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
@@ -218,7 +228,6 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *githubRestConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -381,7 +390,7 @@ func (r *githubRestConnectionResource) Delete(ctx context.Context, req resource.
 
 func (r *githubRestConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
     // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_key"), req, resp)
+    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
 
 
