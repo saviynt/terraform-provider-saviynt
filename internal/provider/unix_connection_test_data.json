@@ -1,0 +1,146 @@
+{
+    "create":{
+        "connection_type": "Unix",
+        "connection_name": "Terraform_Unix_Connector",
+        "host_name": "unix.example.com", 
+        "port_number":"22",
+        "username": "username", 
+        "password": "pass123",
+        "groups_file": "/etc/group",
+        "ssh_key": "-----BEGIN RSA PRIVATE KEY-----\n xojafioawefoiwajofpawjf iwaofjwaoiefjoawefjiof re3irfjowedijoew\n -----END RSA PRIVATE KEY-----",
+        "status_threshold_config": {
+            "statusAndThresholdConfig": {
+              "accountThresholdValue": 25,
+              "accountEntThresholdValue": 3,
+              "entThresholdValue": 10,
+              "deleteAccEntForActiveAccounts": true,
+              "statusColumn": "customproperty1",
+              "deleteLinks": false,
+              "correlateInactiveAccounts": true,
+              "inactivateAccountsNotInFile": false,
+              "inactivateEntsNotInFeed": true,
+              "activeStatus": [
+                "1",
+                "Active"
+              ],
+              "lockedStatusColumn": "userlock",
+              "lockedStatusMapping": {
+                "Locked": [
+                  "1"
+                ],
+                "Unlocked": [
+                  "0"
+                ]
+              }
+            }
+          }
+    },
+    "update":{
+        "connection_type": "Unix",
+        "connection_name": "Terraform_Unix_Connector",
+        "host_name": "unix.example.com", 
+        "port_number":"23",
+        "username": "username", 
+        "password": "pass456",
+        "groups_file": "/etc/group",
+        "ssh_key": "-----BEGIN RSA PRIVATE KEY-----\n xojawaofjwaoiefjoawefjiof re3irfjowedijoew\n -----END RSA PRIVATE KEY-----",
+        "status_threshold_config": {
+            "statusAndThresholdConfig": {
+              "accountThresholdValue": 25,
+              "accountEntThresholdValue": 3,
+              "entThresholdValue": 10,
+              "deleteAccEntForActiveAccounts": true,
+              "statusColumn": "customproperty1",
+              "deleteLinks": false,
+              "correlateInactiveAccounts": true,
+              "inactivateAccountsNotInFile": false,
+              "inactivateEntsNotInFeed": true,
+              "activeStatus": [
+                "1",
+                "Active"
+              ],
+              "lockedStatusColumn": "userlock",
+              "lockedStatusMapping": {
+                "Locked": [
+                  "1"
+                ],
+                "Unlocked": [
+                  "0"
+                ]
+              }
+            }
+          }
+    },
+    "update_connection_name":{
+        "connection_type": "Unix",
+        "connection_name": "Terraform_Unix_Connector_change",
+        "host_name": "unix.example.com", 
+        "port_number":"22",
+        "username": "username", 
+        "password": "pass123",
+        "groups_file": "/etc/group",
+        "ssh_key": "-----BEGIN RSA PRIVATE KEY-----\n xojafioawefoiwajofpawjf iwaofjwaoiefjoawefjiof re3irfjowedijoew\n -----END RSA PRIVATE KEY-----",
+        "status_threshold_config": {
+            "statusAndThresholdConfig": {
+              "accountThresholdValue": 25,
+              "accountEntThresholdValue": 3,
+              "entThresholdValue": 10,
+              "deleteAccEntForActiveAccounts": true,
+              "statusColumn": "customproperty1",
+              "deleteLinks": false,
+              "correlateInactiveAccounts": true,
+              "inactivateAccountsNotInFile": false,
+              "inactivateEntsNotInFeed": true,
+              "activeStatus": [
+                "1",
+                "Active"
+              ],
+              "lockedStatusColumn": "userlock",
+              "lockedStatusMapping": {
+                "Locked": [
+                  "1"
+                ],
+                "Unlocked": [
+                  "0"
+                ]
+              }
+            }
+          }
+    },
+    "update_connection_type":{
+        "connection_type": "SAP",
+        "connection_name": "Terraform_Unix_Connector",
+        "host_name": "unix.example.com", 
+        "port_number":"22",
+        "username": "username", 
+        "password": "pass123",
+        "groups_file": "/etc/group",
+        "ssh_key": "-----BEGIN RSA PRIVATE KEY-----\n xojafioawefoiwajofpawjf iwaofjwaoiefjoawefjiof re3irfjowedijoew\n -----END RSA PRIVATE KEY-----",
+        "status_threshold_config": {
+            "statusAndThresholdConfig": {
+              "accountThresholdValue": 25,
+              "accountEntThresholdValue": 3,
+              "entThresholdValue": 10,
+              "deleteAccEntForActiveAccounts": true,
+              "statusColumn": "customproperty1",
+              "deleteLinks": false,
+              "correlateInactiveAccounts": true,
+              "inactivateAccountsNotInFile": false,
+              "inactivateEntsNotInFeed": true,
+              "activeStatus": [
+                "1",
+                "Active"
+              ],
+              "lockedStatusColumn": "userlock",
+              "lockedStatusMapping": {
+                "Locked": [
+                  "1"
+                ],
+                "Unlocked": [
+                  "0"
+                ]
+              }
+            }
+          }
+    }
+}
