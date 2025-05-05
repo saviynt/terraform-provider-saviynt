@@ -18,6 +18,7 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
   filePath := "salesforce_connection_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
+	resourceName:="saviynt_salesforce_connection_resource.ss"
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -26,38 +27,38 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 			{
 				Config: testAccSalesforceConnectionResourceConfig("create"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(createCfg["connection_name"])),
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_type"), knownvalue.StringExact(createCfg["connection_type"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("client_id"), knownvalue.StringExact(createCfg["client_id"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("redirect_uri"), knownvalue.StringExact(createCfg["redirect_uri"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("instance_url"), knownvalue.StringExact(createCfg["instance_url"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact(createCfg["object_to_be_imported"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("createaccountjson"), knownvalue.StringExact(createCfg["createaccountjson"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("status_threshold_config"), knownvalue.StringExact(createCfg["status_threshold_config"])),
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("connection_name"), knownvalue.StringExact(createCfg["connection_name"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("connection_type"), knownvalue.StringExact(createCfg["connection_type"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("client_id"), knownvalue.StringExact(createCfg["client_id"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("redirect_uri"), knownvalue.StringExact(createCfg["redirect_uri"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("instance_url"), knownvalue.StringExact(createCfg["instance_url"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact(createCfg["object_to_be_imported"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("createaccountjson"), knownvalue.StringExact(createCfg["createaccountjson"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status_threshold_config"), knownvalue.StringExact(createCfg["status_threshold_config"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
 			// Import
 			{
-				ResourceName:      "saviynt_salesforce_connection_resource.ss",
-        ImportStateId: createCfg["connection_name"],
+				ResourceName:      resourceName,
+        		ImportStateId: createCfg["connection_name"],
 				ImportState:       true,
 				ImportStateVerify: true,
-        ImportStateVerifyIgnore: []string{"msg", "client_secret", "refresh_token"},
+        		ImportStateVerifyIgnore: []string{"msg", "client_secret", "refresh_token"},
 			},
 			// Update Step
 			{
 				Config: testAccSalesforceConnectionResourceConfig("update"),
 				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_name"), knownvalue.StringExact(updateCfg["connection_name"])),
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("connection_type"), knownvalue.StringExact(updateCfg["connection_type"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("client_id"), knownvalue.StringExact(updateCfg["client_id"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("redirect_uri"), knownvalue.StringExact(updateCfg["redirect_uri"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("instance_url"), knownvalue.StringExact(updateCfg["instance_url"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact(updateCfg["object_to_be_imported"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("createaccountjson"), knownvalue.StringExact(updateCfg["createaccountjson"])),
-          statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("status_threshold_config"), knownvalue.StringExact(createCfg["status_threshold_config"])),
-					statecheck.ExpectKnownValue("saviynt_salesforce_connection_resource.ss", tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("connection_name"), knownvalue.StringExact(updateCfg["connection_name"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("connection_type"), knownvalue.StringExact(updateCfg["connection_type"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("client_id"), knownvalue.StringExact(updateCfg["client_id"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("redirect_uri"), knownvalue.StringExact(updateCfg["redirect_uri"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("instance_url"), knownvalue.StringExact(updateCfg["instance_url"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("object_to_be_imported"), knownvalue.StringExact(updateCfg["object_to_be_imported"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("createaccountjson"), knownvalue.StringExact(updateCfg["createaccountjson"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("status_threshold_config"), knownvalue.StringExact(createCfg["status_threshold_config"])),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
       // Update the Connectionname to a new value
@@ -66,7 +67,7 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
       // Update the Connectiontype to a new value
-      {
+      		{
 				Config:      testAccSalesforceConnectionResourceConfig("update_connection_type"),
 				ExpectError: regexp.MustCompile(`Connection type cannot be updated`),
 			},
