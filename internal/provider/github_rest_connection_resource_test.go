@@ -70,7 +70,7 @@ func TestAccSaviyntGithubRestConnectionResource(t *testing.T) {
 }
 
 func testAccGithubRestConnectionResourceConfig(operation string) string {
-	jsonPath:="/Users/nandini.choukimath/Desktop/terraform-provider-saviynt/internal/provider/github_rest_connection_test_data.json"
+	jsonPath:="{path}/github_rest_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
