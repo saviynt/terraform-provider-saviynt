@@ -93,7 +93,7 @@ func TestAccSaviyntADSIConnectionResource(t *testing.T) {
 }
 
 func testAccADSIConnectionResourceConfig(operation string) string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/ADSI_connection_resource_test_data.json"
+	jsonPath := "${filepath}/ADSI_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
