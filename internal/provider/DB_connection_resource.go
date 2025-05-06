@@ -15,6 +15,7 @@ import (
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -370,7 +371,7 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("DB")
+	plan.ConnectionType = types.StringValue("DB")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -499,12 +500,12 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
 		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
@@ -635,4 +636,9 @@ func (r *dbConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 
 func (r *dbConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *dbConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
