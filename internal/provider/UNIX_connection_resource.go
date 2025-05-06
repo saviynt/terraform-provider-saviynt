@@ -14,6 +14,7 @@ import (
 	s "github.com/saviynt/saviynt-api-go-client"
 	openapi "github.com/saviynt/saviynt-api-go-client/connections"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -327,8 +328,22 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	// reqParams.SetConnectionkey(state.ConnectionKey.String())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in read block")
+	}
+	if existingResource != nil && existingResource.UNIXConnectionResponse != nil && existingResource.UNIXConnectionResponse.Errorcode != nil && *existingResource.UNIXConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
+
 	unixConn := openapi.UNIXConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required values
@@ -385,8 +400,6 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 		UNIXConnector: &unixConn,
 	}
 
-	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(unixRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
@@ -430,7 +443,6 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *unixConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -666,4 +678,9 @@ func (r *unixConnectionResource) Update(ctx context.Context, req resource.Update
 
 func (r *unixConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+
+func (r *unixConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+    // Retrieve import ID and save to id attribute
+    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
