@@ -514,6 +514,11 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 
 func (r *SecuritySystemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+	log.Printf("Deletion Not Supported")
+	resp.Diagnostics.AddError(
+		"Deletion Not Supported",
+		"Deleting an Security Systm is not supported by this provider. Please remove the delete operation from your configuration.",
+	)
 }
 
 func (r *SecuritySystemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
