@@ -382,7 +382,7 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	if err != nil {
 		log.Printf("Problem with the get function in Create block")
 	}
-	if existingResource != nil && existingResource.WorkdayConnectionResponse != nil && existingResource.WorkdayConnectionResponse.Errorcode != nil && *existingResource.WorkdayConnectionResponse.Errorcode == 0 {
+	if existingResource != nil && existingResource.ADSIConnectionResponse != nil && existingResource.ADSIConnectionResponse.Errorcode != nil && *existingResource.ADSIConnectionResponse.Errorcode == 0 {
 		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
 		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
 		return
