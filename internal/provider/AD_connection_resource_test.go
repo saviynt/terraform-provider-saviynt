@@ -84,7 +84,7 @@ func TestAccSaviyntADConnectionResource(t *testing.T) {
 				Config:      testAccADConnectionResourceConfig("update_connection_name"),
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
-			//// Update the Connectiontype to a new value
+			// Update the Connectiontype to a new value
 			{
 				Config:      testAccADConnectionResourceConfig("update_connection_type"),
 				ExpectError: regexp.MustCompile(`Connection type cannot by updated`),
