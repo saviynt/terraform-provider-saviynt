@@ -59,7 +59,7 @@ func TestAccSaviyntEntraIdConnectionDataSource(t *testing.T) {
 }
 
 func testAccEntraIdConnectionDataSourceConfig() string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/ENTRAID_connection_resource_test_data.json"
+	jsonPath := "${filepath}/ENTRAID_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
