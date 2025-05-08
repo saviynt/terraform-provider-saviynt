@@ -285,6 +285,19 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in Create block")
+	}
+	if existingResource != nil && existingResource.RESTConnectionResponse != nil && existingResource.RESTConnectionResponse.Errorcode != nil && *existingResource.RESTConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
+
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required fields
@@ -329,8 +342,6 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 
 	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
