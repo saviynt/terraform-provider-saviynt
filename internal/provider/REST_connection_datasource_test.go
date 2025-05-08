@@ -52,7 +52,7 @@ func TestAccSaviyntRESTConnectionDataSource(t *testing.T) {
 }
 
 func testAccRESTConnectionDataSourceConfig() string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/REST_connection_resource_test_data.json"
+	jsonPath := "${filepath}/REST_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
