@@ -51,7 +51,7 @@ func TestAccSaviyntWorkdayConnectionDataSource(t *testing.T) {
 }
 
 func testAccWorkdayConnectionDataSourceConfig() string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/workday_connection_test_data.json"
+	jsonPath := "${filepath}/workday_connection_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
