@@ -48,7 +48,7 @@ func TestAccSaviyntSalesforceConnectionDataSource(t *testing.T) {
 }
 
 func testAccSalesforceConnectionDataSourceConfig() string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/salesforce_connection_test_data.json"
+	jsonPath := "${filepath}/salesforce_connection_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"
