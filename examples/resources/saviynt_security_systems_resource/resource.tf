@@ -12,6 +12,6 @@ provider "saviynt" {
   password   = var.SAVIYNT_PASSWORD
 }
 resource "saviynt_security_system_resource" "example" {
-  systemname                            = "shaleenhuddle1"
-  display_name                          = "shaleenhuddle1"
+  systemname                            = "terraform_securitysystem"
+  display_name                          = "terraform_securitysystem"
 }
