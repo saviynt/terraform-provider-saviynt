@@ -414,9 +414,14 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
 	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
-		log.Printf("Problem with the get function in Create block")
+		log.Printf("[ERROR] Problem with the get function in Create block %v", *existingResource.EntraIDConnectionResponse.Msg)
+		resp.Diagnostics.AddError("Problem with the get function in Create block", fmt.Sprintf("Error: %v", *existingResource.EntraIDConnectionResponse.Msg))
+		return
 	}
-	if existingResource != nil && existingResource.EntraIDConnectionResponse != nil && existingResource.EntraIDConnectionResponse.Errorcode != nil && *existingResource.EntraIDConnectionResponse.Errorcode == 0 {
+	if existingResource != nil &&
+		existingResource.EntraIDConnectionResponse != nil &&
+		existingResource.EntraIDConnectionResponse.Errorcode != nil &&
+		*existingResource.EntraIDConnectionResponse.Errorcode == 0 {
 		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
 		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
 		return
@@ -493,8 +498,8 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	// Initialize API client
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(entraidConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
-		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
-		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", *apiResp.Msg)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
@@ -546,7 +551,6 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -572,7 +576,7 @@ func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadR
 	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in read block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Read Block", fmt.Sprintf("Error: %v", *apiResp.EntraIDConnectionResponse.Msg))
 		return
 	}
 	state.ConnectionKey = types.Int64Value(int64(*apiResp.EntraIDConnectionResponse.Connectionkey))
@@ -743,7 +747,7 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(entraidConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("Problem with the update function")
-		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	reqParams := openapi.GetConnectionDetailsRequest{}
@@ -752,7 +756,7 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in update block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Update Block", fmt.Sprintf("Error: %v", *getResp.EntraIDConnectionResponse.Msg))
 		return
 	}
 	plan.ConnectionKey = types.Int64Value(int64(*getResp.EntraIDConnectionResponse.Connectionkey))
