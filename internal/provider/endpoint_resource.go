@@ -19,10 +19,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 
-	// "github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
-
-	// "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	// "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	s "github.com/saviynt/saviynt-api-go-client"
 
@@ -63,19 +59,7 @@ type endpointResourceModel struct {
 	AccountTypeNoPasswordChange             types.String `tfsdk:"account_type_no_password_change"`
 	EndpointConfig                          types.String `tfsdk:"endpoint_config"`
 	AllowRemoveAllRoleOnRequest             types.String `tfsdk:"allow_remove_all_role_on_request"`
-	// BaselineConfig                          types.String `tfsdk:"baseline_config"`
-	// StatusForUniqueAccount                  types.String `tfsdk:"status_for_unique_account"`
-	// UpdatedBy                               types.String `tfsdk:"updated_by"`
-	// CreatedBy                               types.String `tfsdk:"created_by"`
-	// Status                                  types.String `tfsdk:"status"`
-	// CreatedFrom                             types.String `tfsdk:"created_from"`
-	// UpdateDate                              types.String `tfsdk:"update_date"`
-	// RoleTypeAsJson                          types.String `tfsdk:"role_type_as_json"`
-	// EntsWithNewAccount                      types.String `tfsdk:"ents_with_new_account"`
-	// ConnectionConfigAsJson                  types.String `tfsdk:"connection_config_as_json"`
-	// CreateDate                              types.String `tfsdk:"create_date"`
-	// ParentEndpoint                          types.String `tfsdk:"parent_endpoint"`
-	// RequestableApplication                  types.String `tfsdk:"requestable_application"`
+
 	CustomProperty1              types.String `tfsdk:"custom_property1"`
 	CustomProperty2              types.String `tfsdk:"custom_property2"`
 	CustomProperty3              types.String `tfsdk:"custom_property3"`
@@ -181,14 +165,10 @@ type endpointResourceModel struct {
 	CustomProperty58Label        types.String `tfsdk:"custom_property58_label"`
 	CustomProperty59Label        types.String `tfsdk:"custom_property59_label"`
 	CustomProperty60Label        types.String `tfsdk:"custom_property60_label"`
-	// RequestableRoleTypes                   []RequestableRoleType `tfsdk:"requestable_role_types"`
-	// EmailTemplates                           []EmailTemplate       `tfsdk:"email_template"`
-	// MappedEndpoints                         []MappedEndpoint      `tfsdk:"mapped_endpoints"`
 	MappedEndpoints      types.List `tfsdk:"mapped_endpoints"`
 	EmailTemplates       types.List `tfsdk:"email_templates"`
 	RequestableRoleTypes types.List `tfsdk:"requestable_role_types"`
 
-	// Result    types.String `tfsdk:"result"`
 	Msg       types.String `tfsdk:"msg"`
 	ErrorCode types.String `tfsdk:"error_code"`
 }
@@ -278,7 +258,6 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"resource_owner": schema.StringAttribute{
 				Optional: true,
-				// Computed:    true,
 				Description: "Specify the resource owner of the endpoint. If the resourceOwnerType is User, then specify the username of the owner and If it is Usergroup, specify the name of the user group.",
 			},
 			"access_query": schema.StringAttribute{
@@ -685,9 +664,7 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	// Convert to OpenAPI struct
 	for _, tfTemplate := range tfEmailTemplates {
-		// Skip if the entire object is unknown
 		if tfTemplate.EmailTemplateType.IsUnknown() &&
 			tfTemplate.TaskType.IsUnknown() &&
 			tfTemplate.EmailTemplate.IsUnknown() {
@@ -696,7 +673,6 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 
 		emailTemplate := openapi.CreateEndpointRequestEmailTemplateInner{}
 
-		// Only set values that aren't null
 		if !tfTemplate.EmailTemplateType.IsNull() {
 			emailTemplate.EmailTemplateType = tfTemplate.EmailTemplateType.ValueStringPointer()
 		}
@@ -710,7 +686,6 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 		emailTemplates = append(emailTemplates, emailTemplate)
 	}
 
-	// Only set in request if we have valid templates
 	if len(emailTemplates) > 0 {
 		createReq.Taskemailtemplates = emailTemplates
 	}
@@ -931,7 +906,6 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	// Configure API client
 	cfg := openapi.NewConfiguration()
 	apiBaseURL := strings.TrimPrefix(strings.TrimPrefix(r.client.APIBaseURL(), "https://"), "http://")
 	cfg.Host = apiBaseURL
