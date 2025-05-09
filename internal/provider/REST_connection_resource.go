@@ -285,6 +285,22 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("Problem with the get function in Create block")
+	}
+	if existingResource != nil &&
+		existingResource.RESTConnectionResponse != nil &&
+		existingResource.RESTConnectionResponse.Errorcode != nil &&
+		*existingResource.RESTConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
+
 	restConn := openapi.RESTConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required fields
@@ -329,12 +345,10 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 
 	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
-		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
-		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", *apiResp.Msg)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
@@ -394,7 +408,7 @@ func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in read block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", *apiResp.RESTConnectionResponse.Msg))
 		return
 	}
 	state.ConnectionKey = types.Int64Value(int64(*apiResp.RESTConnectionResponse.Connectionkey))
@@ -535,7 +549,7 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(restConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("Problem with the update function")
-		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	reqParams := openapi.GetConnectionDetailsRequest{}
@@ -544,7 +558,7 @@ func (r *restConnectionResource) Update(ctx context.Context, req resource.Update
 	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in update block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", *getResp.RESTConnectionResponse.Msg))
 		return
 	}
 	plan.ConnectionKey = types.Int64Value(int64(*getResp.RESTConnectionResponse.Connectionkey))
