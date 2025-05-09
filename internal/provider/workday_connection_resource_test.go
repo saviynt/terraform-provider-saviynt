@@ -18,11 +18,11 @@ import (
 )
 
 func TestAccSaviyntWorkdayConnectionResource(t *testing.T) {
-  filePath := "workday_connection_test_data.json"
+	filePath := "workday_connection_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
-	resourceName:="saviynt_workday_connection_resource.w"
-  t.Logf("Status key json: %q", createCfg["status_key_json"])
+	resourceName := "saviynt_workday_connection_resource.w"
+	t.Logf("Status key json: %q", createCfg["status_key_json"])
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -47,11 +47,11 @@ func TestAccSaviyntWorkdayConnectionResource(t *testing.T) {
 			},
 			// Import
 			{
-				ResourceName:      resourceName,
-				ImportStateId: createCfg["connection_name"],
-				ImportState:       true,
-				ImportStateVerify: true,
-        		ImportStateVerifyIgnore: []string{"msg", "client_secret", "password", "refresh_token"},
+				ResourceName:            resourceName,
+				ImportStateId:           createCfg["connection_name"],
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"msg", "client_secret", "password", "refresh_token"},
 			},
 			// Update Step
 			{
@@ -71,23 +71,23 @@ func TestAccSaviyntWorkdayConnectionResource(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
-      // Update the Connectionname to a new value
+			// Update the Connectionname to a new value
 			{
 				Config:      testAccWorkdayConnectionResourceConfig("update_connection_name"),
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
-      // Update the Connectiontype to a new value
+			// Update the Connectiontype to a new value
 			{
 				Config:      testAccWorkdayConnectionResourceConfig("update_connection_type"),
 				ExpectError: regexp.MustCompile(`Connection type cannot by updated`),
 			},
 		},
 	},
-)
+	)
 }
 
 func testAccWorkdayConnectionResourceConfig(operation string) string {
-  jsonPath:="{path}/workday_connection_test_data.json"
+	jsonPath := "{path}/workday_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
@@ -108,16 +108,13 @@ func testAccWorkdayConnectionResourceConfig(operation string) string {
   client_id          = local.cfg.client_id
   access_import_list = local.cfg.access_import_list
   status_key_json = jsonencode(local.cfg.status_key_json)
-
   user_import_payload = local.cfg.user_import_payload
-
   user_import_mapping = jsonencode(local.cfg.user_import_mapping)
   }`,
- os.Getenv("SAVIYNT_URL"),
+		os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), 
-    jsonPath, 
-    operation,
+		os.Getenv("SAVIYNT_PASSWORD"),
+		jsonPath,
+		operation,
 	)
 }
-
