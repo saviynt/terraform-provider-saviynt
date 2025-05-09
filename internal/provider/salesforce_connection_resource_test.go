@@ -15,10 +15,10 @@ import (
 )
 
 func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
-  filePath := "salesforce_connection_test_data.json"
+	filePath := "salesforce_connection_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
-	resourceName:="saviynt_salesforce_connection_resource.ss"
+	resourceName := "saviynt_salesforce_connection_resource.ss"
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -40,11 +40,11 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 			},
 			// Import
 			{
-				ResourceName:      resourceName,
-        		ImportStateId: createCfg["connection_name"],
-				ImportState:       true,
-				ImportStateVerify: true,
-        		ImportStateVerifyIgnore: []string{"msg", "client_secret", "refresh_token"},
+				ResourceName:            resourceName,
+				ImportStateId:           createCfg["connection_name"],
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"msg", "client_secret", "refresh_token"},
 			},
 			// Update Step
 			{
@@ -61,13 +61,13 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("error_code"), knownvalue.StringExact("0")),
 				},
 			},
-      // Update the Connectionname to a new value
+			// Update the Connectionname to a new value
 			{
 				Config:      testAccSalesforceConnectionResourceConfig("update_connection_name"),
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
-      // Update the Connectiontype to a new value
-      		{
+			// Update the Connectiontype to a new value
+			{
 				Config:      testAccSalesforceConnectionResourceConfig("update_connection_type"),
 				ExpectError: regexp.MustCompile(`Connection type cannot be updated`),
 			},
@@ -76,7 +76,7 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 }
 
 func testAccSalesforceConnectionResourceConfig(operation string) string {
-  jsonPath:="{path}/salesforce_connection_test_data.json"
+	jsonPath := "{path}/salesforce_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
@@ -98,10 +98,10 @@ locals {
   createaccountjson = jsonencode(local.cfg.createaccountjson)
   status_threshold_config=jsonencode(local.cfg.status_threshold_config)
 }`,
- os.Getenv("SAVIYNT_URL"),
+		os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), 
-    jsonPath, 
-    operation,
+		os.Getenv("SAVIYNT_PASSWORD"),
+		jsonPath,
+		operation,
 	)
 }
