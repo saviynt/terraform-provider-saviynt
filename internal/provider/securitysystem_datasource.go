@@ -258,6 +258,13 @@ func (d *SecuritySystemsDataSource) Read(ctx context.Context, req datasource.Rea
 		resp.Diagnostics.AddError("API Call Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
+	//if the response is null
+	if len(apiResp.SecuritySystemDetails) == 0 {
+		log.Println("[DEBUG] No data returned from API")
+		resp.Diagnostics.AddError("API Response is empty", "No data found for the given filters in the environment.")
+		return
+	}
+
 	log.Printf("[DEBUG] HTTP Status Code: %d", httpResp.StatusCode)
 
 	// Transform API response to a slice of SecuritySystemDetails.
