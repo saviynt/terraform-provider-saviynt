@@ -471,6 +471,24 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("[ERROR] Problem with the get function in Create block %v", *existingResource.DBConnectionResponse.Msg)
+		resp.Diagnostics.AddError("Problem with the get function in Create block", fmt.Sprintf("Error: %v", *existingResource.DBConnectionResponse.Msg))
+		return
+	}
+	if existingResource != nil &&
+		existingResource.ADConnectionResponse != nil &&
+		existingResource.ADConnectionResponse.Errorcode != nil &&
+		*existingResource.ADConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
+
 	adConn := openapi.ADConnector{
 		BaseConnector: openapi.BaseConnector{
 			//required field
@@ -549,12 +567,10 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
-
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
-		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
-		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", *apiResp.Msg)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
@@ -644,7 +660,7 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in read block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Read Block", fmt.Sprintf("Error: %v", *apiResp.ADConnectionResponse.Msg))
 		return
 	}
 	state.ConnectionKey = types.Int64Value(int64(*apiResp.ADConnectionResponse.Connectionkey))
@@ -834,7 +850,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("Problem with the update function")
-		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	reqParams := openapi.GetConnectionDetailsRequest{}
@@ -843,7 +859,7 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in update block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Update Block", fmt.Sprintf("Error: %v", *getResp.ADConnectionResponse.Msg))
 		return
 	}
 	plan.ConnectionKey = types.Int64Value(int64(*getResp.ADConnectionResponse.Connectionkey))
