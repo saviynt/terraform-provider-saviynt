@@ -84,7 +84,7 @@ func TestAccSaviyntADConnectionResource(t *testing.T) {
 				Config:      testAccADConnectionResourceConfig("update_connection_name"),
 				ExpectError: regexp.MustCompile(`Connection name cannot be updated`),
 			},
-			//// Update the Connectiontype to a new value
+			// Update the Connectiontype to a new value
 			{
 				Config:      testAccADConnectionResourceConfig("update_connection_type"),
 				ExpectError: regexp.MustCompile(`Connection type cannot by updated`),
@@ -94,7 +94,7 @@ func TestAccSaviyntADConnectionResource(t *testing.T) {
 }
 
 func testAccADConnectionResourceConfig(operation string) string {
-	jsonPath := "{paht}/AD_connection_resource_test_data.json"
+	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/AD_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"

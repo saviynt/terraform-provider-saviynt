@@ -15,6 +15,7 @@ import (
 
 	s "github.com/saviynt/saviynt-api-go-client"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -374,6 +375,23 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
 	cfg.HTTPClient = http.DefaultClient
+	apiClient := openapi.NewAPIClient(cfg)
+	reqParams := openapi.GetConnectionDetailsRequest{}
+	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
+	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
+	if err != nil {
+		log.Printf("[ERROR] Problem with the get function in Create block %v", *existingResource.ADSIConnectionResponse.Msg)
+		resp.Diagnostics.AddError("Problem with the get function in Create block", fmt.Sprintf("Error: %v", *existingResource.ADSIConnectionResponse.Msg))
+		return
+	}
+	if existingResource != nil &&
+		existingResource.ADSIConnectionResponse != nil &&
+		existingResource.ADSIConnectionResponse.Errorcode != nil &&
+		*existingResource.ADSIConnectionResponse.Errorcode == 0 {
+		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
+		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
+		return
+	}
 
 	if plan.EntitlementAttribute.IsNull() || plan.EntitlementAttribute.IsUnknown() {
 		plan.EntitlementAttribute = types.StringValue("memberOf")
@@ -442,15 +460,14 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	}
 
 	// Initialize API client
-	apiClient := openapi.NewAPIClient(cfg)
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
-		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
-		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("[ERROR] Failed to create API resource. Error: %v", *apiResp.Msg)
+		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("ADSI")
+	plan.ConnectionType = types.StringValue("ADSI")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -494,7 +511,6 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	r.Read(ctx, resource.ReadRequest{State: resp.State}, &resource.ReadResponse{State: resp.State})
 }
 
 func (r *adsiConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -519,7 +535,7 @@ func (r *adsiConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	apiResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in read block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Read Block", fmt.Sprintf("Error: %v", *apiResp.ADSIConnectionResponse.Msg))
 		return
 	}
 	state.ConnectionKey = types.Int64Value(int64(*apiResp.ADSIConnectionResponse.Connectionkey))
@@ -595,12 +611,12 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
 		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
@@ -688,7 +704,7 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(adsiConnRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("Problem with the update function")
-		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Update Failed", fmt.Sprintf("Error: %v", *apiResp.Msg))
 		return
 	}
 	reqParams := openapi.GetConnectionDetailsRequest{}
@@ -697,7 +713,7 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 	getResp, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in update block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Update Block", fmt.Sprintf("Error: %v", *getResp.ADSIConnectionResponse.Msg))
 		return
 	}
 	plan.ConnectionKey = types.Int64Value(int64(*getResp.ADSIConnectionResponse.Connectionkey))
@@ -760,4 +776,8 @@ func (r *adsiConnectionResource) Update(ctx context.Context, req resource.Update
 
 func (r *adsiConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
+}
+func (r *adsiConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
