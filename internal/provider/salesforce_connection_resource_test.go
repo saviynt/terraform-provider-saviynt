@@ -19,6 +19,7 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
 	resourceName := "saviynt_salesforce_connection_resource.ss"
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
