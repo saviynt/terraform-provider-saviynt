@@ -46,6 +46,14 @@ func SafeDeref(s *string) string {
 	return *s
 }
 
+func SafeStringValue(s types.String) string {
+	if s.IsNull() || s.IsUnknown() {
+		return ""
+	}
+	return s.ValueString()
+}
+
+
 // safeList converts a []string to a Terraform types.List.
 func SafeList(items []string) (types.List, diag.Diagnostics) {
 	if len(items) == 0 {

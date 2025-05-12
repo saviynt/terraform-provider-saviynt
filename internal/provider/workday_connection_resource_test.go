@@ -22,7 +22,6 @@ func TestAccSaviyntWorkdayConnectionResource(t *testing.T) {
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
 	resourceName := "saviynt_workday_connection_resource.w"
-	t.Logf("Status key json: %q", createCfg["status_key_json"])
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
