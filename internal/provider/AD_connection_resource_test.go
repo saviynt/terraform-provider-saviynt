@@ -14,7 +14,7 @@ import (
 )
 
 func TestAccSaviyntADConnectionResource(t *testing.T) {
-	filePath := "AD_connection_resource_test_data.json"
+	filePath := "ad_connection_resource_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
 	resourceName := "saviynt_ad_connection_resource.ad"
@@ -94,7 +94,7 @@ func TestAccSaviyntADConnectionResource(t *testing.T) {
 }
 
 func testAccADConnectionResourceConfig(operation string) string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/AD_connection_resource_test_data.json"
+	jsonPath := "${filepath}/ad_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"

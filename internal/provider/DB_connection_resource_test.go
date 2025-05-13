@@ -14,7 +14,7 @@ import (
 )
 
 func TestAccSaviyntDBConnectionResource(t *testing.T) {
-	filePath := "DB_connection_resource_test_data.json"
+	filePath := "db_connection_resource_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
 	resourceName := "saviynt_db_connection_resource.db"
@@ -94,7 +94,7 @@ func TestAccSaviyntDBConnectionResource(t *testing.T) {
 }
 
 func testAccDBConnectionResourceConfig(operation string) string {
-	jsonPath := "${filepath}/DB_connection_resource_test_data.json"
+	jsonPath := "${filepath}/db_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"

@@ -69,7 +69,7 @@ func TestAccSaviyntGithubRestConnectionResource(t *testing.T) {
 }
 
 func testAccGithubRestConnectionResourceConfig(operation string) string {
-	jsonPath:="{path}/github_rest_connection_test_data.json"
+	jsonPath:="{filepath}/github_rest_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"

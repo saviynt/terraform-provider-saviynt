@@ -86,7 +86,7 @@ func TestAccSaviyntWorkdayConnectionResource(t *testing.T) {
 }
 
 func testAccWorkdayConnectionResourceConfig(operation string) string {
-	jsonPath := "{path}/workday_connection_test_data.json"
+	jsonPath := "{filepath}/workday_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"

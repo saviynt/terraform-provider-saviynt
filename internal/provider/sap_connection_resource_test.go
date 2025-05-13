@@ -18,7 +18,7 @@ func TestAccSaviyntSAPConnectionResource(t *testing.T) {
 	filePath := "sap_connection_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
-	resourceName := "saviynt_sap_connection_resource.ss"
+	resourceName := "saviynt_sap_connection_resource.sp"
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -42,11 +42,11 @@ func TestAccSaviyntSAPConnectionResource(t *testing.T) {
 			},
 			// Import
 			{
-				ResourceName:      resourceName,
-				ImportStateId:     createCfg["connection_name"],
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore:  []string {"msg"},
+				ResourceName:            resourceName,
+				ImportStateId:           createCfg["connection_name"],
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"msg"},
 			},
 			// Update Step
 			{
@@ -80,7 +80,7 @@ func TestAccSaviyntSAPConnectionResource(t *testing.T) {
 }
 
 func testAccSAPConnectionResourceConfig(operation string) string {
-	jsonPath:="{path}/sap_connection_test_data.json"
+	jsonPath := "{filepath}/sap_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"
@@ -91,7 +91,7 @@ func testAccSAPConnectionResourceConfig(operation string) string {
   cfg = jsondecode(file("%s"))["%s"]
 }
 
-  resource "saviynt_sap_connection_resource" "ss" {
+  resource "saviynt_sap_connection_resource" "sp" {
   connection_type                    = local.cfg.connection_type
   connection_name                    = local.cfg.connection_name
   message_server                     = local.cfg.message_server
@@ -105,9 +105,8 @@ func testAccSAPConnectionResourceConfig(operation string) string {
 }
   `, os.Getenv("SAVIYNT_URL"),
 		os.Getenv("SAVIYNT_USERNAME"),
-		os.Getenv("SAVIYNT_PASSWORD"), 
-		jsonPath, 
-    operation,
+		os.Getenv("SAVIYNT_PASSWORD"),
+		jsonPath,
+		operation,
 	)
 }
-

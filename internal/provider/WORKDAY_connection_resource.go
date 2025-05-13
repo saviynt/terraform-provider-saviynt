@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type WORKDAYConnectorResourceModel struct {
+type WorkdayConnectorResourceModel struct {
 	BaseConnector
 	ID                     types.String `tfsdk:"id"`
 	UsersLastImportTime    types.String `tfsdk:"users_last_import_time"`
@@ -71,7 +71,7 @@ type workdayConnectionResource struct {
 }
 
 // NewTestConnectionResource returns a new instance of testConnectionResource.
-func WorkdayNewTestConnectionResource() resource.Resource {
+func NewWorkdayTestConnectionResource() resource.Resource {
 	return &workdayConnectionResource{}
 }
 
@@ -352,7 +352,7 @@ func (r *workdayConnectionResource) Configure(ctx context.Context, req resource.
 }
 
 func (r *workdayConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan WORKDAYConnectorResourceModel
+	var plan WorkdayConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -444,11 +444,11 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 		resp.Diagnostics.AddError("API Create Failed", fmt.Sprintf("Error: %v", err))
 		return
 	}
-	if plan.UseEnhancedOrgRole.IsNull() || plan.UseEnhancedOrgRole.ValueString()==""{
-		plan.UseEnhancedOrgRole=types.StringValue("TRUE")
+	if plan.UseEnhancedOrgRole.IsNull() || plan.UseEnhancedOrgRole.ValueString() == "" {
+		plan.UseEnhancedOrgRole = types.StringValue("TRUE")
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("Workday")
+	plan.ConnectionType = types.StringValue("Workday")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -486,14 +486,14 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	plan.UpdateAccountPayload = util.SafeStringDatasource(plan.UpdateAccountPayload.ValueStringPointer())
 	plan.UpdateUserPayload = util.SafeStringDatasource(plan.UpdateUserPayload.ValueStringPointer())
 	plan.AssignOrgRolePayload = util.SafeStringDatasource(plan.AssignOrgRolePayload.ValueStringPointer())
-	plan.RemoveOrgRolePayload = util.SafeStringDatasource(plan.RemoveOrgRolePayload.ValueStringPointer())	
+	plan.RemoveOrgRolePayload = util.SafeStringDatasource(plan.RemoveOrgRolePayload.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *workdayConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state WORKDAYConnectorResourceModel
+	var state WorkdayConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -573,8 +573,8 @@ func (r *workdayConnectionResource) Read(ctx context.Context, req resource.ReadR
 	}
 }
 func (r *workdayConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan WORKDAYConnectorResourceModel
-	var state WORKDAYConnectorResourceModel
+	var plan WorkdayConnectorResourceModel
+	var state WorkdayConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -590,12 +590,12 @@ func (r *workdayConnectionResource) Update(ctx context.Context, req resource.Upd
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
 		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
@@ -735,6 +735,6 @@ func (r *workdayConnectionResource) Delete(ctx context.Context, req resource.Del
 }
 
 func (r *workdayConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-    // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }

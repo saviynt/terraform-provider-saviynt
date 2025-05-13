@@ -21,7 +21,7 @@ import (
 )
 
 // DBConnectionsDataSource defines the data source
-type DBConnectionsDataSource struct {
+type dbConnectionsDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -68,17 +68,17 @@ type DBConnectionAttributes struct {
 	ConnectionTimeoutConfig  *ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
 }
 
-var _ datasource.DataSource = &DBConnectionsDataSource{}
+var _ datasource.DataSource = &dbConnectionsDataSource{}
 
 func NewDBConnectionsDataSource() datasource.DataSource {
-	return &DBConnectionsDataSource{}
+	return &dbConnectionsDataSource{}
 }
 
-func (d *DBConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *dbConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_db_connection_datasource"
 }
 
-func (d *DBConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *dbConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.DBConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -178,7 +178,7 @@ func (d *DBConnectionsDataSource) Schema(ctx context.Context, req datasource.Sch
 	}
 }
 
-func (d *DBConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *dbConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -197,7 +197,7 @@ func (d *DBConnectionsDataSource) Configure(ctx context.Context, req datasource.
 	d.token = prov.accessToken
 }
 
-func (d *DBConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *dbConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state DBConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

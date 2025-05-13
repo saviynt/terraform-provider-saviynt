@@ -25,7 +25,7 @@ import (
 	openapi "github.com/saviynt/saviynt-api-go-client/endpoints"
 )
 
-type endpointResourceModel struct {
+type EndpointResourceModel struct {
 	ID                                      types.String `tfsdk:"id"`
 	EndpointName                            types.String `tfsdk:"endpoint_name"`
 	DisplayName                             types.String `tfsdk:"display_name"`
@@ -165,12 +165,11 @@ type endpointResourceModel struct {
 	CustomProperty58Label        types.String `tfsdk:"custom_property58_label"`
 	CustomProperty59Label        types.String `tfsdk:"custom_property59_label"`
 	CustomProperty60Label        types.String `tfsdk:"custom_property60_label"`
-	MappedEndpoints      types.List `tfsdk:"mapped_endpoints"`
-	EmailTemplates       types.List `tfsdk:"email_templates"`
-	RequestableRoleTypes types.List `tfsdk:"requestable_role_types"`
-
-	Msg       types.String `tfsdk:"msg"`
-	ErrorCode types.String `tfsdk:"error_code"`
+	MappedEndpoints              types.List   `tfsdk:"mapped_endpoints"`
+	EmailTemplates               types.List   `tfsdk:"email_templates"`
+	RequestableRoleTypes         types.List   `tfsdk:"requestable_role_types"`
+	Msg                          types.String `tfsdk:"msg"`
+	ErrorCode                    types.String `tfsdk:"error_code"`
 }
 
 type endpointResource struct {
@@ -221,20 +220,12 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Specify a name for the endpoint. Provide a logical name that will help you easily identify it.",
 			},
 			"display_name": schema.StringAttribute{
-				Required: true,
-				// Computed: true,
+				Required:    true,
 				Description: "Enter a user-friendly display name for the endpoint that will be displayed in the user interface. Display Name can be different from Endpoint Name.",
-				// PlanModifiers: []planmodifier.String{
-				// 	stringplanmodifier.UseStateForUnknown(),
-				// },
 			},
 			"security_system": schema.StringAttribute{
-				Required: true,
-				// Computed: true,
+				Required:    true,
 				Description: "Specify the Security system for which you want to create an endpoint.",
-				// PlanModifiers: []planmodifier.String{
-				// 	stringplanmodifier.UseStateForUnknown(),
-				// },
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
@@ -247,8 +238,7 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Specify the owner type for the endpoint. An endpoint can be owned by a User or Usergroup.",
 			},
 			"owner": schema.StringAttribute{
-				Optional: true,
-				// Computed:    true,
+				Optional:    true,
 				Description: "Specify the owner of the endpoint. If the ownerType is User, then specify the username of the owner, and If it is is Usergroup then specify the name of the user group.",
 			},
 			"resource_owner_type": schema.StringAttribute{
@@ -257,7 +247,7 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Specify the resource owner type for the endpoint. An endpoint can be owned by a User or Usergroup.",
 			},
 			"resource_owner": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
 				Description: "Specify the resource owner of the endpoint. If the resourceOwnerType is User, then specify the username of the owner and If it is Usergroup, specify the name of the user group.",
 			},
 			"access_query": schema.StringAttribute{
@@ -305,7 +295,7 @@ func (r *endpointResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Use this configuration for processing the add access tasks and remove access tasks for AD and LDAP Connectors.",
 			},
 			"requestable": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
 				Description: "Is this endpoint requestable.",
 			},
 			"parent_account_pattern": schema.StringAttribute{
@@ -478,7 +468,7 @@ func (r *endpointResource) Configure(ctx context.Context, req resource.Configure
 }
 
 func (r *endpointResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan endpointResourceModel
+	var plan EndpointResourceModel
 
 	planGetDiagnostics := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(planGetDiagnostics...)
@@ -499,12 +489,14 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 	reqParams.SetEndpointname(plan.EndpointName.ValueString())
 	existingResource, _, err := apiClient.EndpointsAPI.GetEndpoints(ctx).GetEndpointsRequest(reqParams).Execute()
 	if err != nil {
-		log.Printf("Problem with the get function in read block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		log.Printf("Problem with the get function in Create block")
+		resp.Diagnostics.AddError("API Read Failed In Create Block", fmt.Sprintf("Error: %v", *existingResource.Message))
 		return
 	}
 
-	if existingResource != nil && len(existingResource.Endpoints) != 0 && *existingResource.ErrorCode == "0" {
+	if existingResource != nil &&
+		len(existingResource.Endpoints) != 0 &&
+		*existingResource.ErrorCode == "0" {
 		log.Printf("[ERROR] Endpoint name already exists. Please import or use a different name")
 		resp.Diagnostics.AddError("Endpoint name already exists", "Please import or use a different name")
 		return
@@ -899,7 +891,7 @@ func (r *endpointResource) Create(ctx context.Context, req resource.CreateReques
 }
 
 func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state endpointResourceModel
+	var state EndpointResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -919,7 +911,7 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	readResp, _, err := apiClient.EndpointsAPI.GetEndpoints(ctx).GetEndpointsRequest(reqParams).Execute()
 	if err != nil {
 		log.Printf("Problem with the get function in read block")
-		resp.Diagnostics.AddError("API Read Failed", fmt.Sprintf("Error: %v", err))
+		resp.Diagnostics.AddError("API Read Failed In Read Block", fmt.Sprintf("Error: %v", *readResp.Message))
 		return
 	}
 	if len(readResp.Endpoints) == 0 {
@@ -950,9 +942,7 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	state.ConnectionConfig = util.SafeString(readResp.Endpoints[0].Connectionconfig)
 	state.AccountNameRule = util.SafeString(readResp.Endpoints[0].AccountNameRule)
 	state.ChangePasswordAccessQuery = util.SafeString(readResp.Endpoints[0].ChangePasswordAccessQuery)
-
 	state.PluginConfigs = util.SafeString(readResp.Endpoints[0].PluginConfigs)
-
 	state.CreateEntTaskforRemoveAcc = util.SafeString(readResp.Endpoints[0].CreateEntTaskforRemoveAcc)
 	state.EnableCopyAccess = util.SafeString(readResp.Endpoints[0].EnableCopyAccess)
 	state.AccountTypeNoPasswordChange = util.SafeString(readResp.Endpoints[0].AccountTypeNoDeprovision)
@@ -960,7 +950,6 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	state.ServiceAccountAccessQuery = util.SafeString(readResp.Endpoints[0].ServiceAccountAccessQuery)
 	state.UserAccountCorrelationRule = util.SafeString(readResp.Endpoints[0].UserAccountCorrelationRule)
 	state.StatusConfig = util.SafeString(readResp.Endpoints[0].StatusConfig)
-
 	state.CustomProperty1 = util.SafeString(readResp.Endpoints[0].CustomProperty1)
 	state.CustomProperty2 = util.SafeString(readResp.Endpoints[0].CustomProperty2)
 	state.CustomProperty3 = util.SafeString(readResp.Endpoints[0].CustomProperty3)
@@ -1006,7 +995,6 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	state.CustomProperty43 = util.SafeString(readResp.Endpoints[0].CustomProperty43)
 	state.CustomProperty44 = util.SafeString(readResp.Endpoints[0].CustomProperty44)
 	state.CustomProperty45 = util.SafeString(readResp.Endpoints[0].CustomProperty45)
-
 	state.AccountCustomProperty1Label = util.SafeString(readResp.Endpoints[0].AccountCustomProperty1Label)
 	state.AccountCustomProperty2Label = util.SafeString(readResp.Endpoints[0].AccountCustomProperty2Label)
 	state.AccountCustomProperty3Label = util.SafeString(readResp.Endpoints[0].AccountCustomProperty3Label)
@@ -1037,7 +1025,6 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 	state.AccountCustomProperty28Label = util.SafeString(readResp.Endpoints[0].AccountCustomProperty28Label)
 	state.AccountCustomProperty29Label = util.SafeString(readResp.Endpoints[0].AccountCustomProperty29Label)
 	state.AccountCustomProperty30Label = util.SafeString(readResp.Endpoints[0].AccountCustomProperty30Label)
-
 	state.CustomProperty31Label = util.SafeString(readResp.Endpoints[0].Customproperty31Label)
 	state.CustomProperty32Label = util.SafeString(readResp.Endpoints[0].Customproperty32Label)
 	state.CustomProperty33Label = util.SafeString(readResp.Endpoints[0].Customproperty33Label)
@@ -1247,8 +1234,8 @@ func (r *endpointResource) Read(ctx context.Context, req resource.ReadRequest, r
 }
 
 func (r *endpointResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan endpointResourceModel
-	var state endpointResourceModel
+	var plan EndpointResourceModel
+	var state EndpointResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {

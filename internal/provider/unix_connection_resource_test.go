@@ -76,7 +76,7 @@ func TestAccSaviyntUnixConnectionResource(t *testing.T) {
 }
 
 func testAccUnixConnectionResourceConfig(operation string) string {
-	jsonPath:="{path}/unix_connection_test_data.json"
+	jsonPath:="{filepath}/unix_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"

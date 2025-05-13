@@ -21,7 +21,7 @@ import (
 )
 
 // UnixConnectionDataSource defines the data source
-type UnixConnectionDataSource struct {
+type unixConnectionDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -72,17 +72,17 @@ type UnixConnectionAttributes struct {
 	EnableAccountCommand             types.String             `tfsdk:"enable_account_command"`
 }
 
-var _ datasource.DataSource = &UnixConnectionDataSource{}
+var _ datasource.DataSource = &unixConnectionDataSource{}
 
 func NewUnixConnectionsDataSource() datasource.DataSource {
-	return &UnixConnectionDataSource{}
+	return &unixConnectionDataSource{}
 }
 
-func (d *UnixConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *unixConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_unix_connection_datasource"
 }
 
-func (d *UnixConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *unixConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.UnixConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -184,7 +184,7 @@ func (d *UnixConnectionDataSource) Schema(ctx context.Context, req datasource.Sc
 	}
 }
 
-func (d *UnixConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *unixConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -203,7 +203,7 @@ func (d *UnixConnectionDataSource) Configure(ctx context.Context, req datasource
 	d.token = prov.accessToken
 }
 
-func (d *UnixConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *unixConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state UnixConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

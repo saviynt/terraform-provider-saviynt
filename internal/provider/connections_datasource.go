@@ -20,16 +20,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ConnectionsDataSource struct {
+type connectionsDataSource struct {
 	client *s.Client
 	token  string
 }
 
-var _ datasource.DataSource = &ConnectionsDataSource{}
-var _ datasource.DataSourceWithConfigure = &ConnectionsDataSource{}
+var _ datasource.DataSource = &connectionsDataSource{}
+var _ datasource.DataSourceWithConfigure = &connectionsDataSource{}
 
 func NewConnectionsDataSource() datasource.DataSource {
-	return &ConnectionsDataSource{}
+	return &connectionsDataSource{}
 }
 
 type ConnectionsDataSourceModel struct {
@@ -56,11 +56,11 @@ type Connection struct {
 	UpdatedOn             types.String `tfsdk:"updatedon"`
 }
 
-func (d *ConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *connectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_connections_datasource"
 }
 
-func (d *ConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *connectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: util.ConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -143,7 +143,7 @@ func (d *ConnectionsDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (d *ConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *connectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -162,7 +162,7 @@ func (d *ConnectionsDataSource) Configure(ctx context.Context, req datasource.Co
 	d.token = prov.accessToken
 }
 
-func (d *ConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *connectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state ConnectionsDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)
