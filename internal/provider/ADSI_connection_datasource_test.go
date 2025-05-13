@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccSaviyntADSIConnectionDataSource(t *testing.T) {
-	filePath := "ADSI_connection_resource_test_data.json"
+	filePath := "adsi_connection_resource_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	datasource := "data.saviynt_adsi_connection_datasource.test"
 
@@ -53,7 +53,7 @@ func TestAccSaviyntADSIConnectionDataSource(t *testing.T) {
 }
 
 func testAccADSIConnectionDataSourceConfig() string {
-	jsonPath := "${filepath}/ADSI_connection_resource_test_data.json"
+	jsonPath := "${filepath}/adsi_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"

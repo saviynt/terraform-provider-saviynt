@@ -20,7 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type UNIXConnectorResourceModel struct {
+type UnixConnectorResourceModel struct {
 	BaseConnector
 	ID                            types.String `tfsdk:"id"`
 	HostName                      types.String `tfsdk:"host_name"`
@@ -64,7 +64,7 @@ type unixConnectionResource struct {
 	token  string
 }
 
-func UNIXNewTestConnectionResource() resource.Resource {
+func NewUnixTestConnectionResource() resource.Resource {
 	return &unixConnectionResource{}
 }
 
@@ -315,7 +315,7 @@ func (r *unixConnectionResource) Configure(ctx context.Context, req resource.Con
 }
 
 func (r *unixConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan UNIXConnectorResourceModel
+	var plan UnixConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -446,7 +446,7 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 }
 
 func (r *unixConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state UNIXConnectorResourceModel
+	var state UnixConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -522,8 +522,8 @@ func (r *unixConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 }
 
 func (r *unixConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan UNIXConnectorResourceModel
-	var state UNIXConnectorResourceModel
+	var plan UnixConnectorResourceModel
+	var state UnixConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return

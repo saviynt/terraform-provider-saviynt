@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SAPConnectorResourceModel struct {
+type SapConnectorResourceModel struct {
 	BaseConnector
 	ID                             types.String `tfsdk:"id"`
 	Messageserver                  types.String `tfsdk:"message_server"`
@@ -91,7 +91,7 @@ type sapConnectionResource struct {
 	token  string
 }
 
-func SAPNewTestConnectionResource() resource.Resource {
+func NewSapTestConnectionResource() resource.Resource {
 	return &sapConnectionResource{}
 }
 
@@ -479,7 +479,7 @@ func (r *sapConnectionResource) Configure(ctx context.Context, req resource.Conf
 }
 
 func (r *sapConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan SAPConnectorResourceModel
+	var plan SapConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -592,7 +592,7 @@ func (r *sapConnectionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("SAP")
+	plan.ConnectionType = types.StringValue("SAP")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -654,14 +654,14 @@ func (r *sapConnectionResource) Create(ctx context.Context, req resource.CreateR
 	plan.AuditLogJson = util.SafeStringDatasource(plan.AuditLogJson.ValueStringPointer())
 	plan.EccOrS4Hana = util.SafeStringDatasource(plan.EccOrS4Hana.ValueStringPointer())
 	plan.DataImportFilter = util.SafeStringDatasource(plan.DataImportFilter.ValueStringPointer())
-	plan.Configjson = util.SafeStringDatasource(plan.Configjson.ValueStringPointer())	
+	plan.Configjson = util.SafeStringDatasource(plan.Configjson.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *sapConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state SAPConnectorResourceModel
+	var state SapConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -765,8 +765,8 @@ func (r *sapConnectionResource) Read(ctx context.Context, req resource.ReadReque
 }
 
 func (r *sapConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan SAPConnectorResourceModel
-	var state SAPConnectorResourceModel
+	var plan SapConnectorResourceModel
+	var state SapConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -782,12 +782,12 @@ func (r *sapConnectionResource) Update(ctx context.Context, req resource.UpdateR
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
 		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
@@ -971,6 +971,6 @@ func (r *sapConnectionResource) Delete(ctx context.Context, req resource.DeleteR
 }
 
 func (r *sapConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-    // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }

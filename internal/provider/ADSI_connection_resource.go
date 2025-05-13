@@ -72,7 +72,7 @@ type adsiConnectionResource struct {
 	token  string
 }
 
-func ADSINewTestConnectionResource() resource.Resource {
+func NewADSITestConnectionResource() resource.Resource {
 	return &adsiConnectionResource{}
 }
 

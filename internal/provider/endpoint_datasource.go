@@ -20,16 +20,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type EndpointsDataSource struct {
+type endpointsDataSource struct {
 	client *s.Client
 	token  string
 }
 
-var _ datasource.DataSource = &EndpointsDataSource{}
-var _ datasource.DataSourceWithConfigure = &EndpointsDataSource{}
+var _ datasource.DataSource = &endpointsDataSource{}
+var _ datasource.DataSourceWithConfigure = &endpointsDataSource{}
 
 func NewEndpointsDataSource() datasource.DataSource {
-	return &EndpointsDataSource{}
+	return &endpointsDataSource{}
 }
 
 type EndpointsDataSourceModel struct {
@@ -203,10 +203,10 @@ type Endpoint struct {
 
 }
 
-func (d *EndpointsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *endpointsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_endpoints_datasource"
 }
-func (d *EndpointsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *endpointsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: util.EndpointDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -551,7 +551,7 @@ func (d *EndpointsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 }
 
 
-func (d *EndpointsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *endpointsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -570,7 +570,7 @@ func (d *EndpointsDataSource) Configure(ctx context.Context, req datasource.Conf
 	d.token = prov.accessToken
 }
 
-func (d *EndpointsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *endpointsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state EndpointsDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

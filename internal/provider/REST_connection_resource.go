@@ -22,7 +22,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type RESTConnectorResourceModel struct {
+type RestConnectorResourceModel struct {
 	BaseConnector
 	ID                    types.String `tfsdk:"id"`
 	ConnectionJSON        types.String `tfsdk:"connection_json"`
@@ -56,7 +56,7 @@ type restConnectionResource struct {
 	token  string
 }
 
-func RestNewTestConnectionResource() resource.Resource {
+func NewRestTestConnectionResource() resource.Resource {
 	return &restConnectionResource{}
 }
 
@@ -265,7 +265,7 @@ func (r *restConnectionResource) Configure(ctx context.Context, req resource.Con
 }
 
 func (r *restConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan RESTConnectorResourceModel
+	var plan RestConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -387,7 +387,7 @@ func (r *restConnectionResource) Create(ctx context.Context, req resource.Create
 }
 
 func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state RESTConnectorResourceModel
+	var state RestConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -455,8 +455,8 @@ func (r *restConnectionResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 }
 func (r *restConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan RESTConnectorResourceModel
-	var state RESTConnectorResourceModel
+	var plan RestConnectorResourceModel
+	var state RestConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {

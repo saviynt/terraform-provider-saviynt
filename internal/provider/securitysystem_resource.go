@@ -21,7 +21,7 @@ import (
 )
 
 // securitySystemResourceModel defines the state for our security system resource.
-type securitySystemResourceModel struct {
+type SecuritySystemResourceModel struct {
 	ID                                 types.String `tfsdk:"id"`
 	Systemname                         types.String `tfsdk:"systemname"`
 	DisplayName                        types.String `tfsdk:"display_name"`
@@ -52,20 +52,20 @@ type securitySystemResourceModel struct {
 	ErrorCode                          types.String `tfsdk:"error_code"`
 }
 
-type SecuritySystemResource struct {
+type securitySystemResource struct {
 	client *s.Client
 	token  string
 }
 
 func NewSecuritySystemResource() resource.Resource {
-	return &SecuritySystemResource{}
+	return &securitySystemResource{}
 }
 
-func (r *SecuritySystemResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *securitySystemResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = "saviynt_security_system_resource"
 }
 
-func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *securitySystemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Create and manage Security Systems in Saviynt",
 		Attributes: map[string]schema.Attribute{
@@ -212,7 +212,7 @@ func (r *SecuritySystemResource) Schema(ctx context.Context, req resource.Schema
 	}
 }
 
-func (r *SecuritySystemResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *securitySystemResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -231,8 +231,8 @@ func (r *SecuritySystemResource) Configure(ctx context.Context, req resource.Con
 	r.token = prov.accessToken
 }
 
-func (r *SecuritySystemResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan securitySystemResourceModel
+func (r *securitySystemResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan SecuritySystemResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -353,8 +353,8 @@ func (r *SecuritySystemResource) Create(ctx context.Context, req resource.Create
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state securitySystemResourceModel
+func (r *securitySystemResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state SecuritySystemResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -409,9 +409,9 @@ func (r *SecuritySystemResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 }
-func (r *SecuritySystemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan securitySystemResourceModel
-	var state securitySystemResourceModel
+func (r *securitySystemResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan SecuritySystemResourceModel
+	var state SecuritySystemResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -512,11 +512,11 @@ func (r *SecuritySystemResource) Update(ctx context.Context, req resource.Update
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
 
-func (r *SecuritySystemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *securitySystemResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
 }
 
-func (r *SecuritySystemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *securitySystemResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute
 	resource.ImportStatePassthroughID(ctx, path.Root("systemname"), req, resp)
 }

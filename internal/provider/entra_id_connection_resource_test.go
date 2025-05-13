@@ -14,7 +14,7 @@ import (
 )
 
 func TestAccSaviyntEntraIdConnectionResource(t *testing.T) {
-	filePath := "ENTRAID_connection_resource_test_data.json"
+	filePath := "entra_id_connection_resource_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	updateCfg := util.LoadConnectorData(t, filePath, "update")
 	resourceName := "saviynt_entraid_connection_resource.entraid"
@@ -97,7 +97,7 @@ func TestAccSaviyntEntraIdConnectionResource(t *testing.T) {
 }
 
 func testAccEntraIdConnectionResourceConfig(operation string) string {
-	jsonPath := "/Users/shaleen.shukla/terraform-provider-saviynt/internal/provider/ENTRAID_connection_resource_test_data.json"
+	jsonPath := "${filepath}/entra_id_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"

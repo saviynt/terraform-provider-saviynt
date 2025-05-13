@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ENTRAIDConnectorResourceModel struct {
+type EntraIdConnectorResourceModel struct {
 	BaseConnector
 	ID                              types.String `tfsdk:"id"`
 	ClientId                        types.String `tfsdk:"client_id"`
@@ -73,20 +73,20 @@ type ENTRAIDConnectorResourceModel struct {
 	EnhancedDirectoryRoles          types.String `tfsdk:"enhanced_directory_roles"`
 }
 
-type entraidConnectionResource struct {
+type entraIdConnectionResource struct {
 	client *s.Client
 	token  string
 }
 
-func ENTRAIDNewTestConnectionResource() resource.Resource {
-	return &entraidConnectionResource{}
+func NewEntraIdTestConnectionResource() resource.Resource {
+	return &entraIdConnectionResource{}
 }
 
-func (r *entraidConnectionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *entraIdConnectionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = "saviynt_entraid_connection_resource"
 }
 
-func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *entraIdConnectionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.EntraIDConnDescription,
 		Attributes: map[string]schema.Attribute{
@@ -376,7 +376,7 @@ func (r *entraidConnectionResource) Schema(ctx context.Context, req resource.Sch
 	}
 }
 
-func (r *entraidConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *entraIdConnectionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -395,8 +395,8 @@ func (r *entraidConnectionResource) Configure(ctx context.Context, req resource.
 	r.token = prov.accessToken
 }
 
-func (r *entraidConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan ENTRAIDConnectorResourceModel
+func (r *entraIdConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan EntraIdConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -553,8 +553,8 @@ func (r *entraidConnectionResource) Create(ctx context.Context, req resource.Cre
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state ENTRAIDConnectorResourceModel
+func (r *entraIdConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state EntraIdConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -643,9 +643,9 @@ func (r *entraidConnectionResource) Read(ctx context.Context, req resource.ReadR
 	}
 }
 
-func (r *entraidConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan ENTRAIDConnectorResourceModel
-	var state ENTRAIDConnectorResourceModel
+func (r *entraIdConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan EntraIdConnectorResourceModel
+	var state EntraIdConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -819,11 +819,11 @@ func (r *entraidConnectionResource) Update(ctx context.Context, req resource.Upd
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(stateUpdateDiagnostics...)
 }
-func (r *entraidConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *entraIdConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.State.RemoveResource(ctx)
 }
 
-func (r *entraidConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *entraIdConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute
 	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }

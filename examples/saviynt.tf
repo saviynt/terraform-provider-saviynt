@@ -1,45 +1,115 @@
-
-variable "IP_ADDRESS" {
+variable "SAVIYNT_SERVER_URL" {
   type        = string
-  description = "Saviynt host server"
+  description = "Saviynt API Server URL (without https://)"
 }
-variable "LDAP_PORT" {
+variable "SAVIYNT_USERNAME" {
   type        = string
-  description = "Port for the connection"
+  description = "Saviynt API Username"
 }
-variable "LDAP_PROTOCOL" {
+variable "SAVIYNT_PASSWORD" {
   type        = string
-  description = "Protocol type (e.g., LDAP, HTTP, etc.)"
-}
-variable "PASSWORD" {
-  type        = string
-  description = "Connection password"
+  description = "Saviynt API Password"
   sensitive   = true
 }
-variable "BIND_USER" {
-  type        = string
-  description = "Connection username"
+
+terraform {
+  required_providers {
+    saviynt = {
+      source  = "registry.terraform.io/local/saviynt"
+      version = "1.0.0"
+    }
+  }
 }
-variable "VAULT_CONNECTION" {
-  type        = string
-  description = "Vault connection"
+
+provider "saviynt" {
+  server_url = var.SAVIYNT_SERVER_URL
+  username   = var.SAVIYNT_USERNAME
+  password   = var.SAVIYNT_PASSWORD
 }
-variable "VAULT_CONFIG" {
-  type        = string
-  description = "Vault config"
+
+
+resource "saviynt_security_system_resource" "security_system" {
+  systemname                      = "Terraform_Security_System"
+  display_name                    = "Terraform_Security_System"
+  hostname                        = "EntitlementsOnly"
+  port                            = "443"
+  access_add_workflow             = "autoapprovalwf"
+  access_remove_workflow          = "autoapprovalwf"
+  add_service_account_workflow    = "autoapprovalwf"
+  remove_service_account_workflow = "autoapprovalwf"
+  automated_provisioning          = "true"
+  use_open_connector              = "true"
+  recon_application               = "true"
+  instant_provision               = "true"
+  provisioning_tries              = "3"
+  provisioning_comments           = "Auto-provisioned by Terraform"
 }
-variable "SAVE_IN_VAULT" {
-  type        = string
-  description = "Save in vault"
+
+check "saviynt_security_system_resource_check" {
+  assert {
+    condition     = saviynt_security_system_resource.security_system.error_code == "0"
+    error_message = "Message: ${saviynt_security_system_resource.security_system.msg}"
+  }
 }
-variable "BASE_CONTAINER" {
-  type        = string
-  description = "Value of BASEDN"
+
+resource "saviynt_endpoint_resource" "endpoint" {
+  endpointname                                  = "Terraform_Endpoint"
+  display_name                                  = "Terraform_Endpoint"
+  security_system                               = "Terraform_Security_System"
+  description                                   = "Endpoint for Jira Production Access"
+  owner_type                                    = "USER"
+  owner                                         = "admin"
+  resource_owner_type                           = "ROLE"
+  resource_owner                                = "userGroup"
+  access_query                                  = "SELECT * FROM ACCESS WHERE endpoint='JIRA'"
+  enable_copy_access                            = "true"
+  disable_new_account_request_if_account_exists = "false"
+  disable_remove_account                        = "false"
+  disable_modify_account                        = "false"
+  user_account_correlation_rule                 = "MATCH_ON_USERNAME"
+  create_ent_task_for_remove_acc                = "true"
+  out_of_band_action                            = "2"
+  requestable                                   = "true"
+  service_account_access_query                  = "SELECT * FROM ACCESS WHERE account_type='SERVICE'"
+  block_inflight_request                        = "ON"
+  account_name_rule                             = "acct-$${user.email}"
+  allow_change_password_sql_query               = "SELECT 1 FROM dual"
+  account_name_validator_regex                  = "^[a-zA-Z0-9_.-]{5,15}$"
+
+  status_config   = "{\"enabled\":true, \"checkInterval\":10}"
+  plugin_configs  = "{\"pluginVersion\":\"1.2.3\"}"
+  endpoint_config = "{\"audit\":true}"
+
+  # Sample custom properties (only showing 1–5 for brevity)
+  custom_property1 = "BusinessUnit"
+  custom_property2 = "ApplicationName"
+  custom_property3 = "Region"
+  custom_property4 = "Environment"
+  custom_property5 = "IntegrationID"
+
+  # Labels for custom properties
+  custom_property1_label = "Business Unit"
+  custom_property2_label = "App Name"
+  custom_property3_label = "Region"
+  custom_property4_label = "Environment"
+  custom_property5_label = "Integration ID"
+
+  # The rest can be filled similarly (up to 60)
+
+  custom_property60_label = "Custom Label 60"
+
+  allow_remove_all_role_on_request = "false"
+  change_password_access_query     = "SELECT * FROM USERS WHERE changepassword = 1"
+
 }
-variable "DOMAIN" {
-  type        = string
-  description = "Value of DOMCONTRDN"
+
+check "saviynt_endpoint_resource_check" {
+  assert {
+    condition     = saviynt_endpoint_resource.endpoint.error_code == "0"
+    error_message = "Message: ${saviynt_endpoint_resource.endpoint.msg}"
+  }
 }
+
 resource "saviynt_ad_connection_resource" "example" {
   connection_type       = "AD"
   connection_name       = "Terraform_AD_Connector"
@@ -299,4 +369,16 @@ resource "saviynt_ad_connection_resource" "example" {
       lockoutTime = "0"
     }
   )
+}
+
+
+check "saviynt_ad_connection_resource_check" {
+  assert {
+    condition     = saviynt_ad_connection_resource.ad_connector.error_code == "0"
+    error_message = "Message: ${saviynt_ad_connection_resource.ad_connector.msg}"
+  }
+}
+
+data "saviynt_ad_connection_datasource" "ad_datasource" {
+  connection_name = "Terraform_AD_Connector"
 }

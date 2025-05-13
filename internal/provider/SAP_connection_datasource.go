@@ -21,17 +21,17 @@ import (
 )
 
 // SAPConnectionDataSource defines the data source
-type SAPConnectionDataSource struct {
+type sapConnectionDataSource struct {
 	client *s.Client
 	token  string
 }
 
-type SAPConnectionDataSourceModel struct {
+type SapConnectionDataSourceModel struct {
 	BaseConnectionDataSourceModel
-	ConnectionAttributes *SAPConnectionAttributes `tfsdk:"connection_attributes"`
+	ConnectionAttributes *SapConnectionAttributes `tfsdk:"connection_attributes"`
 }
 
-type SAPConnectionAttributes struct {
+type SapConnectionAttributes struct {
 	CreateAccountJson              types.String             `tfsdk:"create_account_json"`
 	AuditLogJson                   types.String             `tfsdk:"audit_log_json"`
 	ConnectionType                 types.String             `tfsdk:"connection_type"`
@@ -98,17 +98,17 @@ type SAPConnectionAttributes struct {
 	UpdateAccountJson              types.String             `tfsdk:"update_account_json"`
 }
 
-var _ datasource.DataSource = &SAPConnectionDataSource{}
+var _ datasource.DataSource = &sapConnectionDataSource{}
 
 func NewSAPConnectionsDataSource() datasource.DataSource {
-	return &SAPConnectionDataSource{}
+	return &sapConnectionDataSource{}
 }
 
-func (d *SAPConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *sapConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_sap_connection_datasource"
 }
 
-func (d *SAPConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *sapConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.SAPConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -236,7 +236,7 @@ func (d *SAPConnectionDataSource) Schema(ctx context.Context, req datasource.Sch
 	}
 }
 
-func (d *SAPConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *sapConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -255,8 +255,8 @@ func (d *SAPConnectionDataSource) Configure(ctx context.Context, req datasource.
 	d.token = prov.accessToken
 }
 
-func (d *SAPConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state SAPConnectionDataSourceModel
+func (d *sapConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state SapConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)
 	resp.Diagnostics.Append(configDiagnostics...)
@@ -307,7 +307,7 @@ func (d *SAPConnectionDataSource) Read(ctx context.Context, req datasource.ReadR
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.SAPConnectionResponse.Emailtemplate)
 
 	if apiResp.SAPConnectionResponse.Connectionattributes != nil {
-		state.ConnectionAttributes = &SAPConnectionAttributes{
+		state.ConnectionAttributes = &SapConnectionAttributes{
 			CreateAccountJson:              util.SafeStringDatasource(apiResp.SAPConnectionResponse.Connectionattributes.CREATEACCOUNTJSON),
 			AuditLogJson:                   util.SafeStringDatasource(apiResp.SAPConnectionResponse.Connectionattributes.AUDIT_LOG_JSON),
 			ConnectionType:                 util.SafeStringDatasource(apiResp.SAPConnectionResponse.Connectionattributes.ConnectionType),
