@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccSaviyntEntraIdConnectionDataSource(t *testing.T) {
-	filePath := "ENTRAID_connection_resource_test_data.json"
+	filePath := "entra_id_connection_resource_test_data.json"
 	createCfg := util.LoadConnectorData(t, filePath, "create")
 	datasource := "data.saviynt_entraid_connection_datasource.test"
 
@@ -59,7 +59,7 @@ func TestAccSaviyntEntraIdConnectionDataSource(t *testing.T) {
 }
 
 func testAccEntraIdConnectionDataSourceConfig() string {
-	jsonPath := "${filepath}/ENTRAID_connection_resource_test_data.json"
+	jsonPath := "${filepath}/entra_id_connection_resource_test_data.json"
 	return fmt.Sprintf(`
 provider "saviynt" {
   server_url = "%s"

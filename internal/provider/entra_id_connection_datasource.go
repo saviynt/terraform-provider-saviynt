@@ -21,17 +21,17 @@ import (
 )
 
 // EntraIDConnectionDataSource defines the data source
-type EntraIDConnectionDataSource struct {
+type entraIdConnectionDataSource struct {
 	client *s.Client
 	token  string
 }
 
-type EntraIDConnectionDataSourceModel struct {
+type EntraIdConnectionDataSourceModel struct {
 	BaseConnectionDataSourceModel
-	ConnectionAttributes *EntraIDConnectionAttributes `tfsdk:"connection_attributes"`
+	ConnectionAttributes *EntraIdConnectionAttributes `tfsdk:"connection_attributes"`
 }
 
-type EntraIDConnectionAttributes struct {
+type EntraIdConnectionAttributes struct {
 	UpdateUserJSON                  types.String             `tfsdk:"update_user_json"`
 	MicrosoftGraphEndpoint          types.String             `tfsdk:"microsoft_graph_endpoint"`
 	EndpointsFilter                 types.String             `tfsdk:"endpoints_filter"`
@@ -85,17 +85,17 @@ type EntraIDConnectionAttributes struct {
 	ConnectionTimeoutConfig         *ConnectionTimeoutConfig `tfsdk:"connection_timeout_config"`
 }
 
-var _ datasource.DataSource = &EntraIDConnectionDataSource{}
+var _ datasource.DataSource = &entraIdConnectionDataSource{}
 
 func NewEntraIDConnectionsDataSource() datasource.DataSource {
-	return &EntraIDConnectionDataSource{}
+	return &entraIdConnectionDataSource{}
 }
 
-func (d *EntraIDConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *entraIdConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_entraid_connection_datasource"
 }
 
-func (d *EntraIDConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *entraIdConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.EndpointDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -210,7 +210,7 @@ func (d *EntraIDConnectionDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (d *EntraIDConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *entraIdConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -229,8 +229,8 @@ func (d *EntraIDConnectionDataSource) Configure(ctx context.Context, req datasou
 	d.token = prov.accessToken
 }
 
-func (d *EntraIDConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state EntraIDConnectionDataSourceModel
+func (d *entraIdConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state EntraIdConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)
 	resp.Diagnostics.Append(configDiagnostics...)
@@ -281,7 +281,7 @@ func (d *EntraIDConnectionDataSource) Read(ctx context.Context, req datasource.R
 	state.EmailTemplate = util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Emailtemplate)
 
 	if apiResp.EntraIDConnectionResponse.Connectionattributes != nil {
-		state.ConnectionAttributes = &EntraIDConnectionAttributes{
+		state.ConnectionAttributes = &EntraIdConnectionAttributes{
 			UpdateUserJSON:                  util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.UpdateUserJSON),
 			MicrosoftGraphEndpoint:          util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.MICROSOFT_GRAPH_ENDPOINT),
 			EndpointsFilter:                 util.SafeStringDatasource(apiResp.EntraIDConnectionResponse.Connectionattributes.ENDPOINTS_FILTER),

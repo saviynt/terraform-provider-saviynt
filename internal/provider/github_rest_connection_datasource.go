@@ -21,7 +21,7 @@ import (
 )
 
 // GithubRestConnectionDataSource defines the data source
-type GithubRestConnectionDataSource struct {
+type githubRestConnectionDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -43,17 +43,17 @@ type GithubRestConnectionAttributes struct {
 	IsTimeoutConfigValidated types.Bool               `tfsdk:"is_timeout_config_validated"`
 }
 
-var _ datasource.DataSource = &GithubRestConnectionDataSource{}
+var _ datasource.DataSource = &githubRestConnectionDataSource{}
 
 func NewGithubRestConnectionsDataSource() datasource.DataSource {
-	return &GithubRestConnectionDataSource{}
+	return &githubRestConnectionDataSource{}
 }
 
-func (d *GithubRestConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *githubRestConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_github_rest_connection_datasource"
 }
 
-func (d *GithubRestConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *githubRestConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.GithubRestConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -142,7 +142,7 @@ func (d *GithubRestConnectionDataSource) Schema(ctx context.Context, req datasou
 	}
 }
 
-func (d *GithubRestConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *githubRestConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -161,7 +161,7 @@ func (d *GithubRestConnectionDataSource) Configure(ctx context.Context, req data
 	d.token = prov.accessToken
 }
 
-func (d *GithubRestConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *githubRestConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state GithubRestConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

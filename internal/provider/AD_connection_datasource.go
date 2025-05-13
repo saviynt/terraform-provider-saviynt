@@ -21,7 +21,7 @@ import (
 )
 
 // ADConnectionsDataSource defines the data source
-type ADConnectionsDataSource struct {
+type adConnectionsDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -124,26 +124,17 @@ type ConnectionTimeoutConfig struct {
 	RetryFailureStatusCode  types.Int64 `tfsdk:"retry_failure_status_code"`
 }
 
-// type ADConnectionAttributesConnectionTimeoutConfig struct {
-// 	RetryWait               types.Int64 `tfsdk:"retry_wait"`
-// 	TokenRefreshMaxTryCount types.Int64 `tfsdk:"token_refresh_max_try_count"`
-// 	RetryWaitMaxValue       types.Int64 `tfsdk:"retry_wait_max_value"`
-// 	RetryCount              types.Int64 `tfsdk:"retry_count"`
-// 	ReadTimeout             types.Int64 `tfsdk:"read_timeout"`
-// 	ConnectionTimeout       types.Int64 `tfsdk:"connection_timeout"`
-// }
-
-var _ datasource.DataSource = &ADConnectionsDataSource{}
+var _ datasource.DataSource = &adConnectionsDataSource{}
 
 func NewADConnectionsDataSource() datasource.DataSource {
-	return &ADConnectionsDataSource{}
+	return &adConnectionsDataSource{}
 }
 
-func (d *ADConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *adConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_ad_connection_datasource"
 }
 
-func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *adConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.ADConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -275,7 +266,7 @@ func (d *ADConnectionsDataSource) Schema(ctx context.Context, req datasource.Sch
 	}
 }
 
-func (d *ADConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *adConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -294,7 +285,7 @@ func (d *ADConnectionsDataSource) Configure(ctx context.Context, req datasource.
 	d.token = prov.accessToken
 }
 
-func (d *ADConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *adConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state ADConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

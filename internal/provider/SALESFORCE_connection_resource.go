@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SALESFORCEConnectorResourceModel struct {
+type SalesforceConnectorResourceModel struct {
 	BaseConnector
 	ID                     types.String `tfsdk:"id"`
 	ClientId               types.String `tfsdk:"client_id"`
@@ -47,7 +47,7 @@ type salesforceConnectionResource struct {
 	token  string
 }
 
-func SALESFORCENewTestConnectionResource() resource.Resource {
+func NewSalesfoceTestConnectionResource() resource.Resource {
 	return &salesforceConnectionResource{}
 }
 
@@ -217,7 +217,7 @@ func (r *salesforceConnectionResource) Configure(ctx context.Context, req resour
 }
 
 func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan SALESFORCEConnectorResourceModel
+	var plan SalesforceConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -286,7 +286,7 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("SalesForce")
+	plan.ConnectionType = types.StringValue("SalesForce")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -311,7 +311,7 @@ func (r *salesforceConnectionResource) Create(ctx context.Context, req resource.
 }
 
 func (r *salesforceConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state SALESFORCEConnectorResourceModel
+	var state SalesforceConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -373,8 +373,8 @@ func (r *salesforceConnectionResource) Read(ctx context.Context, req resource.Re
 }
 
 func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan SALESFORCEConnectorResourceModel
-	var state SALESFORCEConnectorResourceModel
+	var plan SalesforceConnectorResourceModel
+	var state SalesforceConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -390,12 +390,12 @@ func (r *salesforceConnectionResource) Update(ctx context.Context, req resource.
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot be updated")
 		log.Printf("[ERROR]: Connection type cannot be updated")
 		return
@@ -490,6 +490,6 @@ func (r *salesforceConnectionResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *salesforceConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-    // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }

@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type GITHUBRESTConnectorResourceModel struct {
+type GithubRestConnectorResourceModel struct {
 	BaseConnector
 	ID                      types.String `tfsdk:"id"`
 	ConnectionJSON          types.String `tfsdk:"connection_json"`
@@ -37,7 +37,7 @@ type githubRestConnectionResource struct {
 	token  string
 }
 
-func GITHUBRESTNewTestConnectionResource() resource.Resource {
+func NewGithubRestTestConnectionResource() resource.Resource {
 	return &githubRestConnectionResource{}
 }
 
@@ -155,7 +155,7 @@ func (r *githubRestConnectionResource) Configure(ctx context.Context, req resour
 }
 
 func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan GITHUBRESTConnectorResourceModel
+	var plan GithubRestConnectorResourceModel
 	// Extract plan from request
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -208,7 +208,7 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 	githubRestRequest := openapi.CreateOrUpdateRequest{
 		GithubRESTConnector: &githubRestConn,
 	}
-	
+
 	apiResp, _, err := apiClient.ConnectionsAPI.CreateOrUpdate(ctx).CreateOrUpdateRequest(githubRestRequest).Execute()
 	if err != nil || *apiResp.ErrorCode != "0" {
 		log.Printf("[ERROR] Failed to create API resource. Error: %v", err)
@@ -216,7 +216,7 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("GithubRest")
+	plan.ConnectionType = types.StringValue("GithubRest")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -231,7 +231,7 @@ func (r *githubRestConnectionResource) Create(ctx context.Context, req resource.
 }
 
 func (r *githubRestConnectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state GITHUBRESTConnectorResourceModel
+	var state GithubRestConnectorResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -283,8 +283,8 @@ func (r *githubRestConnectionResource) Read(ctx context.Context, req resource.Re
 }
 
 func (r *githubRestConnectionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan GITHUBRESTConnectorResourceModel
-	var state GITHUBRESTConnectorResourceModel
+	var plan GithubRestConnectorResourceModel
+	var state GithubRestConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,12 +301,12 @@ func (r *githubRestConnectionResource) Update(ctx context.Context, req resource.
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
 		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
@@ -389,11 +389,6 @@ func (r *githubRestConnectionResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *githubRestConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-    // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }
-
-
-
-
-

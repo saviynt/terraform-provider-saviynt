@@ -21,7 +21,7 @@ import (
 )
 
 // ADSIConnectionsDataSource defines the data source
-type ADSIConnectionsDataSource struct {
+type adsiConnectionsDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -86,20 +86,20 @@ type ADSIConnectionAttributes struct {
 }
 
 // Ensure the implementation satisfies Terraform framework interface
-var _ datasource.DataSource = &ADSIConnectionsDataSource{}
+var _ datasource.DataSource = &adsiConnectionsDataSource{}
 
 // NewSecuritySystemsDataSource returns a new instance
 func NewADSIConnectionsDataSource() datasource.DataSource {
-	return &ADSIConnectionsDataSource{}
+	return &adsiConnectionsDataSource{}
 }
 
 // Metadata defines the data source name
-func (d *ADSIConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *adsiConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_adsi_connection_datasource"
 }
 
 // Schema defines the attributes for the data source
-func (d *ADSIConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *adsiConnectionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.ADSIConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -214,7 +214,7 @@ func (d *ADSIConnectionsDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (d *ADSIConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *adsiConnectionsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -233,7 +233,7 @@ func (d *ADSIConnectionsDataSource) Configure(ctx context.Context, req datasourc
 	d.token = prov.accessToken
 }
 
-func (d *ADSIConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *adsiConnectionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state ADSIConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)
@@ -354,17 +354,4 @@ func (d *ADSIConnectionsDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
-}
-
-func SafeInt64FromStringPointer(s *string) types.Int64 {
-	if s == nil || *s == "" {
-		return types.Int64Value(0)
-	}
-
-	val, err := strconv.ParseInt(*s, 10, 64)
-	if err != nil {
-		return types.Int64Value(0)
-	}
-
-	return types.Int64Value(val)
 }

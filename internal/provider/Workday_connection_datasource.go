@@ -21,7 +21,7 @@ import (
 )
 
 // WorkdayConnectionDataSource defines the data source
-type WorkdayConnectionDataSource struct {
+type workdayConnectionDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -76,17 +76,17 @@ type WorkdayConnectionAttributes struct {
 	BaseUrl                     types.String             `tfsdk:"base_url"`
 }
 
-var _ datasource.DataSource = &WorkdayConnectionDataSource{}
+var _ datasource.DataSource = &workdayConnectionDataSource{}
 
 func NewWorkdayConnectionsDataSource() datasource.DataSource {
-	return &WorkdayConnectionDataSource{}
+	return &workdayConnectionDataSource{}
 }
 
-func (d *WorkdayConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *workdayConnectionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_workday_connection_datasource"
 }
 
-func (d *WorkdayConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *workdayConnectionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.WorkdayConnDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -192,7 +192,7 @@ func (d *WorkdayConnectionDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (d *WorkdayConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *workdayConnectionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -211,7 +211,7 @@ func (d *WorkdayConnectionDataSource) Configure(ctx context.Context, req datasou
 	d.token = prov.accessToken
 }
 
-func (d *WorkdayConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *workdayConnectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state WorkdayConnectionDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

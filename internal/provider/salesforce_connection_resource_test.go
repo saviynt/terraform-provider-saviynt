@@ -77,7 +77,7 @@ func TestAccSaviyntSalesforceConnectionResource(t *testing.T) {
 }
 
 func testAccSalesforceConnectionResourceConfig(operation string) string {
-	jsonPath := "{path}/salesforce_connection_test_data.json"
+	jsonPath := "{filepath}/salesforce_connection_test_data.json"
 	return fmt.Sprintf(`
 	provider "saviynt" {
   server_url = "%s"

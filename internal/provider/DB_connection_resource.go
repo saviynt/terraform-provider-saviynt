@@ -61,7 +61,7 @@ type dbConnectionResource struct {
 	token  string
 }
 
-func DBNewTestConnectionResource() resource.Resource {
+func NewDBTestConnectionResource() resource.Resource {
 	return &dbConnectionResource{}
 }
 

@@ -20,7 +20,7 @@ import (
 )
 
 // SecuritySystemsDataSource defines the data source
-type SecuritySystemsDataSource struct {
+type securitySystemsDataSource struct {
 	client *s.Client
 	token  string
 }
@@ -79,17 +79,17 @@ type SecuritySystemDetails struct {
 	InherentSodReportFields            []types.String `tfsdk:"inherent_sod_report_fields"`
 }
 
-var _ datasource.DataSource = &SecuritySystemsDataSource{}
+var _ datasource.DataSource = &securitySystemsDataSource{}
 
 func NewSecuritySystemsDataSource() datasource.DataSource {
-	return &SecuritySystemsDataSource{}
+	return &securitySystemsDataSource{}
 }
 
-func (d *SecuritySystemsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *securitySystemsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "saviynt_security_systems_datasource"
 }
 
-func (d *SecuritySystemsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *securitySystemsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: util.SecuritySystemDataSourceDescription,
 		Attributes: map[string]schema.Attribute{
@@ -183,7 +183,7 @@ func (d *SecuritySystemsDataSource) Schema(ctx context.Context, req datasource.S
 }
 
 // Retrieve user-defined filters from configuration.
-func (d *SecuritySystemsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *securitySystemsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Check if provider data is available.
 	if req.ProviderData == nil {
 		log.Println("ProviderData is nil, returning early.")
@@ -203,7 +203,7 @@ func (d *SecuritySystemsDataSource) Configure(ctx context.Context, req datasourc
 }
 
 // Read fetches data from the API and converts it to Terraform state.
-func (d *SecuritySystemsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *securitySystemsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state SecuritySystemsDataSourceModel
 
 	configDiagnostics := req.Config.Get(ctx, &state)

@@ -98,7 +98,7 @@ type adConnectionResource struct {
 	token  string
 }
 
-func ADNewTestConnectionResource() resource.Resource {
+func NewADTestConnectionResource() resource.Resource {
 	return &adConnectionResource{}
 }
 
