@@ -3,7 +3,7 @@
       "connection_type":       "AD",
       "connection_name":       "Terraform_AD_Connector",
       "url":                   "LDAPS://dc01.domainname.com:636",
-      "password":              "Test@123",
+      "password":              "*****",
       "username":              "CN=EICADAdmin,OU=Users,DC=domainname,DC=com",
       "searchfilter":          "OU=Users,DC=domainname,DC=com",
       "base":                  "OU=Users,DC=domainname,DC=com",
