@@ -378,12 +378,7 @@ func (r *adsiConnectionResource) Create(ctx context.Context, req resource.Create
 	apiClient := openapi.NewAPIClient(cfg)
 	reqParams := openapi.GetConnectionDetailsRequest{}
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
-	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
-	if err != nil {
-		log.Printf("[ERROR] Problem with the get function in Create block %v", *existingResource.ADSIConnectionResponse.Msg)
-		resp.Diagnostics.AddError("Problem with the get function in Create block", fmt.Sprintf("Error: %v", *existingResource.ADSIConnectionResponse.Msg))
-		return
-	}
+	existingResource, _, _ := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if existingResource != nil &&
 		existingResource.ADSIConnectionResponse != nil &&
 		existingResource.ADSIConnectionResponse.Errorcode != nil &&

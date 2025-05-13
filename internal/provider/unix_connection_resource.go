@@ -334,10 +334,7 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 	reqParams := openapi.GetConnectionDetailsRequest{}
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
 	// reqParams.SetConnectionkey(state.ConnectionKey.String())
-	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
-	if err != nil {
-		log.Printf("Problem with the get function in read block")
-	}
+	existingResource, _, _ := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if existingResource != nil && existingResource.UNIXConnectionResponse != nil && existingResource.UNIXConnectionResponse.Errorcode != nil && *existingResource.UNIXConnectionResponse.Errorcode == 0 {
 		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
 		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
@@ -407,7 +404,7 @@ func (r *unixConnectionResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 	plan.ID = types.StringValue(fmt.Sprintf("%d", *apiResp.ConnectionKey))
-	plan.ConnectionType=types.StringValue("Unix")
+	plan.ConnectionType = types.StringValue("Unix")
 	plan.ConnectionKey = types.Int64Value(int64(*apiResp.ConnectionKey))
 	plan.Description = util.SafeStringDatasource(plan.Description.ValueStringPointer())
 	plan.DefaultSavRoles = util.SafeStringDatasource(plan.DefaultSavRoles.ValueStringPointer())
@@ -540,12 +537,12 @@ func (r *unixConnectionResource) Update(ctx context.Context, req resource.Update
 	cfg.Host = apiBaseURL
 	cfg.Scheme = "https"
 	cfg.AddDefaultHeader("Authorization", "Bearer "+r.token)
-	if plan.ConnectionName.ValueString()!=state.ConnectionName.ValueString(){
+	if plan.ConnectionName.ValueString() != state.ConnectionName.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection name cannot be updated")
 		log.Printf("[ERROR]: Connection name cannot be updated")
 		return
 	}
-	if plan.ConnectionType.ValueString()!=state.ConnectionType.ValueString(){
+	if plan.ConnectionType.ValueString() != state.ConnectionType.ValueString() {
 		resp.Diagnostics.AddError("Error", "Connection type cannot by updated")
 		log.Printf("[ERROR]: Connection type cannot by updated")
 		return
@@ -681,6 +678,6 @@ func (r *unixConnectionResource) Delete(ctx context.Context, req resource.Delete
 }
 
 func (r *unixConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-    // Retrieve import ID and save to id attribute
-    resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("connection_name"), req, resp)
 }

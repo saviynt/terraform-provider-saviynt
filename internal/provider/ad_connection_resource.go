@@ -91,6 +91,8 @@ type ADConnectorResourceModel struct {
 	Updateorgjson             types.String `tfsdk:"update_org_json"`
 	ConfigJson                types.String `tfsdk:"config_json"`
 	PamConfig                 types.String `tfsdk:"pam_config"`
+	EnableGroupManagement     types.String `tfsdk:"enable_group_management"`
+	OrgImportJson             types.String `tfsdk:"org_import_json"`
 }
 
 type adConnectionResource struct {
@@ -424,6 +426,16 @@ func (r *adConnectionResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:    true,
 				Description: "JSON for PAM bootstrap configuration. Example: '{\"Connection\":\"AD\",...}'",
 			},
+			"enable_group_management": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Enable group management. Example: \"TRUE\"",
+			},
+			"org_import_json": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "JSON for organization import configuration.",
+			},
 			"msg": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
@@ -474,12 +486,7 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	apiClient := openapi.NewAPIClient(cfg)
 	reqParams := openapi.GetConnectionDetailsRequest{}
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
-	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
-	if err != nil {
-		log.Printf("[ERROR] Problem with the get function in Create block %v", *existingResource.DBConnectionResponse.Msg)
-		resp.Diagnostics.AddError("Problem with the get function in Create block", fmt.Sprintf("Error: %v", *existingResource.DBConnectionResponse.Msg))
-		return
-	}
+	existingResource, _, _ := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if existingResource != nil &&
 		existingResource.ADConnectionResponse != nil &&
 		existingResource.ADConnectionResponse.Errorcode != nil &&
@@ -555,6 +562,8 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 		UPDATEORGJSON:               util.StringPointerOrEmpty(plan.Updateorgjson),
 		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson),
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig),
+		ENABLEGROUPMANAGEMENT:       util.StringPointerOrEmpty(plan.EnableGroupManagement),
+		ORGIMPORTJSON:               util.StringPointerOrEmpty(plan.OrgImportJson),
 	}
 	if plan.VaultConnection.ValueString() != "" {
 		adConn.BaseConnector.VaultConnection = util.SafeStringConnector(plan.VaultConnection.ValueString())
@@ -632,6 +641,8 @@ func (r *adConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	plan.Updateorgjson = util.SafeStringDatasource(plan.Updateorgjson.ValueStringPointer())
 	plan.ConfigJson = util.SafeStringDatasource(plan.ConfigJson.ValueStringPointer())
 	plan.PamConfig = util.SafeStringDatasource(plan.PamConfig.ValueStringPointer())
+	plan.EnableGroupManagement = util.SafeStringDatasource(plan.EnableGroupManagement.ValueStringPointer())
+	plan.OrgImportJson = util.SafeStringDatasource(plan.OrgImportJson.ValueStringPointer())
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -724,6 +735,8 @@ func (r *adConnectionResource) Read(ctx context.Context, req resource.ReadReques
 	state.MaxChangeNumber = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
 	state.IncrementalConfig = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
 	state.CheckForUnique = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
+	state.EnableGroupManagement = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ENABLEGROUPMANAGEMENT)
+	state.OrgImportJson = util.SafeStringDatasource(apiResp.ADConnectionResponse.Connectionattributes.ORGIMPORTJSON)
 	stateDiagnostics := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(stateDiagnostics...)
 	if resp.Diagnostics.HasError() {
@@ -829,6 +842,8 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 		UPDATEORGJSON:               util.StringPointerOrEmpty(plan.Updateorgjson),
 		ConfigJSON:                  util.StringPointerOrEmpty(plan.ConfigJson),
 		PAM_CONFIG:                  util.StringPointerOrEmpty(plan.PamConfig),
+		ENABLEGROUPMANAGEMENT:       util.StringPointerOrEmpty(plan.EnableGroupManagement),
+		ORGIMPORTJSON:               util.StringPointerOrEmpty(plan.OrgImportJson),
 	}
 	log.Print("[DEBUG] AD Connector: ", adConn.PASSWORD)
 	if plan.VaultConnection.ValueString() != "" {
@@ -923,6 +938,8 @@ func (r *adConnectionResource) Update(ctx context.Context, req resource.UpdateRe
 	plan.MaxChangeNumber = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.MAX_CHANGENUMBER)
 	plan.IncrementalConfig = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.INCREMENTAL_CONFIG)
 	plan.CheckForUnique = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.CHECKFORUNIQUE)
+	plan.EnableGroupManagement = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ENABLEGROUPMANAGEMENT)
+	plan.OrgImportJson = util.SafeStringDatasource(getResp.ADConnectionResponse.Connectionattributes.ORGIMPORTJSON)
 	plan.Msg = types.StringValue(util.SafeDeref(apiResp.Msg))
 	plan.ErrorCode = types.StringValue(util.SafeDeref(apiResp.ErrorCode))
 	stateUpdateDiagnostics := resp.State.Set(ctx, plan)

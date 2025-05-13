@@ -1,12 +1,9 @@
-resource "saviynt_endpoint_resource" "example" {
-  endpointname                                  = "Terraform_Endpoint"
+resource "saviynt_endpoint_resource" "endpoint" {
+  endpoint_name                                  = "Terraform_Endpoint"
   display_name                                  = "Terraform_Endpoint"
   security_system                               = "Terraform_Security_System"
   description                                   = "Endpoint for Jira Production Access"
   owner_type                                    = "USER"
-  owner                                         = "admin"
-  resource_owner_type                           = "ROLE"
-  resource_owner                                = "ROLE_JIRA_OWNER"
   access_query                                  = "SELECT * FROM ACCESS WHERE endpoint='JIRA'"
   enable_copy_access                            = "true"
   disable_new_account_request_if_account_exists = "false"
@@ -34,11 +31,11 @@ resource "saviynt_endpoint_resource" "example" {
   custom_property5 = "IntegrationID"
 
   # Labels for custom properties
-  custom_property1_label = "Business Unit"
-  custom_property2_label = "App Name"
-  custom_property3_label = "Region"
-  custom_property4_label = "Environment"
-  custom_property5_label = "Integration ID"
+  account_custom_property_1_label = "Business Unit"
+  account_custom_property_2_label = "App Name"
+  account_custom_property_3_label = "Region"
+  account_custom_property_4_label = "Environment"
+  account_custom_property_5_label = "Integration ID"
 
   # The rest can be filled similarly (up to 60)
 
@@ -46,5 +43,5 @@ resource "saviynt_endpoint_resource" "example" {
 
   allow_remove_all_role_on_request = "false"
   change_password_access_query     = "SELECT * FROM USERS WHERE changepassword = 1"
-}
 
+}
