@@ -11,7 +11,47 @@ variable "SAVIYNT_PASSWORD" {
   description = "Saviynt API Password"
   sensitive   = true
 }
-
+variable "IP_ADDRESS" {
+  type        = string
+  description = "Saviynt host server"
+}
+variable "LDAP_PORT" {
+  type        = string
+  description = "Port for the connection"
+}
+variable "LDAP_PROTOCOL" {
+  type        = string
+  description = "Protocol type (e.g., LDAP, HTTP, etc.)"
+}
+variable "PASSWORD" {
+  type        = string
+  description = "Connection password"
+  sensitive   = true
+}
+variable "BIND_USER" {
+  type        = string
+  description = "Connection username"
+}
+variable "VAULT_CONNECTION" {
+  type        = string
+  description = "Vault connection"
+}
+variable "VAULT_CONFIG" {
+  type        = string
+  description = "Vault config"
+}
+variable "SAVE_IN_VAULT" {
+  type        = string
+  description = "Save in vault"
+}
+variable "BASE_CONTAINER" {
+  type        = string
+  description = "Value of BASEDN"
+}
+variable "DOMAIN" {
+  type        = string
+  description = "Value of DOMCONTRDN"
+}
 terraform {
   required_providers {
     saviynt = {
@@ -53,14 +93,11 @@ check "saviynt_security_system_resource_check" {
 }
 
 resource "saviynt_endpoint_resource" "endpoint" {
-  endpointname                                  = "Terraform_Endpoint"
+  endpoint_name                                  = "Terraform_Endpoint"
   display_name                                  = "Terraform_Endpoint"
   security_system                               = "Terraform_Security_System"
   description                                   = "Endpoint for Jira Production Access"
   owner_type                                    = "USER"
-  owner                                         = "admin"
-  resource_owner_type                           = "ROLE"
-  resource_owner                                = "userGroup"
   access_query                                  = "SELECT * FROM ACCESS WHERE endpoint='JIRA'"
   enable_copy_access                            = "true"
   disable_new_account_request_if_account_exists = "false"
@@ -88,11 +125,11 @@ resource "saviynt_endpoint_resource" "endpoint" {
   custom_property5 = "IntegrationID"
 
   # Labels for custom properties
-  custom_property1_label = "Business Unit"
-  custom_property2_label = "App Name"
-  custom_property3_label = "Region"
-  custom_property4_label = "Environment"
-  custom_property5_label = "Integration ID"
+  account_custom_property_1_label = "Business Unit"
+  account_custom_property_2_label = "App Name"
+  account_custom_property_3_label = "Region"
+  account_custom_property_4_label = "Environment"
+  account_custom_property_5_label = "Integration ID"
 
   # The rest can be filled similarly (up to 60)
 
@@ -110,7 +147,7 @@ check "saviynt_endpoint_resource_check" {
   }
 }
 
-resource "saviynt_ad_connection_resource" "example" {
+resource "saviynt_ad_connection_resource" "ad_connector" {
   connection_type       = "AD"
   connection_name       = "Terraform_AD_Connector"
   url                   = format("%s://%s:%d", var.LDAP_PROTOCOL, var.IP_ADDRESS, var.LDAP_PORT)
@@ -370,8 +407,6 @@ resource "saviynt_ad_connection_resource" "example" {
     }
   )
 }
-
-
 check "saviynt_ad_connection_resource_check" {
   assert {
     condition     = saviynt_ad_connection_resource.ad_connector.error_code == "0"

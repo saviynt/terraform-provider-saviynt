@@ -312,12 +312,7 @@ func (r *dbConnectionResource) Create(ctx context.Context, req resource.CreateRe
 	apiClient := openapi.NewAPIClient(cfg)
 	reqParams := openapi.GetConnectionDetailsRequest{}
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
-	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
-	if err != nil {
-		log.Printf("[ERROR] Problem with the get function in Create block %v", *existingResource.DBConnectionResponse.Msg)
-		resp.Diagnostics.AddError("Problem with the get function in Create block", fmt.Sprintf("Error: %v", *existingResource.DBConnectionResponse.Msg))
-		return
-	}
+	existingResource, _, _ := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if existingResource != nil &&
 		existingResource.DBConnectionResponse != nil &&
 		existingResource.DBConnectionResponse.Errorcode != nil &&

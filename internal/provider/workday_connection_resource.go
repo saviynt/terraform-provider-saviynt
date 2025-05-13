@@ -370,10 +370,7 @@ func (r *workdayConnectionResource) Create(ctx context.Context, req resource.Cre
 	reqParams := openapi.GetConnectionDetailsRequest{}
 	reqParams.SetConnectionname(plan.ConnectionName.ValueString())
 	// reqParams.SetConnectionkey(state.ConnectionKey.String())
-	existingResource, _, err := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
-	if err != nil {
-		log.Printf("Problem with the get function in read block")
-	}
+	existingResource, _, _ := apiClient.ConnectionsAPI.GetConnectionDetails(ctx).GetConnectionDetailsRequest(reqParams).Execute()
 	if existingResource != nil && existingResource.WorkdayConnectionResponse != nil && existingResource.WorkdayConnectionResponse.Errorcode != nil && *existingResource.WorkdayConnectionResponse.Errorcode == 0 {
 		log.Printf("[ERROR] Connection name already exists. Please import or use a different name")
 		resp.Diagnostics.AddError("API Create Failed", "Connection name already exists. Please import or use a different name")
