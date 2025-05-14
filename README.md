@@ -56,7 +56,8 @@ Examples are available for all resources. Follow the following steps to try out 
 
 The following limitations are present in the latest version of the provider. These are being prioritized for resolution in the upcoming release alongside new feature additions:
 
-### 1. We don't support `terraform destroy` for any resource currently.
+### 1. All Resource objects
+ - `terraform destroy` is not supported.
 
 ### 2. Endpoints
 
