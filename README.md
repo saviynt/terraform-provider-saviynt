@@ -52,7 +52,7 @@ Examples are available for all resources. Follow the following steps to try out 
    ```
 
 ---
-## Known Issues
+## Known Limitations
 
 The following limitations are present in the latest version of the provider. These are being prioritized for resolution in the upcoming release alongside new feature additions:
 
