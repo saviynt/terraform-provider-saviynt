@@ -3,12 +3,12 @@
 page_title: "saviynt_github_rest_connection_datasource Data Source - saviynt"
 subcategory: ""
 description: |-
-  Retrieve the details for a given Github Rest connector by its name or key
+  Retrieve the details for a given Github REST connector by its name or key
 ---
 
 # saviynt_github_rest_connection_datasource (Data Source)
 
-Retrieve the details for a given Github Rest connector by its name or key
+Retrieve the details for a given Github REST connector by its name or key
 
 ## Example Usage
 
