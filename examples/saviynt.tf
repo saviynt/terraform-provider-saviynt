@@ -93,7 +93,7 @@ check "saviynt_security_system_resource_check" {
 }
 
 resource "saviynt_endpoint_resource" "endpoint" {
-  endpoint_name                                  = "Terraform_Endpoint"
+  endpoint_name                                 = "Terraform_Endpoint"
   display_name                                  = "Terraform_Endpoint"
   security_system                               = "Terraform_Security_System"
   description                                   = "Endpoint for Jira Production Access"
