@@ -56,7 +56,9 @@ Examples are available for all resources. Follow the following steps to try out 
 
 The following limitations are present in the latest version of the provider. These are being prioritized for resolution in the upcoming release alongside new feature additions:
 
-### 1. Endpoints
+### 1. We don't support `terraform destroy` for any resource currently.
+
+### 2. Endpoints
 
 - **State management is not supported** for the following attributes:
   - `Owner`
@@ -78,7 +80,7 @@ The following limitations are present in the latest version of the provider. The
   - `Disable Modify Service Account`
   - `Disable New Account Request if Account Exists`
 
-### 2. Connections
+### 3. Connections
 - `description` field can't be set from Terraform currently.
 - **State management** is not supported for the following attributes due to their sensitive nature:
   - **AD**: `password`
