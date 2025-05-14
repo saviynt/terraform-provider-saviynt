@@ -52,6 +52,46 @@ Examples are available for all resources. Follow the following steps to try out 
    ```
 
 ---
+## Known Issues
+
+The following limitations are present in the latest version of the provider. These are being prioritized for resolution in the upcoming release alongside new feature additions:
+
+### 1. Endpoints
+
+- **State management is not supported** for the following attributes:
+  - `Owner`
+  - `ResourceOwner`
+  - `Requestable`
+  - `OutOfBandAccess`
+
+- The `MappedEndpoints` field **cannot be configured during endpoint creation**; it must be managed after the endpoint is created.
+
+- The `RequestableRoleType` attribute **can only be set during updates**, since the role must be assigned to the endpoint beforehand.
+
+- For `saviynt_endpoint_resource.requestable_role_types.request_option`, the supported values for proper state tracking are:
+  - `DropdownSingle`
+  - `Table`
+  - `TableOnlyAdd`
+
+- The following service account settings are **not currently configurable via Terraform**:
+  - `Disable Remove Service Account`
+  - `Disable Modify Service Account`
+  - `Disable New Account Request if Account Exists`
+
+### 2. Connections
+- `description` field can't be set from Terraform currently.
+- **State management** is not supported for the following attributes due to their sensitive nature:
+  - **AD**: `password`
+  - **ADSI**: `password`
+  - **DB**: `password`, `change_pass_json`
+  - **EntraId**: `access_token`, `azure_mgmt_access_token`, `client_secret`, `windows_connector_json`, `connection_json`
+  - **Github REST**: `connection_json`, `access_tokens`
+  - **REST**: `connection_json`
+  - **Salesforce**: `client_secret`, `refresh_token`
+  - **SAP**: `password`, `prov_password`
+  - **Unix**: `password`, `passphrase`, `ssh_key`, `ssh_pass_through_password`, `ssh_pass_through_sshkey`, `ssh_pass_through_passphrase`
+  - **Workday**: `password`, `client_secret`, `refresh_token`
+---
 
 ##  Contributing
 

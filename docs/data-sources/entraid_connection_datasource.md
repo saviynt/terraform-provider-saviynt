@@ -3,12 +3,12 @@
 page_title: "saviynt_entraid_connection_datasource Data Source - saviynt"
 subcategory: ""
 description: |-
-  Retrieve the details for a given EntraID(AzureAD) connector by its name or key
+  Datasource to retrieve all endpoints
 ---
 
 # saviynt_entraid_connection_datasource (Data Source)
 
-Retrieve the details for a given EntraID(AzureAD) connector by its name or key
+Datasource to retrieve all endpoints
 
 ## Example Usage
 

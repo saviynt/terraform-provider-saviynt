@@ -3,18 +3,19 @@
 page_title: "saviynt_github_rest_connection_datasource Data Source - saviynt"
 subcategory: ""
 description: |-
-  Retrieve the details for a given Github REST connector by its name or key
+  Retrieve the details for a given Github Rest connector by its name or key
 ---
 
 # saviynt_github_rest_connection_datasource (Data Source)
 
-Retrieve the details for a given Github REST connector by its name or key
+Retrieve the details for a given Github Rest connector by its name or key
 
 ## Example Usage
 
 ```terraform
 data "saviynt_github_rest_connection_datasource" "g" {
   connection_key = "123"
+  # connection_name="sample"          #Either one can be used
 }
 ```
 

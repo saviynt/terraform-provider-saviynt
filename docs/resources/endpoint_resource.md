@@ -3,25 +3,22 @@
 page_title: "saviynt_endpoint_resource Resource - saviynt"
 subcategory: ""
 description: |-
-  Create and Manage endpoints
+  Create and manage endpoints in Saviynt
 ---
 
 # saviynt_endpoint_resource (Resource)
 
-Create and Manage endpoints
+Create and manage endpoints in Saviynt
 
 ## Example Usage
 
 ```terraform
-resource "saviynt_endpoint_resource" "example" {
-  endpointname                                  = "sample"
-  display_name                                  = "sample"
-  security_system                               = "samplesystem"
+resource "saviynt_endpoint_resource" "endpoint" {
+  endpoint_name                                 = "Terraform_Endpoint"
+  display_name                                  = "Terraform_Endpoint"
+  security_system                               = "Terraform_Security_System"
   description                                   = "Endpoint for Jira Production Access"
   owner_type                                    = "USER"
-  owner                                         = "john.doe"
-  resource_owner_type                           = "ROLE"
-  resource_owner                                = "ROLE_JIRA_OWNER"
   access_query                                  = "SELECT * FROM ACCESS WHERE endpoint='JIRA'"
   enable_copy_access                            = "true"
   disable_new_account_request_if_account_exists = "false"
@@ -29,14 +26,11 @@ resource "saviynt_endpoint_resource" "example" {
   disable_modify_account                        = "false"
   user_account_correlation_rule                 = "MATCH_ON_USERNAME"
   create_ent_task_for_remove_acc                = "true"
-  out_of_band_action                            = "RECONCILE"
-  connection_config                             = "{\"host\":\"jira.example.com\", \"port\":443}"
+  out_of_band_action                            = "2"
   requestable                                   = "true"
-  parent_account_pattern                        = "parent-${accountId}"
-  service_account_name_rule                     = "svc-${username}"
   service_account_access_query                  = "SELECT * FROM ACCESS WHERE account_type='SERVICE'"
-  block_inflight_request                        = "false"
-  account_name_rule                             = "acct-${user.email}"
+  block_inflight_request                        = "ON"
+  account_name_rule                             = "acct-$${user.email}"
   allow_change_password_sql_query               = "SELECT 1 FROM dual"
   account_name_validator_regex                  = "^[a-zA-Z0-9_.-]{5,15}$"
 
@@ -52,66 +46,19 @@ resource "saviynt_endpoint_resource" "example" {
   custom_property5 = "IntegrationID"
 
   # Labels for custom properties
-  custom_property1_label = "Business Unit"
-  custom_property2_label = "App Name"
-  custom_property3_label = "Region"
-  custom_property4_label = "Environment"
-  custom_property5_label = "Integration ID"
+  account_custom_property_1_label = "Business Unit"
+  account_custom_property_2_label = "App Name"
+  account_custom_property_3_label = "Region"
+  account_custom_property_4_label = "Environment"
+  account_custom_property_5_label = "Integration ID"
 
   # The rest can be filled similarly (up to 60)
-  # ...
+
   custom_property60_label = "Custom Label 60"
 
   allow_remove_all_role_on_request = "false"
   change_password_access_query     = "SELECT * FROM USERS WHERE changepassword = 1"
 
-  # Complex blocks
-  requestable_role_type = [
-    {
-      role_type       = "TECH_ROLE"
-      request_option  = "SELF"
-      required        = true
-      requested_query = "SELECT * FROM ROLE WHERE type='TECH_ROLE'"
-      selected_query  = "SELECT * FROM ROLE WHERE selected='true'"
-      show_on         = "ACCESS_REQUEST"
-    },
-    {
-      role_type       = "ENT_ROLE"
-      request_option  = "MANAGER"
-      required        = false
-      requested_query = "SELECT * FROM ROLE WHERE type='ENT_ROLE'"
-      selected_query  = "SELECT * FROM ROLE WHERE selected='true'"
-      show_on         = "BIRTHRIGHT"
-    }
-  ]
-
-  email_template = [
-    {
-      email_template_type = "CREATE"
-      task_type           = "ACCOUNT_CREATE"
-      email_template      = "AccountCreationNotification"
-    },
-    {
-      email_template_type = "REVOKE"
-      task_type           = "ACCOUNT_REMOVE"
-      email_template      = "AccessRevokedNotification"
-    }
-  ]
-
-  mapped_endpoints = [
-    {
-      security_system = "JIRA_SECURITY_SYSTEM"
-      endpoint        = "JIRA_DEV_ENDPOINT"
-      requestable     = "true"
-      operation       = "SYNC"
-    },
-    {
-      security_system = "JIRA_SECURITY_SYSTEM"
-      endpoint        = "JIRA_QA_ENDPOINT"
-      requestable     = "false"
-      operation       = "READONLY"
-    }
-  ]
 }
 ```
 
@@ -121,14 +68,45 @@ resource "saviynt_endpoint_resource" "example" {
 ### Required
 
 - `display_name` (String) Enter a user-friendly display name for the endpoint that will be displayed in the user interface. Display Name can be different from Endpoint Name.
-- `endpointname` (String) Specify a name for the endpoint. Provide a logical name that will help you easily identify it.
+- `endpoint_name` (String) Specify a name for the endpoint. Provide a logical name that will help you easily identify it.
 - `security_system` (String) Specify the Security system for which you want to create an endpoint.
 
 ### Optional
 
 - `access_query` (String) Specify the query to filter the access and display of the endpoint to specific users. If you do not define a query, the endpoint is displayed for all users.
+- `account_custom_property_10_label` (String) Account Custom Property label 10.
+- `account_custom_property_11_label` (String) Account Custom Property label 11.
+- `account_custom_property_12_label` (String) Account Custom Property label 12.
+- `account_custom_property_13_label` (String) Account Custom Property label 13.
+- `account_custom_property_14_label` (String) Account Custom Property label 14.
+- `account_custom_property_15_label` (String) Account Custom Property label 15.
+- `account_custom_property_16_label` (String) Account Custom Property label 16.
+- `account_custom_property_17_label` (String) Account Custom Property label 17.
+- `account_custom_property_18_label` (String) Account Custom Property label 18.
+- `account_custom_property_19_label` (String) Account Custom Property label 19.
+- `account_custom_property_1_label` (String) Account Custom Property label 1.
+- `account_custom_property_20_label` (String) Account Custom Property label 20.
+- `account_custom_property_21_label` (String) Account Custom Property label 21.
+- `account_custom_property_22_label` (String) Account Custom Property label 22.
+- `account_custom_property_23_label` (String) Account Custom Property label 23.
+- `account_custom_property_24_label` (String) Account Custom Property label 24.
+- `account_custom_property_25_label` (String) Account Custom Property label 25.
+- `account_custom_property_26_label` (String) Account Custom Property label 26.
+- `account_custom_property_27_label` (String) Account Custom Property label 27.
+- `account_custom_property_28_label` (String) Account Custom Property label 28.
+- `account_custom_property_29_label` (String) Account Custom Property label 29.
+- `account_custom_property_2_label` (String) Account Custom Property label 2.
+- `account_custom_property_30_label` (String) Account Custom Property label 30.
+- `account_custom_property_3_label` (String) Account Custom Property label 3.
+- `account_custom_property_4_label` (String) Account Custom Property label 4.
+- `account_custom_property_5_label` (String) Account Custom Property label 5.
+- `account_custom_property_6_label` (String) Account Custom Property label 6.
+- `account_custom_property_7_label` (String) Account Custom Property label 7.
+- `account_custom_property_8_label` (String) Account Custom Property label 8.
+- `account_custom_property_9_label` (String) Account Custom Property label 9.
 - `account_name_rule` (String) Specify rule to generate an account name for this endpoint while creating a new account.
 - `account_name_validator_regex` (String) Specify the regular expression which will be used to validate the account name either generated by the rule or provided manually.
+- `account_type_no_password_change` (String) Account type no password change
 - `allow_change_password_sql_query` (String) SQL query to configure the accounts for which you can change passwords.
 - `allow_remove_all_role_on_request` (String) Specify true to displays the Remove All Roles option in the Request page that can be used to remove all the roles.
 - `block_inflight_request` (String) Specify true to prevent users from raising duplicate requests for the same applications.
@@ -137,51 +115,28 @@ resource "saviynt_endpoint_resource" "example" {
 - `create_ent_task_for_remove_acc` (String) If this is set to true, remove Access tasks will be created for entitlements (account entitlements and their dependent entitlements) when a user requests for removing an account.
 - `custom_property1` (String) Custom Property 1.
 - `custom_property10` (String) Custom Property 10.
-- `custom_property10_label` (String) Label for the custom property 10 of accounts of this endpoint.
 - `custom_property11` (String) Custom Property 11.
-- `custom_property11_label` (String) Label for the custom property 11 of accounts of this endpoint.
 - `custom_property12` (String) Custom Property 12.
-- `custom_property12_label` (String) Label for the custom property 12 of accounts of this endpoint.
 - `custom_property13` (String) Custom Property 13.
-- `custom_property13_label` (String) Label for the custom property 13 of accounts of this endpoint.
 - `custom_property14` (String) Custom Property 14.
-- `custom_property14_label` (String) Label for the custom property 14 of accounts of this endpoint.
 - `custom_property15` (String) Custom Property 15.
-- `custom_property15_label` (String) Label for the custom property 15 of accounts of this endpoint.
 - `custom_property16` (String) Custom Property 16.
-- `custom_property16_label` (String) Label for the custom property 16 of accounts of this endpoint.
 - `custom_property17` (String) Custom Property 17.
-- `custom_property17_label` (String) Label for the custom property 17 of accounts of this endpoint.
 - `custom_property18` (String) Custom Property 18.
-- `custom_property18_label` (String) Label for the custom property 18 of accounts of this endpoint.
 - `custom_property19` (String) Custom Property 19.
-- `custom_property19_label` (String) Label for the custom property 19 of accounts of this endpoint.
-- `custom_property1_label` (String) Label for the custom property 1 of accounts of this endpoint.
 - `custom_property2` (String) Custom Property 2.
 - `custom_property20` (String) Custom Property 20.
-- `custom_property20_label` (String) Label for the custom property 20 of accounts of this endpoint.
 - `custom_property21` (String) Custom Property 21.
-- `custom_property21_label` (String) Label for the custom property 21 of accounts of this endpoint.
 - `custom_property22` (String) Custom Property 22.
-- `custom_property22_label` (String) Label for the custom property 22 of accounts of this endpoint.
 - `custom_property23` (String) Custom Property 23.
-- `custom_property23_label` (String) Label for the custom property 23 of accounts of this endpoint.
 - `custom_property24` (String) Custom Property 24.
-- `custom_property24_label` (String) Label for the custom property 24 of accounts of this endpoint.
 - `custom_property25` (String) Custom Property 25.
-- `custom_property25_label` (String) Label for the custom property 25 of accounts of this endpoint.
 - `custom_property26` (String) Custom Property 26.
-- `custom_property26_label` (String) Label for the custom property 26 of accounts of this endpoint.
 - `custom_property27` (String) Custom Property 27.
-- `custom_property27_label` (String) Label for the custom property 27 of accounts of this endpoint.
 - `custom_property28` (String) Custom Property 28.
-- `custom_property28_label` (String) Label for the custom property 28 of accounts of this endpoint.
 - `custom_property29` (String) Custom Property 29.
-- `custom_property29_label` (String) Label for the custom property 29 of accounts of this endpoint.
-- `custom_property2_label` (String) Label for the custom property 2 of accounts of this endpoint.
 - `custom_property3` (String) Custom Property 3.
 - `custom_property30` (String) Custom Property 30.
-- `custom_property30_label` (String) Label for the custom property 30 of accounts of this endpoint.
 - `custom_property31` (String) Custom Property 31.
 - `custom_property31_label` (String) Label for the custom property 31 of accounts of this endpoint.
 - `custom_property32` (String) Custom Property 32.
@@ -200,7 +155,6 @@ resource "saviynt_endpoint_resource" "example" {
 - `custom_property38_label` (String) Label for the custom property 38 of accounts of this endpoint.
 - `custom_property39` (String) Custom Property 39.
 - `custom_property39_label` (String) Label for the custom property 39 of accounts of this endpoint.
-- `custom_property3_label` (String) Label for the custom property 3 of accounts of this endpoint.
 - `custom_property4` (String) Custom Property 4.
 - `custom_property40` (String) Custom Property 40.
 - `custom_property40_label` (String) Label for the custom property 40 of accounts of this endpoint.
@@ -218,7 +172,6 @@ resource "saviynt_endpoint_resource" "example" {
 - `custom_property47_label` (String) Label for the custom property 47 of accounts of this endpoint.
 - `custom_property48_label` (String) Label for the custom property 48 of accounts of this endpoint.
 - `custom_property49_label` (String) Label for the custom property 49 of accounts of this endpoint.
-- `custom_property4_label` (String) Label for the custom property 4 of accounts of this endpoint.
 - `custom_property5` (String) Custom Property 5.
 - `custom_property50_label` (String) Label for the custom property 50 of accounts of this endpoint.
 - `custom_property51_label` (String) Label for the custom property 51 of accounts of this endpoint.
@@ -230,36 +183,31 @@ resource "saviynt_endpoint_resource" "example" {
 - `custom_property57_label` (String) Label for the custom property 57 of accounts of this endpoint.
 - `custom_property58_label` (String) Label for the custom property 58 of accounts of this endpoint.
 - `custom_property59_label` (String) Label for the custom property 59 of accounts of this endpoint.
-- `custom_property5_label` (String) Label for the custom property 5 of accounts of this endpoint.
 - `custom_property6` (String) Custom Property 6.
 - `custom_property60_label` (String) Label for the custom property 60 of accounts of this endpoint.
-- `custom_property6_label` (String) Label for the custom property 6 of accounts of this endpoint.
 - `custom_property7` (String) Custom Property 7.
-- `custom_property7_label` (String) Label for the custom property 7 of accounts of this endpoint.
 - `custom_property8` (String) Custom Property 8.
-- `custom_property8_label` (String) Label for the custom property 8 of accounts of this endpoint.
 - `custom_property9` (String) Custom Property 9.
-- `custom_property9_label` (String) Label for the custom property 9 of accounts of this endpoint.
 - `description` (String) Specify a description for the endpoint.
 - `disable_modify_account` (String) Specify true to disable users from modifying their application accounts.
 - `disable_new_account_request_if_account_exists` (String) Specify true to disable users from requesting additional accounts on applications where they already have active accounts.
 - `disable_remove_account` (String) Specify true to disable users from removing their existing application accounts.
-- `email_template` (Attributes List) A list of email templates associated with the endpoint. (see [below for nested schema](#nestedatt--email_template))
+- `email_templates` (List of Object) (see [below for nested schema](#nestedatt--email_templates))
 - `enable_copy_access` (String) Specify true to display the Copy Access from User option in the Request pages.
 - `endpoint_config` (String) Option to copy data in Step 3 of the service account request will be enabled.
 - `error_code` (String) An error code where '0' signifies success and '1' signifies an unsuccessful operation.
-- `mapped_endpoints` (Attributes List) List of mapped endpoints with individual security systems. (see [below for nested schema](#nestedatt--mapped_endpoints))
+- `mapped_endpoints` (List of Object) (see [below for nested schema](#nestedatt--mapped_endpoints))
 - `msg` (String) A message indicating the outcome of the operation.
 - `out_of_band_action` (String) Use this parameter to determine if you need to remove the accesses which were granted outside Saviynt.
 - `owner` (String) Specify the owner of the endpoint. If the ownerType is User, then specify the username of the owner, and If it is is Usergroup then specify the name of the user group.
 - `owner_type` (String) Specify the owner type for the endpoint. An endpoint can be owned by a User or Usergroup.
 - `parent_account_pattern` (String) Specify the parent and child relationship for the Active Directory endpoint. The specified value is used to filter the parent and child objects in the Request Access tile.
 - `plugin_configs` (String) The Plugin Configuration drives the functionality of the Saviynt SmartAssist (Browserplugin).
+- `primary_account_type` (String) Type of primary account
 - `requestable` (String) Is this endpoint requestable.
-- `requestable_role_type` (Attributes List) A list of requestable role types associated with the endpoint. (see [below for nested schema](#nestedatt--requestable_role_type))
+- `requestable_role_types` (List of Object) (see [below for nested schema](#nestedatt--requestable_role_types))
 - `resource_owner` (String) Specify the resource owner of the endpoint. If the resourceOwnerType is User, then specify the username of the owner and If it is Usergroup, specify the name of the user group.
 - `resource_owner_type` (String) Specify the resource owner type for the endpoint. An endpoint can be owned by a User or Usergroup.
-- `result` (String) The result of the API call.
 - `service_account_access_query` (String) Specify the query to filter the access and display of the endpoint for specific users while managing service accounts.
 - `service_account_name_rule` (String) Rule to generate a name for this endpoint while creating a new service account.
 - `status_config` (String) Enable the State and Status options (Enable, Disable, Lock, Unlock) that would be available to request for a user and service accounts.
@@ -269,38 +217,35 @@ resource "saviynt_endpoint_resource" "example" {
 
 - `id` (String) The unique ID of the resource.
 
-<a id="nestedatt--email_template"></a>
-### Nested Schema for `email_template`
+<a id="nestedatt--email_templates"></a>
+### Nested Schema for `email_templates`
 
 Optional:
 
-- `email_template` (String) The email template name to be used.
-- `email_template_type` (String) Type of email template (e.g., Approval, Rejection).
-- `task_type` (String) Task type associated with the email template (e.g., Create, Delete).
+- `email_template` (String)
+- `email_template_type` (String)
+- `task_type` (String)
 
 
 <a id="nestedatt--mapped_endpoints"></a>
 ### Nested Schema for `mapped_endpoints`
 
-Required:
+Optional:
 
-- `endpoint` (String) Logical name of the endpoint.
-- `security_system` (String) The security system specific to this mapped endpoint.
+- `endpoint` (String)
+- `operation` (String)
+- `requestable` (String)
+- `security_system` (String)
+
+
+<a id="nestedatt--requestable_role_types"></a>
+### Nested Schema for `requestable_role_types`
 
 Optional:
 
-- `operation` (String) Specifies the operation associated with the endpoint.
-- `requestable` (String) Indicates whether the endpoint is requestable.
-
-
-<a id="nestedatt--requestable_role_type"></a>
-### Nested Schema for `requestable_role_type`
-
-Optional:
-
-- `request_option` (String) Option for requesting the role.
-- `requested_query` (String) Query for requested role selection.
-- `required` (Boolean) Indicates whether the role is required.
-- `role_type` (String) Type of role that can be requested.
-- `selected_query` (String) Query for selected role display.
-- `show_on` (String) Specifies where the role should be shown.
+- `request_option` (String)
+- `requested_query` (String)
+- `required` (Boolean)
+- `role_type` (String)
+- `selected_query` (String)
+- `show_on` (String)
