@@ -3,13 +3,13 @@ terraform {
   required_providers {
     saviynt = {
       source  = "saviynt/saviynt"
-      version = "0.2.1"
+      version = "x.x.x"
     }
   }
 }
 
 provider "saviynt" {
-  server_url = "www.example.com"
+  server_url = "https://example.saviyntcloud.com"
   username   = "username"
   password   = "password"
 }
