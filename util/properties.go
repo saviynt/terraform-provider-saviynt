@@ -3,7 +3,11 @@
 
 package util
 
-var ProviderDescription="Interact with the Saviynt ECM"
+import (
+	"fmt"
+)
+
+var ProviderDescription=fmt.Sprint("The Saviynt Terraform provider empowers you to leverage Terraform's declarative Infrastructure-as-Code (IaC) capabilities to provision, configure, and manage resources within the Saviynt Identity Cloud.<br/><br/>The provider needs to be configured with the correct credentials in the provider block to be used. For the resources and datasources supported, refer to the navigation menu on the left.")
 
 var SecuritySystemDescription="Create and manage security systems in Saviynt"
 var EndpointDescription="Create and manage endpoints in Saviynt"
