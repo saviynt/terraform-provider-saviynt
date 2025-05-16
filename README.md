@@ -46,7 +46,7 @@ Following connectors are available:
 - Salesforce
 - Workday
 - Unix
-- Github Rest
+- Github REST
 ---
 
 ##  Documentation
