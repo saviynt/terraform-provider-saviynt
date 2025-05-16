@@ -198,10 +198,6 @@ resource "saviynt_ad_connection_resource" "example" {
   read_operational_attributes = "FALSE"
   enforce_tree_deletion       = "FALSE"
   dc_locator                  = "Win-DC-Locator"
-  _user_data_json = jsonencode({
-    COMPUTEDCOLUMNS   = ["DISPLAYNAME"],
-    PREPROCESSQUERIES = ["UPDATE NEWUSERDATA SET DISPLAYNAME=city"]
-  })
   advance_filter_json = jsonencode({
     AdvanceFilter = {
       "OU=Employees,DC=domainname,DC=com" = [
