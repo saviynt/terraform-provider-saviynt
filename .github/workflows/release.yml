@@ -1,0 +1,77 @@
+name: Release build for Saviynt Terraform Provider
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        #goos: [linux]
+        #goarch: [amd64]
+        goarch: [amd64, arm64]
+      fail-fast: false
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract Version
+        run: |
+          # Strip 'v' from the tag (e.g., v1.0.0 → 1.0.0)
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Set Up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build Provider
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          #BINARY_NAME="terraform-provider-saviynt_${{ github.ref_name }}"
+          BINARY_NAME="terraform-provider-saviynt_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME="$BINARY_NAME.exe"
+          fi
+          go build -o "$BINARY_NAME"
+          ZIP_NAME="terraform-provider-saviynt_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
+          zip "$ZIP_NAME" "$BINARY_NAME"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-binaries-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            *.zip
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: provider-binaries-*
+          merge-multiple: true
+      - run: ls -R artifacts
+
+      - name: Verify download
+        run: ls -la artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.1.0  # Fixed to v2
+        with:
+          tag_name: ${{ github.ref }}
+          files: artifacts/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
