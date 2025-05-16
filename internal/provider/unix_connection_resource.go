@@ -674,7 +674,11 @@ func (r *unixConnectionResource) Update(ctx context.Context, req resource.Update
 }
 
 func (r *unixConnectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	resp.State.RemoveResource(ctx)
+	// resp.State.RemoveResource(ctx)
+	resp.Diagnostics.AddError(
+		"Delete Not Supported",
+		"Resource deletion is not supported by this provider. Please remove the resource manually if required, or contact your administrator.",
+	)
 }
 
 func (r *unixConnectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
