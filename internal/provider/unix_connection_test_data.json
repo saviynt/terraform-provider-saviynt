@@ -5,7 +5,7 @@
         "host_name": "unix.example.com", 
         "port_number":"22",
         "username": "username", 
-        "password": "pass123",
+        "password": "***",
         "groups_file": "/etc/group",
         "ssh_key": "-----BEGIN RSA PRIVATE KEY-----\n xojafioawefoiwajofpawjf iwaofjwaoiefjoawefjiof re3irfjowedijoew\n -----END RSA PRIVATE KEY-----",
         "status_threshold_config": {
