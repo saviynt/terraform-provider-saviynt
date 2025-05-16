@@ -3,7 +3,6 @@ module terraform-provider-Saviynt
 go 1.24.0
 
 require (
-	dynamicattributes v0.0.0
 	github.com/hashicorp/terraform-plugin-framework v1.14.1
 	github.com/hashicorp/terraform-plugin-go v0.26.0
 	github.com/hashicorp/terraform-plugin-testing v1.12.0
@@ -64,5 +63,3 @@ require (
 	google.golang.org/protobuf v1.36.3 // indirect
 	gopkg.in/validator.v2 v2.0.1 // indirect
 )
-
-replace dynamicattributes => /Users/nandini.choukimath/Desktop/dynamic-attrs/dynamicattributes
