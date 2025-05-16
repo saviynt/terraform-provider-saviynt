@@ -16,8 +16,8 @@ The Saviynt Terraform provider empowers you to leverage Terraform's declarative 
 terraform {
   required_providers {
     saviynt = {
-      source  = "registry.terraform.io/local/saviynt"
-      version = "1.0.0"
+      source  = "saviynt/saviynt"
+      version = "x.x.x"
     }
   }
 }
