@@ -157,23 +157,6 @@ resource "saviynt_sap_connection_resource" "ss" {
       BAPIPWD = "$${randomPassword}"
     }
   })
-  modify_user_data_json = jsonencode(
-    {
-      ADDITIONALTABLES = {}
-      COMPUTEDCOLUMNS = [
-        "USERNAME"
-      ]
-      PREPROCESSQUERIES = [
-        "CUSTOMFUNCTION###FUNCTION1"
-      ]
-      CUSTOMFUNCTIONS = {
-        FUNCTION1 = {
-          FULLCLASSNAME = "com.saviynt.organizationimport.inlineservice"
-          METHODNAME    = "importOrg"
-        }
-      }
-    }
-  )
   external_sod_eval_json        = "{\"EVAL\":\"true\"}"
   external_sod_eval_json_detail = "{\"DETAIL\":\"on\"}"
   logs_table_filter = jsonencode({
@@ -186,7 +169,6 @@ resource "saviynt_sap_connection_resource" "ss" {
       "testname2"]
     }
   })
-  pam_config                         = "{\"enabled\": true, \"vault\": \"hashicorp\"}"
   saptable_filter_lang               = "EN"
   alternate_output_parameter_et_data = "custom_param"
   audit_log_json                     = "{\"LOG_LEVEL\":\"FULL\"}"

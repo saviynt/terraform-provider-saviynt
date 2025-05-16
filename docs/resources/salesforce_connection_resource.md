@@ -87,34 +87,6 @@ resource "saviynt_salesforce_connection_resource" "ss" {
       FederationIdentifier = "$${user?.getEmail()}"
     }
   ])
-  modifyaccountjson = jsonencode([
-    {
-      Username             = "$${user?.customproperty16 + \".company\"}",
-      FirstName            = "$${user?.getFirstname()}",
-      LastName             = "$${user?.getLastname()}",
-      FederationIdentifier = "$${user?.customproperty16}"
-    }
-  ])
-  status_threshold_config = jsonencode({
-    statusAndThresholdConfig = {
-      accountThresholdValue     = 1000,
-      correlateInactiveAccounts = true,
-      statusColumn              = "customproperty10",
-      activeStatus = [
-        "true"
-      ],
-      deleteLinks        = true,
-      lockedStatusColumn = "customproperty22",
-      lockedStatusMapping = {
-        Locked = [
-          "1"
-        ],
-        Unlocked = [
-          "0"
-        ]
-      }
-    }
-  })
   customconfigjson = jsonencode([
     {
       disableAccountForRevokeTask = false,

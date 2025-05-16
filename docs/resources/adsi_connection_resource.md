@@ -412,53 +412,6 @@ resource "saviynt_adsi_connection_resource" "example" {
       }
     ]
   })
-  modifyuserdatajson = jsonencode({
-    COMPUTEDCOLUMNS   = ["DISPLAYNAME"]
-    PREPROCESSQUERIES = ["UPDATE NEWUSERDATA SET DISPLAYNAME=city"]
-  })
-  pam_config = jsonencode({
-    Connection          = "ADSI"
-    encryptionMechanism = "ENCRYPTED"
-    CONSOLE = {
-      maxCredSessionRequestTime     = "36000"
-      maxCredlessSessionRequestTime = "36000"
-      maxIDRequestableTime          = "2592000"
-      shareableAccounts = {
-        IDQueryCredentials    = "acc.name in ('cpamuser1')"
-        IDQueryCredentialless = "acc.name in ('cpamuser2', 'cpamuser3')"
-      }
-      endpointAttributeMappings = [
-        {
-          column  = "accessquery"
-          value   = "where users.USERNAME is not null"
-          feature = "endpointAccessQuery"
-        },
-        {
-          column  = "customproperty43"
-          value   = "PAMDefaultUserAccountAccessControl"
-          feature = "accountVisibilityControl"
-        }
-      ]
-      endpointPamConfig = {
-        maxConcurrentSession = "50"
-      }
-      accountVisibilityConfig = {
-        accountCustomProperty = "customproperty55"
-        accountMappingConfig = [
-          {
-            accountPattern = "cpamuser*"
-            mappingData    = "roletest1"
-            override       = "false"
-          },
-          {
-            accountPattern = "cpamuser1,cpamuser2"
-            mappingData    = "roletest2"
-            override       = "false"
-          }
-        ]
-      }
-    }
-  })
 }
 ```
 

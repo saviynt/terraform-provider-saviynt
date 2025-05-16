@@ -966,45 +966,6 @@ resource "saviynt_entraid_connection_resource" "example" {
       retryCount        = 3
     }
   })
-
-  modify_user_data_json = jsonencode({
-    ADDITIONALTABLES = {
-      USERS = "SELECT USERKEY,customproperty5,location,startdate,statuskey,employeeclass,customproperty7,departmentNumber,customproperty10,customproperty14,customproperty16,endDate,termDate,customproperty13,customproperty26,FIRSTNAME,LASTNAME,employeetype FROM USERS"
-    },
-    COMPUTEDCOLUMNS = [
-      "customproperty2",
-      "customproperty5",
-      "siteid",
-      "customproperty8",
-      "statuskey",
-      "customproperty30",
-      "employeetype",
-      "departmentNumber",
-      "customproperty10",
-      "customproperty14",
-      "customproperty16",
-      "termDate",
-      "customproperty13",
-      "customproperty45",
-      "customproperty34"
-    ],
-    PREPROCESSQUERIES = [
-      "UPDATE NEWUSERDATA SET customproperty2 = 'Transport'",
-      "UPDATE NEWUSERDATA SET customproperty34 = 'AT'",
-      "UPDATE NEWUSERDATA SET customproperty5 =FROM_UNIXTIME((CAST('0'+SUBSTRING(customproperty5 , 7, 13) AS UNSIGNED))/1000,'%Y-%m-%d')",
-      "UPDATE NEWUSERDATA SET siteid = CASE WHEN customproperty7 = 'true' THEN customproperty23 WHEN customproperty7 = 'false' THEN siteid END",
-      "UPDATE NEWUSERDATA SET customproperty8 = CASE WHEN customproperty7 = 'true' THEN customproperty25 WHEN customproperty7 = 'false' THEN SUBSTRING(SUBSTRING_INDEX(SUBSTRING_INDEX(location , '(', -1),')',1), 1, 2) END",
-      "UPDATE NEWUSERDATA SET statuskey = CASE WHEN (FROM_UNIXTIME((CAST(SUBSTRING(startdate, locate('(' , startdate)+1,(locate('\\)',startdate)-locate('(' , startdate)-1)) AS UNSIGNED))/1000) between sysdate() and DATE_ADD(NOW(),INTERVAL 20 DAY)) THEN 't' ELSE statuskey END",
-      "UPDATE NEWUSERDATA SET customproperty30 = CASE WHEN customproperty8 in ('AD','AE','SW','AT','AZ','BE','CH','CZ','DE','DK','DZ','EG','ES','FI','FR','GB','GR','HR','HU','IE','IL','IT','KZ','KA','LV','MA','MY','NG','NL','NO','PL','PT','PF','QA','RO','RU','SA','SE','SN','TN','TR','UZ','ZA','ZW','ZM','YE','EH','UG','TM','TG','TZ','TJ','SY','SZ','SD','SO','SL','SC','ST','RW','OM','NE','NA','MZ','MU','MR','ML','MW','MG','LY','LR','LS','LB','KG','KW','KE','IQ','GW','GN','GH','GE','GA','ET','ER','GQ','DJ','CI','CD','CG','KM','TD','CF','CV','CM','BI','BF','BW','BJ','BH','AM','AO','VG','SJ','GS','SI','SK','RS','SM','SH','AN','MS','ME','MD','MT','MK','LU','LT','LI','XK','JE','IS','VA','GL','GI','GM','FO','FK','EE','CY','KY','IO','BV','BA','BY','AW','AI','AL','BG','UA','PM','RE','NC','MC','YT','MQ','GP','TF','GF','AX','GG','SS') THEN 'EMEA' WHEN customproperty8 in ('AU','CN','HK','IN','ID','JO','JP','MM','PH','SG','KR','TW','TH','VN','WF','VU','TV','TC','TO','TK','TL','LK','SB','WS','PN','PG','PW','PK','MP','NF','NU','NZ','NP','NR','MN','FM','MH','MV','MO','LA','KI','HM','GU','FJ','CK','CC','CX','KH','BN','BT','BD','AQ','AS','AF','KP') THEN 'APAC' WHEN customproperty8 in ('AR','BR','CA','CL','CO','EC','IR','MX','PA','PE','SDQ','US','VE','UY','TT','SR','VC','LC','KN','PY','NI','JM','HN','HT','GY','GT','GD','SV','DM','CU','CR','BO','BM','BZ','BB','BS','AG','DO','VI','UM','PR','BL','BQ','CW','MF','SX') THEN 'AMER' END",
-      "UPDATE NEWUSERDATA SET employeetype = CASE WHEN employeeClass in ('Apprentice','Employee','Trainee','VIE France','Hired Staff') THEN 'Internal' WHEN customproperty7 ='true' then 'External' END",
-      "UPDATE NEWUSERDATA SET departmentNumber = CASE WHEN customproperty7 = 'true' THEN customproperty24 WHEN customproperty7 = 'false' THEN departmentNumber END",
-      "UPDATE NEWUSERDATA SET customproperty14 = CASE WHEN UPPER(customproperty14) = 'abc' THEN '@abcgroup.com' WHEN UPPER(customproperty14) = 'abc1' THEN '@abc1.com' END",
-      "UPDATE NEWUSERDATA SET customproperty16 = LOWER(customproperty16)",
-      "UPDATE NEWUSERDATA SET termDate = CASE WHEN customproperty7 = 'true' THEN enddate WHEN customproperty7 = 'false' THEN termDate END",
-      "UPDATE NEWUSERDATA SET customproperty13 = CASE WHEN customproperty7 = 'true' THEN customproperty13 WHEN customproperty7 = 'false' THEN customproperty26 END",
-      "UPDATE NEWUSERDATA SET departmentName = SUBSTR(departmentName,1,CHAR_LENGTH(departmentName) - LOCATE('(', REVERSE(departmentName)))"
-    ]
-  })
   windows_connector_json = jsonencode({
     http = {
       url = "http://<domain-name>/FIMAzure/PS/ExecutePSCommand",

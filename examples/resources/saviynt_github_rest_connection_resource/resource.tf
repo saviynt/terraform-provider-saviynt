@@ -465,5 +465,4 @@ resource "saviynt_github_rest_connection_resource" "example" {
       }
     }
   })
-  pam_config = ""
 }

@@ -198,10 +198,6 @@ resource "saviynt_ad_connection_resource" "example" {
   read_operational_attributes = "FALSE"
   enforce_tree_deletion       = "FALSE"
   dc_locator                  = "Win-DC-Locator"
-  modify_user_data_json = jsonencode({
-    COMPUTEDCOLUMNS   = ["DISPLAYNAME"],
-    PREPROCESSQUERIES = ["UPDATE NEWUSERDATA SET DISPLAYNAME=city"]
-  })
   advance_filter_json = jsonencode({
     AdvanceFilter = {
       "OU=Employees,DC=domainname,DC=com" = [
@@ -249,49 +245,6 @@ resource "saviynt_ad_connection_resource" "example" {
         mapping = "street,postalAddress"
       }
     ]
-  })
-  pam_config = jsonencode({
-    Connection          = "AD"
-    encryptionMechanism = "ENCRYPTED"
-    CONSOLE = {
-      maxCredSessionRequestTime     = "36000"
-      maxCredlessSessionRequestTime = "36000"
-      shareableAccounts = {
-        IDQueryCredentials           = "acc.name in ('cpamuser1')"
-        IDQueryCredentialless        = "acc.name in ('cpamuser2', 'cpamuser3')"
-        IDQueryCredentiallessViewPwd = "acc.name in ('cpamuser2')"
-      }
-      endpointAttributeMappings = [
-        {
-          column  = "accessquery"
-          value   = "where users.USERNAME is not null"
-          feature = "endpointAccessQuery"
-        },
-        {
-          column  = "customproperty43"
-          value   = "PAMDefaultUserAccountAccessControl"
-          feature = "accountVisibilityControl"
-        }
-      ]
-      endpointPamConfig = {
-        maxConcurrentSession = "50"
-      }
-      accountVisibilityConfig = {
-        accountCustomProperty = "customproperty55"
-        accountMappingConfig = [
-          {
-            accountPattern = "cpamuser*"
-            mappingData    = "roletest1"
-            override       = "false"
-          },
-          {
-            accountPattern = "cpamuser1,cpamuser2"
-            mappingData    = "roletest2"
-            override       = "false"
-          }
-        ]
-      }
-    }
   })
   enable_group_management = "TRUE"
   unlock_account_json = jsonencode(
