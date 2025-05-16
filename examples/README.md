@@ -7,8 +7,7 @@ Below are example configurations to help guide you through your Terraform journe
 ---
 
 ## Supported Resources
-
-- [saviynt_security_systems_resource](./resources/saviynt_security_systems_resource) Manages lifecycle (create, update, read) of security systems. Supports workflows, connectors, password policies and more.
+- [saviynt_security_system_resource](./resources/saviynt_security_system_resource) Manages lifecycle (create, update, read) of security systems. Supports workflows, connectors, password policies and more.
 - [saviynt_endpoint_resource](./resources/saviynt_endpoint_resource) For managing endpoints definitions used by security systems.
 - [saviynt_ad_connection_resource](./resources/saviynt_ad_connection_resource) For managing Active Directory (AD) connections.
 - [saviynt_adsi_connection_resource](./resources/saviynt_adsi_connection_resource) For managing ADSI connections.
@@ -23,7 +22,7 @@ Below are example configurations to help guide you through your Terraform journe
 
 ## Supported Data Sources
 
-- [saviynt_security_systems_datasource](./data-sources/saviynt_security_systems_datasource) Retrieves a list of configured security systems filtered by systemname, connection_type, etc.
+- [saviynt_security_system_datasource](./data-sources/saviynt_security_system_datasource) Retrieves a list of configured security systems filtered by systemname, connection_type, etc.
 - [saviynt_endpoints_datasource](./data-sources/saviynt_endpoints_datasource) Retrieves a list of endpoints.
 - [saviynt_connection_datasource](./data-sources/saviynt_connections_datasource) Retrieves a list of connections.
 - [saviynt_ad_connection_datasource](./data-sources/saviynt_ad_connection_datasource) Retrieves an AD connection.

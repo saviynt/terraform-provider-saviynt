@@ -86,7 +86,7 @@ func NewSecuritySystemsDataSource() datasource.DataSource {
 }
 
 func (d *securitySystemsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = "saviynt_security_systems_datasource"
+	resp.TypeName = "saviynt_security_system_datasource"
 }
 
 func (d *securitySystemsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {

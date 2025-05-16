@@ -165,6 +165,5 @@ func (p *saviyntProvider) Resources(ctx context.Context) []func() resource.Resou
 		NewUnixTestConnectionResource,
 		NewGithubRestTestConnectionResource,
 		NewEndpointResource,
-		NewDynamicAttributeResource,
 	}
 }
